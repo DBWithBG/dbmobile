@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+  <link rel="stylesheet" type="text/css" href="css/index.css">
+  <title>DELIVERBAG</title>
+</head>
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="cordova.js"></script>
+<script type="text/javascript" src="js/sncf.js"></script>
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8Vjewz4EKG19ljWw37rIA_5po4xAjo_o&libraries=places&callback=activateAutocomplete">
+</script>
+
+
+<body>
+  <div id ="app">
+    <input id="input_user" name="position_check" type="checkbox" > </br>
+    <label for="input_user">Lieu de prise en charge : Utiliser ma position ? </label> <br>
+    <input id="lieu_depart" type="text" size="30" placeholder="Lieu de prise en charge"> <br>
+
+    <input id="lieu_arrivee" type="text" size="30" placeholder="Lieu de restitution"> <br>
+
+    <input id="date" class="calendar" type="date" >
+    <label for="date">DATE (INPUT) </label> <br>
+    <button class="calendar" onclick="calendar()" > CALENDRIER (ASPECT NATIF)</button> <br>
+
+    <input id="time" type="time"  step="300" >
+    <label for="time">HEURE (INPUT) </label> <br>
+
+    <input id="input_train" type="text" placeholder="Numéro de train"> <br>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <title>DELIVERBAG</title>
+    </head>
+    <script
+        src="http://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+    <script src="cordova.js"></script>
+    <script type="text/javascript" src="js/maps.js"></script>
+    <script type="text/javascript" src="js/camera.js"></script>
+    <script type="text/javascript" src="js/sncf.js"></script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8Vjewz4EKG19ljWw37rIA_5po4xAjo_o&libraries=places&callback=initMap">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+
+    <body>
+
+      <div id ="app">
+        <button class="displayMap" onclick="displayMap()" > Afficher la carte </button> <br>
+        <button class="hideMap" onclick="hideMap()"> Masquer la carte </button> <br>
+        <div id="map" > </div>
+        <div id="delivery_infos"> </div>
+        <button class="demand" onClick="window.location='demand.html'"> Demander une prise en charge </button> <br>
+        <button class="camera" onclick="openCamera()" > Prendre une photo </button> <br>
+        <button class="galery" onclick="openGalery()" > Photo depuis la galerie </button> <br>
+          <div id="photo_container"> </div> <br>
+        <input id="customer_id" type="text" placeholder="ENTREZ VOTRE NUMERO DE CLIENT"> <br>
+        <button class="envoi" onclick="requestSNCF()" > VALIDER </button> <br>
+        <button class="delete_demande" onclick="annulerPriseEnCharge()" > &times; </button> <br>
+        <button class="firebase" onclick="firebase()" > FIREBASE </button> <br>
+
+      </div>
+
+
+
+
+  </body>
+</html>
