@@ -131,6 +131,10 @@
             {
               "xml": "<feature name=\"DatePicker\"><param name=\"ios-package\" value=\"DatePicker\" /></feature>",
               "count": 1
+            },
+            {
+              "xml": "<feature name=\"FirebasePlugin\"><param name=\"ios-package\" value=\"FirebasePlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+              "count": 1
             }
           ]
         }
@@ -244,12 +248,22 @@
       },
       "*/Entitlements-Debug.plist": {
         "parents": {
-          "aps-environment": []
+          "aps-environment": [
+            {
+              "xml": "<string>development</string>",
+              "count": 1
+            }
+          ]
         }
       },
       "*/Entitlements-Release.plist": {
         "parents": {
-          "aps-environment": []
+          "aps-environment": [
+            {
+              "xml": "<string>production</string>",
+              "count": 1
+            }
+          ]
         }
       }
     }
@@ -286,6 +300,12 @@
       "PACKAGE_NAME": "io.cordova.hellocordova"
     },
     "cordova-plugin-datepicker": {
+      "PACKAGE_NAME": "io.cordova.hellocordova"
+    },
+    "cordova-android-play-services-gradle-release": {
+      "PACKAGE_NAME": "io.cordova.hellocordova"
+    },
+    "cordova-plugin-firebase": {
       "PACKAGE_NAME": "io.cordova.hellocordova"
     }
   },
@@ -651,6 +671,14 @@
       "clobbers": [
         "datePicker"
       ]
+    },
+    {
+      "id": "cordova-plugin-firebase.FirebasePlugin",
+      "file": "plugins/cordova-plugin-firebase/www/firebase.js",
+      "pluginId": "cordova-plugin-firebase",
+      "clobbers": [
+        "FirebasePlugin"
+      ]
     }
   ],
   "plugin_metadata": {
@@ -663,6 +691,8 @@
     "cordova-plugin-inappbrowser": "3.0.0",
     "cordova-plugin-request-location-accuracy": "2.2.2",
     "cordova-plugin-splashscreen": "5.0.2",
-    "cordova-plugin-datepicker": "0.9.3"
+    "cordova-plugin-datepicker": "0.9.3",
+    "cordova-android-play-services-gradle-release": "1.4.1",
+    "cordova-plugin-firebase": "1.0.3"
   }
 }

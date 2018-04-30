@@ -19,7 +19,6 @@
     <allow-intent href="geo:*" />
     <icon src="res/icon/logo.png" />
     <preference name="SplashScreen" value="screen" />
-    <preference name="AutoHideSplashScreen" value="true" />
-    <preference name="SplashScreenDelay" value="6000" />
+    <preference name="AutoHideSplashScreen" value="false" />
     <preference name="ShowSplashScreenSpinner" value="false" />
 </widget>

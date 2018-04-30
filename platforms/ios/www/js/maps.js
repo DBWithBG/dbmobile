@@ -8,6 +8,8 @@ document.addEventListener('deviceready', function () {
   $('#date').attr('min',today);
   checkGps();
   requests();
+  navigator.splashscreen.hide();
+
 });
 
 
@@ -18,7 +20,6 @@ document.addEventListener('deviceready', function () {
 */
 
 function initMap() {
-
   //window.open = cordova.InAppBrowser.open;
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 48.6843900, lng: 6.1849600},
@@ -162,12 +163,6 @@ function initMap() {
           //clearInterval(window.timer);
           $('#map').css('display','none');
           clearInterval(window.timer);
-          window.FirebasePlugin.getToken(function(token) {
-            // save this server-side and use it to push notifications to this device
-            alert(token);
-          }, function(error) {
-            alert(error);
-          });
         }
 
 

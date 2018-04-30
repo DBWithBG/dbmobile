@@ -11,6 +11,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "android-versions": "^1.3.0",
+    "cordova-android": "^6.3.0",
+    "cordova-android-play-services-gradle-release": "^1.4.1",
     "cordova-browser": "~5.0.3",
     "cordova-ios": "^4.5.4",
     "cordova-plugin-camera": "^4.0.2",
@@ -24,7 +26,8 @@
     "cordova-plugin-whitelist": "^1.3.3",
     "cordova-push-notifications": "^1.2.4",
     "cordova.plugins.diagnostic": "^4.0.5",
-    "cordova.plugins.diagnostic.api-22": "^100.0.0-api-22"
+    "cordova.plugins.diagnostic.api-22": "^100.0.0-api-22",
+    "cordova-plugin-firebase": "^1.0.0"
   },
   "cordova": {
     "plugins": {
@@ -39,11 +42,16 @@
       "cordova.plugins.diagnostic": {},
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-splashscreen": {},
-      "cordova-plugin-datepicker": {}
+      "cordova-plugin-datepicker": {},
+      "cordova-android-play-services-gradle-release": {
+        "PLAY_SERVICES_VERSION": "15.+"
+      },
+      "cordova-plugin-firebase": {}
     },
     "platforms": [
       "browser",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }

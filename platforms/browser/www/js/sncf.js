@@ -237,7 +237,6 @@ function geocode(pos){
   */
   function activateAutocomplete(){
 
-    checkGps();
     // restrictions
     var france = {
       country: 'fr'
@@ -257,6 +256,7 @@ function geocode(pos){
 
 
     $('#input_user').click(function() {
+
       if (this.checked) {
         navigator.geolocation.getCurrentPosition(function(position){
           user_pos = {

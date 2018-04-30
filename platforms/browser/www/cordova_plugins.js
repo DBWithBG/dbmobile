@@ -266,6 +266,14 @@ module.exports = [
         "id": "cordova-plugin-splashscreen.SplashScreenProxy",
         "pluginId": "cordova-plugin-splashscreen",
         "runs": true
+    },
+    {
+        "file": "plugins/cordova-plugin-firebase/www/firebase-browser.js",
+        "id": "cordova-plugin-firebase.FirebasePlugin",
+        "pluginId": "cordova-plugin-firebase",
+        "clobbers": [
+            "FirebasePlugin"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -280,7 +288,9 @@ module.exports.metadata =
     "cordova-plugin-inappbrowser": "3.0.0",
     "cordova-plugin-request-location-accuracy": "2.2.2",
     "cordova-plugin-splashscreen": "5.0.2",
-    "cordova-plugin-datepicker": "0.9.3"
+    "cordova-plugin-datepicker": "0.9.3",
+    "cordova-android-play-services-gradle-release": "1.4.1",
+    "cordova-plugin-firebase": "1.0.3"
 }
 // BOTTOM OF METADATA
 });

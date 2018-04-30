@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DELIVERBAG</string>
+    <string name="launcher_name">@string/app_name</string>
+    <string name="activity_name">@string/launcher_name</string>
+    <string name="google_app_id">1:782571423011:android:f52ffe99dc638fdf</string>
+    <string name="google_api_key">AIzaSyAyr9vfMCcGoOvttwh7YaXirwao2UWA-uQ</string>
+</resources>
