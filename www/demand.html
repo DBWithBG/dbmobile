@@ -15,6 +15,7 @@
 <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 <script src="cordova.js"></script>
 <script type="text/javascript" src="js/sncf.js"></script>
+<script type="text/javascript" src="js/flights.js"></script>
 <script async defer
 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8Vjewz4EKG19ljWw37rIA_5po4xAjo_o&libraries=places&callback=activateAutocomplete">
 </script>
@@ -35,7 +36,12 @@ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8Vjewz4EKG19ljWw37rIA_5p
     <input id="time" type="time"  step="300" >
     <label for="time">HEURE (INPUT) </label> <br>
 
-    <input id="input_train" type="text" placeholder="Numéro de train"> <br>
+    <input id="input_train" type="text" placeholder="Numéro de train"> <br> <br> <br>
+
+    <input id="input_flight" type="text" placeholder="Numéro de vol"> <br>
+    <input id="input_airport" type="text" placeholder="Code aéroport d'arrivée"> <br>
+    <button class="flightstats" onclick="flightStats()" > Valider ce vol </button> <br>
+
   </div>
 </body>
 

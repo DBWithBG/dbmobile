@@ -1,6 +1,6 @@
 var map,marker;
 var serv = 'http://dev-deliverbag.supconception.fr/';
-
+var mapStyle = ` [{"featureType":"administrative","stylers":[{"visibility":"on"}]},{"featureType":"administrative.country","stylers":[{"visibility":"on"}]},{"featureType":"administrative.land_parcel","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"administrative.province","stylers":[{"visibility":"on"}]},{"featureType":"landscape.man_made","elementType":"geometry.fill","stylers":[{"color":"#e9e5dc"}]},{"featureType":"landscape.natural","elementType":"geometry.fill","stylers":[{"color":"#b8cb93"},{"visibility":"on"}]},{"featureType":"poi","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.attraction","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","stylers":[{"visibility":"off"}]},{"featureType":"poi.government","stylers":[{"visibility":"off"}]},{"featureType":"poi.medical","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","stylers":[{"visibility":"on"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#ccdca1"}]},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"poi.park","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","stylers":[{"visibility":"off"}]},{"featureType":"poi.school","stylers":[{"visibility":"off"}]},{"featureType":"poi.sports_complex","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"hue":"#ff0000"},{"saturation":-100},{"lightness":100}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#808080"},{"lightness":54},{"visibility":"off"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels.text","stylers":[{"visibility":"on"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#767676"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#ffffff"}]},{"featureType":"road.arterial","stylers":[{"weight":"1.74"}]},{"featureType":"road.arterial","elementType":"labels.text","stylers":[{"hue":"#ff0000"},{"visibility":"on"},{"weight":"4.98"}]},{"featureType":"road.highway","stylers":[{"visibility":"off"}]},{"featureType":"road.highway.controlled_access","stylers":[{"visibility":"off"}]},{"featureType":"road.local","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.local","elementType":"labels.text","stylers":[{"visibility":"on"},{"weight":"0.01"}]},{"featureType":"transit","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.airport","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.bus","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.rail","stylers":[{"visibility":"off"}]},{"featureType":"water","stylers":[{"color":"#6abcd1"},{"saturation":"0"},{"lightness":"0"},{"gamma":"1"},{"weight":"1"}]}] `;
 
 document.addEventListener('deviceready', function () {
 
@@ -21,15 +21,20 @@ document.addEventListener('deviceready', function () {
 
 function initMap() {
   //window.open = cordova.InAppBrowser.open;
+
+
+
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 48.6843900, lng: 6.1849600},
-    zoom: 12,
+    zoom: 14,
     disableDefaultUI: true,
-    gestureHandling: "greedy"
+    gestureHandling: "greedy",
+    styles:JSON.parse(mapStyle)
 
   });
 
 
+console.log(JSON.parse(mapStyle));
   marker = new google.maps.Marker(
     {
       position : {lat: 0, lng: 0}
@@ -49,11 +54,11 @@ function initMap() {
   }
 
   function requests(){
-    request('deliveries',addDeliveriesMarkers);
-    request('customers',console.log);
-    request('customers/1',displayDeliveries);
-    request('drivers',console.log);
-    request('drivers/1',console.log);
+    get('deliveries',addDeliveriesMarkers);
+    get('customers',console.log);
+    get('customers/1',displayDeliveries);
+    get('drivers',console.log);
+    get('drivers/1',console.log);
   }
 
 
@@ -72,9 +77,24 @@ function initMap() {
   ** @param url : data to get (ex : deliveries, customers...)
   ** @param succes : succes callback executed
   */
-  function request(url, succes){
+  function get(url, succes){
+    $.ajax({
+      url: 'https://dev-deliverbag.supconception.fr/'+url,
+      dataType: 'jsonp',
+      success: function(data){
+        succes(JSON.parse(data));
+      },
+      error:function(e){
+        console.log(e);
+      },
+    });
+  }
+
+
+  function post(url, succes){
     $.ajax({
       url: 'http://dev-deliverbag.supconception.fr/'+url,
+      type : 'POST',
       dataType: 'jsonp',
       success: function(data){
         succes(JSON.parse(data));
@@ -160,22 +180,37 @@ function initMap() {
         ** Hide the map & stop the timer
         */
         function hideMap(){
-          //clearInterval(window.timer);
+
           $('#map').css('display','none');
           clearInterval(window.timer);
+
+        }
+
+
+        function button_webview(){
+          webview('https://dev-deliverbag.supconception.fr/');
+        }
+
+        function webview(url){
+          window.open('https://dev-deliverbag.supconception.fr/', '_self', 'location=no,zoom=no');
         }
 
 
         function test_firebase(){
-
-          alert(window.FirebasePlugin);
+          /*
           window.FirebasePlugin.getToken(function(token) {
-            // save this server-side and use it to push notifications to this device
-            alert(token);
-          }, function(error) {
-            alert(error);
-          });
-          // POUR CHANGER DE PAGE
-          //window.location = "test.html";
+          // save this server-side and use it to push notifications to this device
+          $('.token').val(token);
+        }, function(error) {
+        alert(error);
+      });
+      */
+      window.FirebasePlugin.verifyPhoneNumber('0777706645', 60, function(credential) {
+        alert(credential);
+      });
 
-        }
+
+      // POUR CHANGER DE PAGE
+      //window.location = "test.html";
+
+    }

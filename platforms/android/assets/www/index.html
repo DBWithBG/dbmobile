@@ -10,6 +10,7 @@
         <link rel="stylesheet" type="text/css" href="css/index.css">
         <title>DELIVERBAG</title>
     </head>
+    <script src="http://www.localeplanet.com/api/translate.js" /></script>
     <script
         src="http://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
@@ -20,7 +21,6 @@
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8Vjewz4EKG19ljWw37rIA_5po4xAjo_o&libraries=places&callback=initMap">
     </script>
-    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
 
     <body>
 
@@ -37,7 +37,9 @@
         <button class="envoi" onclick="requestSNCF()" > VALIDER </button> <br>
         <button class="delete_demande" onclick="annulerPriseEnCharge()" > &times; </button> <br>
         <button class="firebase" onclick="test_firebase()" > FIREBASE </button> <br>
+        <button class="webview" onclick="button_webview()" > WEBVIEW </button> <br>
 
+        <input type="text" class="token"  >
       </div>
 
 

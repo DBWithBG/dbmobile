@@ -6,8 +6,8 @@ $(function(){ // this will be called when the DOM is ready
     var val = $('#input_train').val();
     var dateVoyage = $('#date').val();
   //  since=20170407T120000&until=20170407T120100
-  dateVoyage = (dateVoyage.split('-').join('')) + "T000000";
   if (dateVoyage != ''){
+    dateVoyage = (dateVoyage.split('-').join('')) + "T000000";
     $.get(`https://api.sncf.com/v1/coverage/sncf/vehicle_journeys/?headsign=${val}&since=${dateVoyage}&key=7308cd76-a20f-4f01-9cc3-59d4742bba24 `, function(data){
       traitement_gares(data);
     });
@@ -17,6 +17,9 @@ $(function(){ // this will be called when the DOM is ready
     }
   });
 });
+
+
+
 function requestSNCF(){
   /*
   ${domain}api/records/1.0/search/?dataset=tgvmax&refine.destination=BORDEAUX+ST+JEAN&refine.train_no=${num_train} `, {
