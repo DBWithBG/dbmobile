@@ -8,12 +8,14 @@ $(function(){ // this will be called when the DOM is ready
   //  since=20170407T120000&until=20170407T120100
   if (dateVoyage != ''){
     dateVoyage = (dateVoyage.split('-').join('')) + "T000000";
-    $.get(`https://api.sncf.com/v1/coverage/sncf/vehicle_journeys/?headsign=${val}&since=${dateVoyage}&key=7308cd76-a20f-4f01-9cc3-59d4742bba24 `, function(data){
-      traitement_gares(data);
-    });
+    if (val.length==4) {
+        $.get(`https://api.sncf.com/v1/coverage/sncf/vehicle_journeys/?headsign=${val}&since=${dateVoyage}&key=7308cd76-a20f-4f01-9cc3-59d4742bba24 `, function(data){
+        traitement_gares(data);
+      });
+    }
   }
     else{
-      alert("Vous devez spécifier une date de voyage");
+      console.log("date de voyage non spécifiée");
     }
   });
 });
@@ -72,7 +74,7 @@ function traitement_gares(data){
   var stops = data.vehicle_journeys[0].stop_times;
   for (var i=0 ;i<stops.length; i++){
     var pos = {  lat : parseFloat(stops[i].stop_point.coord.lat), lng : parseFloat(stops[i].stop_point.coord.lon) } ;
-    $(`<br> <button class="choix_gare" data-lat="${pos.lat}" data-lng="${pos.lng}"> ${stops[i].stop_point.name} </button>`).insertAfter($('#input_train'));
+    $(`<br> <button  class="btn btn-medium border border-green uppercase xround-2 choix_gare" data-lat="${pos.lat}" data-lng="${pos.lng}"> ${stops[i].stop_point.name}  </button>`).insertAfter($('#input_train'));
     console.log(stops[i].stop_point.name);
     console.log('*************');
   }

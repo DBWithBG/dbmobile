@@ -8,12 +8,18 @@
   <meta name="msapplication-tap-highlight" content="no">
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
   <link rel="stylesheet" type="text/css" href="css/index.css">
+  <link rel="stylesheet" href="js/datepicker/bootstrap-datetimepicker.css" />
+  <link href="js/tabs/css/responsive-tabs.css" rel="stylesheet" type="text/css" media="all">
+  <link rel="stylesheet" href="css/shortcodes.css" type="text/css">
+  <link rel="stylesheet" href="css/theme-default.css" type="text/css">
+
   <title>DELIVERBAG</title>
 </head>
 
 
-<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="js/jquery-3.3.1.min.js"> </script>
 <script src="cordova.js"></script>
+<script src="js/tabs/js/responsive-tabs.js" type="text/javascript"></script>
 <script type="text/javascript" src="js/sncf.js"></script>
 <script type="text/javascript" src="js/flights.js"></script>
 <script async defer
@@ -23,26 +29,82 @@ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8Vjewz4EKG19ljWw37rIA_5p
 
 <body>
   <div id ="app">
-    <input id="input_user" name="position_check" type="checkbox" > </br>
-    <label for="input_user">Lieu de prise en charge : Utiliser ma position ? </label> <br>
-    <input id="lieu_depart" type="text" size="30" placeholder="Lieu de prise en charge"> <br>
 
-    <input id="lieu_arrivee" type="text" size="30" placeholder="Lieu de restitution"> <br>
+    <!--
+    Onglets pour les différentes demandes possibles
+  -->
+  <div class="tab-navbar-main tabstyle-9 ">
+    <ul class="responsive-tabs">
+      <li class=""><a href="#tab-adress" target="_self"> <br/>
+        Par adresse géographique </a></li>
+        <li class=""><a href="#tab-train" target="_self"> <br/>
+          Par numéro de train</a></li>
+          <li class=""><a href="#tab-flight" target="_self"> <br/>
+            Par numéro de vol</a></li>
+          </ul>
+        </div>
 
-    <input id="date" class="calendar" type="date" >
-    <label for="date">DATE (INPUT) </label> <br>
-    <button class="calendar" onclick="calendar()" > CALENDRIER (ASPECT NATIF)</button> <br>
 
-    <input id="time" type="time"  step="300" >
-    <label for="time">HEURE (INPUT) </label> <br>
+        <!--
+        Les différents onglets en fonction du moyen de transport ou par adresse
+      -->
+      <div class="container">
+        <!-- PREMIER CAS : Saisie d'adresse
+        On demande à l'utilisateur s'il souhaite qu'on utilise sa position actuelle
+        Sinon, un champ de saisie pour l'adresse est affiché
+        Découpage en 2 sections :en haut saisie du lieu, en bas DatePicker pour la date ?-->
+        <div id="tab-adress" class="responsive-tabs-panel">
+          <label class="lable-text control control--checkbox">Lieu de prise en charge : Utiliser ma position?
+            <input id="input_user" type="checkbox" />
+            <div class="control__indicator cyan"> </div>
+          </label>
+          <input class="input-1" id="lieu_depart" type="text" size="30" placeholder="Lieu de prise en charge"> <br>
+        </div>
 
-    <input id="input_train" type="text" placeholder="Numéro de train"> <br> <br> <br>
 
-    <input id="input_flight" type="text" placeholder="Numéro de vol"> <br>
-    <input id="input_airport" type="text" placeholder="Code aéroport d'arrivée"> <br>
-    <button class="flightstats" onclick="flightStats()" > Valider ce vol </button> <br>
 
-  </div>
-</body>
 
-</html>
+
+
+
+
+
+
+
+        <div id="tab-train" class="responsive-tabs-panel">
+          <label class="lable-text" for "input_train"> Indiquez votre numéro de train. <br> Les différents arrêts compatibles avec notre service vous seront proposés. </label>
+          <input class="input-1" id="input_train" type="number" placeholder="Numéro de train"> <br> <br> <br>
+        </div>
+
+
+
+
+
+
+        <div id="tab-flight" class="responsive-tabs-panel">
+          <label class="lable-text" for "input_flight"> Indiquez votre numéro de vol. </label>
+
+          <input class="input-1" id="input_flight" type="number" placeholder="Numéro de vol"> <br>
+        </div>
+      </div>
+
+
+
+      <input id="lieu_arrivee" type="text" size="30" placeholder="Lieu de restitution"> <br>
+
+      <input id="date" class="calendar" type="date" >
+      <label for="date">DATE (INPUT) </label> <br>
+      <button class="calendar" onclick="calendar()" > CALENDRIER (ASPECT NATIF)</button> <br>
+
+      <input id="time" type="time"  step="300" >
+      <label for="time">HEURE (INPUT) </label> <br>
+
+
+
+      <input id="input_airport" type="text" placeholder="Code aéroport d'arrivée"> <br>
+      <button class="flightstats" onclick="flightStats()" > Valider ce vol </button> <br>
+
+    </div>
+  </body>
+
+  </html>

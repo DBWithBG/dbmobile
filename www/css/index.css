@@ -16,9 +16,14 @@
 * specific language governing permissions and limitations
 * under the License.
 */
+
+
+
+
 * {
   -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
 }
+
 
 body {
   -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
@@ -33,9 +38,15 @@ body {
   font-size:12px;
   height:100%;
   margin:0px;
-  padding:0px;
   text-transform:uppercase;
   width:100%;
+
+}
+
+/* Le bottom nav est fixé, on doit donc monter les autres éléments pour ne pas qu'ils soient cachés par le menu */
+
+#home{
+  padding-bottom:56px;
 }
 
 /* Portrait layout (default) */
@@ -66,11 +77,12 @@ h1 {
   text-align:center;
 }
 
-input, button {
-  min-height:5%;
-  min-width: 30%;
-  border:2px solid;
-  border-color: #696 #363 #363 #696;
+.vdatetime input,  .autocomplete{
+  min-height:5% ;
+  min-width: 30% ;
+  border:1px solid ;
+  padding:1%;
+  margin:1%;
 }
 
 #map {
