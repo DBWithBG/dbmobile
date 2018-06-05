@@ -56449,8 +56449,7 @@ Vue.use(require('vue-moment'));
 const routes = [{ path: '/courses', component: courses }, { path: '/demands', component: myMap }, { path: '/demand', component: demand }, { path: '/demand-address', component: address }, { path: '/demand-train', component: train }, { path: '/demand-flight', component: flight }, { path: '/demand-next', component: demandNext, name: 'demand-next', props: true }, { path: '/', component: Main }];
 
 const router = new VueRouter({
-  routes: routes,
-  mode: 'history'
+  routes: routes
 });
 
 document.addEventListener('deviceready', function () {
