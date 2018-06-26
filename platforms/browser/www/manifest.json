@@ -1,0 +1,11 @@
+{
+  "background_color": "#FFF",
+  "display": "standalone",
+  "name": "Deliverbag",
+  "short_name": "Deliverbag",
+  "version": "io.cordova.hellocordova",
+  "description": "Deliverbag facilite le transport de vos bagages",
+  "author": "System'Up",
+  "icons": [],
+  "start_url": "dist/index.html"
+}
