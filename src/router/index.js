@@ -28,6 +28,7 @@ Vue.component('pull-to',PullTo);
 
 Vue.component('demande-form',FormulaireDemande);
 Vue.component('profile-customer',ProfileCustomer);
+Vue.component('demands-list',DemandsList);
 
 export default new Router({
   mode:'history',

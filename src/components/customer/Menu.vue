@@ -27,6 +27,11 @@ export default{
 
 </script>
 
-<style scoped>
+<style>
+
+
+body {
+  padding-bottom:56px;
+}
 
 </style>

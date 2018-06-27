@@ -288,7 +288,7 @@
 
 
     <v-btn  color="orange lighten-1" @click.native="step=2" dark >Précédent</v-btn>
-    <v-btn  color="green darken-1" @click.native="reponse()" dark >Valider </v-btn>
+    <v-btn  color="green darken-1" @click.native="payer()" dark >Payer </v-btn>
   </v-stepper-content>
 </v-stepper-items>
 
@@ -309,6 +309,7 @@ export default {
   data(){
     return {
 
+      activeDeliveryId:'',
       step:0,
       livraisonDirecte:true,
       message:'',
@@ -363,6 +364,20 @@ export default {
       return date.toLocaleString();
     },
 
+    dateToJson(){
+      console.log(this.time);
+      var date = new Date(this.date);
+      if (typeof this.time === 'string'){
+        date.setHours(this.time.match(/^(\d+)/)[1]);
+        date.setMinutes(this.time.match(/:(\d+)/)[1]);
+      }
+      else{
+        date.setHours(this.time.getHours());
+        date.setMinutes(this.time.getMinutes());
+      }
+      return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(),  date.getHours(), date.getMinutes(), date.getSeconds())).toJSON().split('.')[0].replace('T',' ');
+    },
+
     displayDate(){
       return this.dateTime.substring(0,10);
     },
@@ -402,7 +417,7 @@ export default {
           "delivery" :
           {
             "comment" : "Un commentaire... sur une demande de prise en charge...",
-            "start_date" : this.date,
+            "start_date" : this.dateToJson,
             "livraisonDirecte":this.livraisonDirecte
           },
           "bagages" : {
@@ -413,15 +428,15 @@ export default {
         "mobile_token":localStorage.getItem('deviceId'),
 
         }
-
-        //alert(this.startPlace.geometry.location.lng);
-      //  alert(typeof(this.startPlace.geometry.location));
+        var self=this;
 
         $.ajax({
           url: 'http://dev-deliverbag.supconception.fr/create/delivery',
           type : 'POST',
           data : req,
           success: function(data){
+            console.log(data.id);
+            self.activeDeliveryId=data.id;
             console.log(data);
           },
           error:function(e){
@@ -430,7 +445,29 @@ export default {
         });
       }
 
+
       return req;
+    },
+
+
+    payer(){
+
+      var self=this;
+      $.ajax({
+        url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/payment',
+        type : 'POST',
+        data : {
+          "delivery_id" : self.activeDeliveryId,
+          "mobile_token": localStorage.getItem('deviceId')
+        },
+        success: function(data){
+          console.log(data);
+        },
+        error:function(e){
+          console.log(e);
+        },
+      });
+
     },
 
 

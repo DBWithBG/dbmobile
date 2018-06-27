@@ -25,24 +25,28 @@
             <v-expansion-panel>
               <v-expansion-panel-content>
                 <div slot="header">Détails de la course {{props.item.id}}</div>
-                <div v-if="props.item.take_over_delivery != null">
+                <div v-if="props.item.status === 5 && !ratingSent">
                   <v-layout row>
-                    <v-flex xs12>
-                      <star-rating v-model="props.item.rating" :show-rating="false"> </star-rating>
-                    </v-flex>
+
+                      <star-rating v-model="props.item.rating" :show-rating="false" @click.native.stop="dialog = true" @click.native="sendRating(props.item.id,props.item.rating)"> </star-rating>
+                      </v-flex>
+                      <v-dialog v-model="dialog" max-width="290">
+                      <v-card>
+                        <v-card-title class="headline">Notation de la course</v-card-title>
+                        <v-layout row>
+                        <v-flex xs10 offset-xs1>
+                          <v-text-field
+                          label="Commentaire"
+                          v-model="props.item.details"
+                          ></v-text-field>
+                        </v-flex>
+                      </v-layout>
+                        <v-btn  flat color="green darken-2" @click.native="sendRating(props.item.id,props.item.rating,props.item.details),dialog = false">
+                          <span>Envoyer mon avis</span>
+                        </v-btn>
+                      </v-card>
+                    </v-dialog>
                   </v-layout>
-                  <v-flex xs5>
-                    <v-text-field
-                    label="Commentaire"
-                    v-model="props.item.details"
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex xs5>
-                    <v-btn  flat color="green darken-2" @click.native="sendRating(props.item.id,props.item.rating,props.item.details)">
-                      <span>Envoyer mon avis</span>
-                    </v-btn>
-                  </v-flex>
-                </v-layout>
               </div>
               <td >Distance : {{ props.item.distance }} km</td>
               <td >Prix : {{ props.item.price }} €</td>
@@ -86,6 +90,7 @@ export default {
 
   data () {
     return {
+      ratingSent:false,
       headers: [
         { text: 'Distance', value: 'distance' },
         { text: 'Prix', value: 'price' },
@@ -109,28 +114,30 @@ export default {
 
       var self=this;
       $.ajax({
-        url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/customers',
-        type : 'POST',
-        data : {"mobile_token" : localStorage.getItem('deviceId')},
+        url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/customers?mobile_token='+localStorage.getItem('deviceId'),
+        type : 'GET',
+        datatype:'jsonp',
         //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
         success: function(data){
-          console.log(data[0]);
-          for (let i=0;i<data[0].length;i++){
-            switch (data[0][i].status) {
-              case 0 : self.demandes[1].push(data[0][i]);
-              break;
-              case 1 : self.demandes[1].push(data[0][i]);
-              break;
-              case 2 : self.demandes[0].push(data[0][i]);
-              break;
-              case 3 : self.demandes[0].push(data[0][i]);
-              break;
-              case 4 : self.demandes[2].push(data[0][i]);
-              break;
-              case 5 : self.demandes[2].push(data[0][i]);
-              break;
-            }
-          }
+          console.log(data);
+
+          // Les demandes à l'index 0 correspondent à celles en cours :
+          // Dans la base, ce sont les indexs 2,3 et 4 qui correspondent respectivement à
+          // 'PRIS EN CHARGE' / 'EN COURS DE LIVRAISON' / 'EN CONSIGNE'
+          self.demandes[0].push.apply(self.demandes[0], data[2]);
+          self.demandes[0].push.apply(self.demandes[0], data[3]);
+          self.demandes[0].push.apply(self.demandes[0], data[4]);
+
+          // Les demandes à l'index 1 correspondent à celles en attente de prise en charge :
+          // Dans la base, c'est l' index 1 qui correspond à
+          // 'EN ATTENTE DE PRISE EN CAHRGE'
+          self.demandes[1].push.apply(self.demandes[1], data[1]);
+
+          // Les demandes à l'index 2 correspondent à celles en attente de prise en charge :
+          // Dans la base, c'est l'index 5 qui correspond à
+          // 'TERMINÉ'
+          self.demandes[2].push.apply(self.demandes[2], data[5]);
+
         },
         error:function(e){
           alert(e);
@@ -143,6 +150,12 @@ export default {
     methods:{
 
       sendRating(id,rating,com){
+
+        console.log(com);
+
+        if (com != undefined){
+          this.ratingSent=true;
+        }
 
         $.ajax({
           url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/ratings',

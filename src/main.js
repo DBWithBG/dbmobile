@@ -26,13 +26,7 @@ document.addEventListener('deviceReady', () => {
   }, false );
 
 
-  cordova.plugins.firebase.messaging.getToken().then(function(token) {
-    self.firebaseToken=token;
-    alert(token);
-  });
-
   cordova.plugins.firebase.messaging.requestPermission().then(function(token) {
-    alert(token);
   });
 
     cordova.plugins.firebase.messaging.onMessage(function(payload) {
