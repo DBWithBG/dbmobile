@@ -1,25 +1,25 @@
 <template>
   <div id="home">
-    <back-header :message="$t('header')"> </back-header>
+    <back-header message="Effectuer une demande"> </back-header>
 
     <!-- STEPPER -->
     <v-stepper v-model="step">
       <v-stepper-header>
-        <v-stepper-step :complete="step > 1" step="1"> {{$t('subt_1')}}</v-stepper-step>
+        <v-stepper-step :complete="step > 1" step="1"> Prise en charge et livraison</v-stepper-step>
         <v-divider></v-divider>
-        <v-stepper-step :complete="step > 2" step="2">{{$t('subt_2')}}</v-stepper-step>
+        <v-stepper-step :complete="step > 2" step="2">Mes bagages</v-stepper-step>
         <v-divider></v-divider>
-        <v-stepper-step step="3">{{$t('subt_3')}}</v-stepper-step>
+        <v-stepper-step step="3">Récapitulatif</v-stepper-step>
       </v-stepper-header>
 
 
       <v-stepper-items>
         <!-- PRISE EN CHARGE -->
         <v-stepper-content step="1">
-          <v-subheader> {{$t('subt_1')}}</v-subheader>
+          <v-subheader> Prise en charge et livraison</v-subheader>
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
-              <v-card-title> {{$t('info_1')}}</v-card-title>
+              <v-card-title> Informations de prise en charge</v-card-title>
 
             </v-flex>
           </v-layout>
@@ -44,13 +44,26 @@
           <v-layout row>
             <v-flex xs10 >
               <!-- DATE PICKER -->
-              <v-menu ref="menu" :close-on-content-click="false" :nudge-right="40" :return-value.sync="date" transition="scale-transition" offset-y full-width min-width="290px">
+              <v-menu
+              ref="menu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              :return-value.sync="date"
+              transition="scale-transition"
+              offset-y
+              full-width
+              min-width="290px"
+              >
               <v-text-field
-                slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
-              </v-text-field>
+              slot="activator"
+              v-model="displayDate"
+              label="Date"
+              prepend-icon="event"
+              readonly
+              ></v-text-field>
 
 
-              <v-date-picker v-model="date" :min="minDate" @input="$refs.menu.save(date)" color="green darken-3" no-title scrollable :locale="this.$root.$i18n.locale" >
+              <v-date-picker v-model="date" :min="minDate" @input="$refs.menu.save(date)" color="green darken-3" no-title scrollable locale="fr" >
 
               </v-date-picker>
             </v-menu>
@@ -61,224 +74,238 @@
           <div v-if="type == 'address'">
             <v-flex xs10>
               <!-- DATE PICKER -->
-              <v-menu ref="menu2" :close-on-content-click="false" :nudge-right="40" :return-value.sync="time" transition="scale-transition" offset-y lazy full-width min-width="290px">
-                <v-text-field
-                  slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" append-icon="access_time"  readonly>
-              </v-text-field>
+              <v-menu
+              ref="menu2"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              :return-value.sync="time"
+              transition="scale-transition"
+              offset-y
+              lazy
+              full-width
+              min-width="290px"
+              >
+              <v-text-field
+              slot="activator"
+              v-model="displayTime"
+              label="Heure"
+              append-icon="access_time"
+              readonly
+              ></v-text-field>
 
 
               <v-time-picker
 
               v-model="time"
               :min="minTime"
-              :format="$t('date_format')"
+              max="22:55"
+              format="24hr"
               @change="$refs.menu2.save(time)"
               color="green darken-3"
               no-title
-              :locale="this.$root.$i18n.locale" >
+              locale="fr" >
 
-            </v-time-picker>
-          </v-menu>
+              </v-time-picker>
+            </v-menu>
+          </v-flex>
+        </div>
+      </v-layout>
+
+
+      <v-layout v-if="type == 'train'" row>
+        <v-flex xs6>
+          <!-- NUMERO DE TRAIN POUR TRAIN -->
+          <input v-model="numTrain" v-on:input="traitementTrain" v-on:click="resetData" pattern="\d*" type="number" :placeholder="'Numéro de train'">
         </v-flex>
-      </div>
-    </v-layout>
 
 
-    <v-layout v-if="type == 'train'" row>
-      <v-flex xs6>
-        <!-- NUMERO DE TRAIN POUR TRAIN -->
-        <input v-model="numTrain" v-on:input="traitementTrain" v-on:click="resetData" pattern="\d*" type="number" :placeholder="$t('train_number')">
+        <!-- SELECTION DE L'ARRET EN GARE POUR TRAIN -->
+        <v-flex v-if="gares.length" xs6>
+          <v-select
+          :items="gares"
+          v-model="selectedGare"
+          item-text="stop_point.name"
+          label="Choisir un arrêt"
+          single-line
+          v-on:input="verifGare"
+          ></v-select>
+        </v-flex>
+
+      </v-layout>
+
+      <!-- NUMERO DE VOL POUR VOL -->
+      <v-layout v-if="type == 'flight'" row>
+        <v-flex xs12 sm6 offset-sm3>
+          <input v-model="numVol" v-on:input="traitementVol" v-on:click="resetData" type="text"  maxlength="6" :placeholder="'Numéro de vol'">
+        </v-flex>
+      </v-layout>
+
+      <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
+      <v-layout v-if="type == 'address'" row>
+        <v-flex xs12 sm6 offset-sm3>
+          <input class="autocomplete" ref="autocomplete_start" :placeholder="'Adresse de départ'" />
+        </v-flex>
+      </v-layout>
+
+      <v-divider>
+      </v-divider>
+      <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
+      <v-layout row>
+        <v-flex xs12 sm6 offset-sm3>
+          <v-card-title> Informations sur la livraison </v-card-title>
+        </v-flex>
+      </v-layout>
+
+
+      <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
+      <v-layout row>
+        <v-flex xs12 sm6 offset-sm3>
+          <input class="autocomplete" ref="autocomplete_end" :placeholder="'Adresse de livraison'" />
+        </v-flex>
+      </v-layout>
+
+
+      <v-layout row>
+        <v-flex xs12 sm6 offset-sm3>
+          <v-switch :label="'Livraison dès que possible'" v-model="livraisonDirecte" color="success"> </v-switch>
+        </v-flex>
+      </v-layout>
+
+
+
+      <v-flex xs12 sm6 offset-sm3 >
+        <v-btn :disabled="!isFormOk()" color="green darken-1" @click.native="step=2"dark >Suivant
+          <v-icon right>navigate_next</v-icon>
+        </v-btn>
+
       </v-flex>
+      <!--  this.$router.push( { name:'demand-next', params : {date : this.date, place : this.place} });
+
+    -->
+
+  </v-stepper-content>
 
 
-      <!-- SELECTION DE L'ARRET EN GARE POUR TRAIN -->
-      <v-flex v-if="gares.length" xs6>
-        <v-select
-        :items="gares"
-        v-model="selectedGare"
-        item-text="stop_point.name"
-        v-bind:label="$t('select_gare')"
-        single-line
-        v-on:input="verifGare"
-        ></v-select>
-      </v-flex>
 
-    </v-layout>
 
-    <!-- NUMERO DE VOL POUR VOL -->
-    <v-layout v-if="type == 'flight'" row>
-      <v-flex xs12 sm6 offset-sm3>
-        <input v-model="numVol" v-on:input="traitementVol" v-on:click="resetData" type="text"  maxlength="6" :placeholder="$t('flight_number')">
-      </v-flex>
-    </v-layout>
 
-    <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
-    <v-layout v-if="type == 'address'" row>
-      <v-flex xs12 sm6 offset-sm3>
-        <input class="autocomplete" ref="autocomplete_start" v-bind:placeholder="$t('label_address_depart')"/>
-      </v-flex>
-    </v-layout>
 
-    <v-divider>
-    </v-divider>
-    <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
+
+  <v-stepper-content step="2">
+    Mes bagages
+
+    <!-- Gestion des bagages -->
+
+
+
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <v-card-title> {{$t('info_2')}} </v-card-title>
+
+        <v-btn color="green lighten-1" @click.native="ajoutBagage('cabine')" dark >Ajout bagage cabine</v-btn>
+        <div v-for="bag in bagagesCabine" :key="bag.id">
+
+          <v-layout row>
+            <v-flex xs2>
+              <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
+                <v-icon>delete</v-icon>
+              </v-btn>
+              <v-btn icon flat color="teal" >
+                <v-icon>photo</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex xs5>
+              <v-text-field  box label="Nom du bagage" v-model="bag.name"
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs5>
+              <v-text-field  box label="Description" v-model="bag.descr"></v-text-field>
+            </v-flex>
+          </v-layout>
+          <v-divider>
+          </v-divider>
+        </div>
       </v-flex>
     </v-layout>
 
 
-    <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <input class="autocomplete" ref="autocomplete_end" v-bind:placeholder="$t('label_address_livraison')" />
+        <v-btn  color="green lighten-1" @click.native="ajoutBagage('soute')" dark >Ajout bagage soute </v-btn>
+        <div v-for="bag in bagagesSoute" :key="bag.id">
+          <v-layout row>
+            <v-flex xs2>
+              <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
+                <v-icon>delete</v-icon>
+              </v-btn>
+              <v-btn icon flat color="teal" >
+                <v-icon>photo</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex xs5>
+              <v-text-field  box label="nom du bagage" v-model="bag.name"
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs5>
+              <v-text-field  box label="Description" v-model="bag.descr"></v-text-field>
+            </v-flex>
+          </v-layout>
+          <v-divider>
+          </v-divider>
+        </div>
       </v-flex>
     </v-layout>
 
-
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <v-switch v-bind:label="$t('livraison')" v-model="livraisonDirecte" color="success"> </v-switch>
+        <v-btn  color="green lighten-1" @click.native="ajoutBagage('autre')" dark >Ajout bagage autre</v-btn>
+        <div v-for="bag in bagagesAutre" :key="bag.id">
+
+          <v-layout row>
+            <v-flex xs2>
+              <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
+                <v-icon>delete</v-icon>
+              </v-btn>
+              <v-btn icon flat color="teal" >
+                <v-icon>photo</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex xs5>
+              <v-text-field  required box label="nom du bagage" v-model="bag.name"
+              :rules="[() => bag.name.length > 0 || 'Il est requis de nommer votre bagage']"
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs5>
+              <v-text-field box label="Description" v-model="bag.descr"></v-text-field>
+            </v-flex>
+          </v-layout>
+          <v-divider>
+          </v-divider>
+        </div>
       </v-flex>
     </v-layout>
 
 
 
     <v-flex xs12 sm6 offset-sm3 >
-      <v-btn :disabled="!isFormOk()" color="green darken-1" @click.native="step=2"dark >
-        <span> {{$t('next')}}</span>
-        <v-icon right>navigate_next</v-icon>
+      <v-btn color="orange lighten-1" @click.native="step=1" dark >Précédent</v-btn>
+      <v-btn :disabled="!verifBagage()" color="green darken-1" @click.native="step=3" dark >Suivant
+        <v-icon right >navigate_next</v-icon>
       </v-btn>
 
     </v-flex>
-    <!--  this.$router.push( { name:'demand-next', params : {date : this.date, place : this.place} });
 
-  -->
+  </v-stepper-content>
 
-</v-stepper-content>
+  <v-stepper-content step="3">
 
-
-
-
-
+    <v-card>
+      {{reponse()}}
+    </v-card>
 
 
-<v-stepper-content step="2">
-  Mes bagages
-
-  <!-- Gestion des bagages -->
-
-
-
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
-
-      <v-btn color="green lighten-1" @click.native="ajoutBagage('cabine')" dark > {{$t('bagages_ajout')}} {{$t('bagage_cabine')}}</v-btn>
-      <div v-for="bag in bagagesCabine" :key="bag.id">
-
-        <v-layout row>
-          <v-flex xs2>
-            <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
-              <v-icon>delete</v-icon>
-            </v-btn>
-            <v-btn icon flat color="teal" >
-              <v-icon>photo</v-icon>
-            </v-btn>
-          </v-flex>
-          <v-flex xs5>
-            <v-text-field  box v-bind:label="$t('bagage_nom')" v-model="bag.name"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs5>
-            <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
-          </v-flex>
-        </v-layout>
-        <v-divider>
-        </v-divider>
-      </div>
-    </v-flex>
-  </v-layout>
-
-
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
-      <v-btn  color="green lighten-1" @click.native="ajoutBagage('soute')" dark >{{$t('bagages_ajout')}} {{$t('bagage_soute')}} </v-btn>
-      <div v-for="bag in bagagesSoute" :key="bag.id">
-        <v-layout row>
-          <v-flex xs2>
-            <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
-              <v-icon>delete</v-icon>
-            </v-btn>
-            <v-btn icon flat color="teal" >
-              <v-icon>photo</v-icon>
-            </v-btn>
-          </v-flex>
-          <v-flex xs5>
-            <v-text-field  box v-bind:label="$t('bagage_nom')" v-model="bag.name"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs5>
-            <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
-          </v-flex>
-        </v-layout>
-        <v-divider>
-        </v-divider>
-      </div>
-    </v-flex>
-  </v-layout>
-
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
-      <v-btn  color="green lighten-1" @click.native="ajoutBagage('autre')" dark >{{$t('bagages_ajout')}} {{$t('bagage_autre')}}</v-btn>
-      <div v-for="bag in bagagesAutre" :key="bag.id">
-
-        <v-layout row>
-          <v-flex xs2>
-            <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
-              <v-icon>delete</v-icon>
-            </v-btn>
-            <v-btn icon flat color="teal" >
-              <v-icon>photo</v-icon>
-            </v-btn>
-          </v-flex>
-          <v-flex xs5>
-            <v-text-field  required box v-bind:label="$t('bagage_nom')" v-model="bag.name"
-            :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs5>
-            <v-text-field box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
-          </v-flex>
-        </v-layout>
-        <v-divider>
-        </v-divider>
-      </div>
-    </v-flex>
-  </v-layout>
-
-
-
-  <v-flex xs12 sm6 offset-sm3 >
-    <v-btn color="orange lighten-1" @click.native="step=1" dark >{{$t('prev')}}</v-btn>
-    <v-btn :disabled="!verifBagage()" color="green darken-1" @click.native="step=3" dark >Suivant
-      <v-icon right >navigate_next</v-icon>
-    </v-btn>
-
-  </v-flex>
-
-</v-stepper-content>
-
-<v-stepper-content step="3">
-
-  <v-card>
-    {{reponse()}}
-  </v-card>
-
-
-  <v-btn  color="orange lighten-1" @click.native="step=2" dark >Précédent</v-btn>
-  <v-btn  color="green darken-1" @click.native="payer()" dark >Payer </v-btn>
-</v-stepper-content>
+    <v-btn  color="orange lighten-1" @click.native="step=2" dark >Précédent</v-btn>
+    <v-btn  color="green darken-1" @click.native="payer()" dark >Payer </v-btn>
+  </v-stepper-content>
 </v-stepper-items>
 
 </v-stepper>
@@ -303,7 +330,7 @@ export default {
       livraisonDirecte:true,
       message:'',
       minDate:new Date().toISOString().substring(0,10),
-
+      minTime:new Date().toLocaleString().substring(12,18),
       date:new Date().toJSON(),
       time:new Date(),
       startPlace:'',
@@ -320,6 +347,7 @@ export default {
       flight_app_key : '84cb52736b8c4db53b753b8f87be34a8',
       numVol : '',
 
+
       bagagesCabine : [],
       bagagesSoute : [],
       bagagesAutre : []
@@ -329,6 +357,7 @@ export default {
   computed:{
     compagnyId(){
       return this.numVol.substring(0,2);
+
     },
     flightId(){
       return this.numVol.substring(2,6);
@@ -339,7 +368,7 @@ export default {
     },
 
     dateTime(){
-      //console.log(this.time);
+      console.log(this.time);
       var date = new Date(this.date);
       if (typeof this.time === 'string'){
         date.setHours(this.time.match(/^(\d+)/)[1]);
@@ -350,20 +379,6 @@ export default {
         date.setMinutes(this.time.getMinutes());
       }
       return date.toLocaleString();
-    },
-
-    minTime(){
-      let time;
-
-      if (this.dateTime.substring(0,10) != new Date().toLocaleString().substring(0,10)) {
-        time = '';
-      }
-      else{
-        //this.time = new Date();
-        time = new Date().toLocaleString().substring(12,18);
-      }
-      console.log(time);
-      return time;
     },
 
     dateToJson(){
@@ -427,7 +442,7 @@ export default {
             '2' : this.bagagesSoute,
             '3' : this.bagagesAutre
           },
-          "mobile_token":localStorage.getItem('deviceId'),
+        "mobile_token":localStorage.getItem('deviceId'),
 
         }
         var self=this;
@@ -472,7 +487,7 @@ export default {
 
     },
 
-/*
+
     openCamera(){
       navigator.camera.getPicture(function(photo){
         // traitement de la camera
@@ -498,7 +513,6 @@ export default {
         targetHeight : 400 });
       },
 
-      */
 
       ajoutBagage(type){
         switch(type){
@@ -640,14 +654,14 @@ export default {
                   for (let i=0;i<data.length;i++){
                     switch (data[i].type_id){
                       case 1 :
-                      self.bagagesCabine.push(data[i]);
-                      break;
+                        self.bagagesCabine.push(data[i]);
+                        break;
                       case 2:
-                      self.bagagesSoute.push(data[i]);
-                      break;
+                        self.bagagesSoute.push(data[i]);
+                        break;
                       case 3 :
-                      self.bagagesAutre.push(data[i]);
-                      break;
+                        self.bagagesAutre.push(data[i]);
+                        break;
                     }
                   }
                 }
@@ -721,15 +735,14 @@ export default {
                 //console.log(this.$router);
                 //this.$router.replace(this.$router.history.current.path);
                 // on met une alerte pour lui dire que la gare sélectionnée n'est pas encore desservie
-                var text=this.$i18n.t('error_start_place');
-
+                var text='Le lieu souhaité pour la prise en charge'
                 if (lieu=='end'){
-                  text=this.$i18n.t('error_end_place');
+                  text='Le lieu souhaité pour la livraison'
                 }
                 if (lieu=='gare'){
-                  text=this.$i18n.t('error_gare');
+                  text='Cet arrêt souhaité'
                 }
-                this.errors[lieu]=text+this.$i18n.t('error_place');
+                this.errors[lieu]=text+" n'est pas encore desservi par nos services";
                 console.log(this.errors);
                 //console.log(this.errors);
               }
@@ -818,27 +831,26 @@ export default {
               })
               .fail(function(error) {
                 switch(error.status){
-                  case 404 : self.error=self.$i18n.t("error_404_sncf");
+                  case 404 : self.error="Ce numéro de train ne correspond à aucun train circulant à cette date";
                   break;
-                  case 401 : self.error=self.$i18n.t("error_401_sncf");
+                  case 401 : self.error="Un problème d'autorisation d'accès est survenu." ;
                   break;
-                  case 403 : self.error=self.$i18n.t("error_403_sncf");
+                  case 403 : self.error="Requête correcte mais refusée par le serveur.";
                   break;
-                  case 500 : self.error=self.$i18n.t("error_500_sncf");
+                  case 500 : self.error="Erreur interne liée au serveur.";
+                  break;
+                  case 404 : self.error="Le service n'est pas disponible actuellement, erreur probablement liée à une maintenance";
                   break;
                   default:
                   if (self.date.length){
-                    self.error=self.$i18n.t("error_default_sncf");
-                  }
+                    self.error="Une erreur inconnue est survenue lors de la recherche de ce train"; }
                     else{
-                      self.error=self.$i18n.t("date_voyage_vide");
+                      self.error="Vous devez spécifier une date de voyage."
                     }
                   }
 
-
                 });
               }
-
             },
 
             traitement_gares(data){
@@ -904,88 +916,3 @@ export default {
           }
 
           </style>
-
-
-          <i18n>
-          {
-            "fr": {
-              "bagage_nom": "Nom du bagage",
-              "bagage_descr" : "Description",
-              "bagages_update" : "Mettre à jour mes bagages",
-              "bagages_ajout" : "Ajouter un ",
-              "bagage_cabine" : "bagage cabine",
-              "bagage_soute" : "bagage soute",
-              "bagage_autre" : "autre bagage",
-              "bagage_required" : "Il est requis de nommer votre bagage",
-              "error_404_sncf" : "Ce numéro de train ne correspond à aucun train circulant à cette date",
-              "error_401_sncf" : "Un problème d'autorisation d'accès est survenu",
-              "error_403_sncf" : "Requête correcte mais refusée par le serveur",
-              "error_500_sncf" : "Erreur interne liée au serveur",
-              "error_default_sncf" : "Le service n'est pas disponible actuellement",
-              "date_voyage_vide" : "Vous devez spécifier une date de voyage",
-              "header" : "Effectuer une demande",
-              "next" : "Suivant",
-              "prev" : "Précédent",
-              "payer" : "Payer",
-              "subt_1" : "Prise en charge et livraison",
-              "subt_2" : "Mes bagages",
-              "subt_3" : "Récapitulatif",
-              "subt_4" : "Paiement",
-              "info_1" : "Informations de prise en charge",
-              "info_2" : "Informations de livraison",
-              "livraison" : "Livraison dès que possible",
-              "label_date" : "Date",
-              "label_heure" : "Heure",
-              "label_address_depart" : "Adresse de départ",
-              "label_address_livraison" : "Adresse de livraison",
-              "date_format" : "24hr" ,
-              "select_gare" : "Choisir un arrêt",
-              "train_number" : "Numéro de train",
-              "flight_number" : "Numéro de vol",
-              "error_start_place" : "Le lieu souhaité pour la prise en charge",
-              "error_end_place" : "Le lieu souhaité pour la livraison",
-              "error_gare" : "L'arrêt souhaité",
-              "error_place" : " n'est pas encore desservi par nos services"
-
-            },
-            "en": {
-              "bagage_nom": "Bagage name",
-              "bagage_descr" : "Description",
-              "bagages_update" : "Update my bags",
-              "bagages_ajout" : "Add a",
-              "bagage_cabine" : "hand baggage",
-              "bagage_soute" : "hold baggage",
-              "bagage_autre" : "other bag",
-              "bagage_required" : "Name is required",
-              "error_404_sncf" : "Train number doesn't match any train at this date",
-              "error_401_sncf" : "Unauthorized access",
-              "error_403_sncf" : "Request denied from the server",
-              "error_500_sncf" : "Internal server error",
-              "error_default_sncf" : "The service is unviable",
-              "date_voyage_vide" : "Pleaser enter a travel date",
-              "header" : "Make a request",
-              "next" : "Next",
-              "prev" : "Previous",
-              "payer" : "Pay",
-              "subt_1" : "Takeover and delivery",
-              "subt_2" : "My bags",
-              "subt_3" : "Summary",
-              "subt_4" : "Payment",
-              "info_1" : "Takeover informations",
-              "info_2" : "Delivery informations",
-              "livraison" : "As soon as possible",
-              "label_date" : "Date",
-              "label_heure" : "Hour",
-              "label_address_depart" : "Takeover place",
-              "label_address_livraison" : "Delivery place",
-              "date_format" : "ampm" ,
-              "select_gare" : "Select a stop point",
-              "train_number" : "Train number",
-              "flight_number" : "Flight number",
-              "error_start_place" : "Place for the takeover",
-              "error_end_place" : "Place for the delivery",
-              "error_gare" : "This stop point",
-              "error_place" : " is not yet served by our service"
-            }
-          }
-          </i18n>

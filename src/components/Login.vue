@@ -34,12 +34,17 @@ export default {
       self.deviceId=device.uuid;
       var id = localStorage.getItem('deviceId');
       //navigator.splashscreen.hide();
-
-
+      if (id != ''){
+        self.getUser();
+      }
+      else {
+      self.webviewConnexion();
+      }
+/*
       if (id == null){
         // on ouvre le formulaire de connexion
         // on enregistre ensuite le token sur l'espace de stockage (local storage)
-        self.webviewConnexion();
+
       }
       else{
         // requête ajax pour récupérer l'utilisateur
@@ -48,6 +53,7 @@ export default {
         self.getUser();
 
       }
+      */
     }, false)
 
     // Pour arriver directement sur la page de demande
@@ -71,15 +77,9 @@ export default {
         success: function(data){
 
           self.sendFirebaseToken();
-          if (self.user.driver != null){
-            self.isDriver=true;
-          }
-          if (!self.isDriver){
-            //self.$router.replace({path: 'demands'});
-          }
 
-
-          //this.$router.replace({path: 'demand'});
+          self.$router.replace({path: 'demands'});
+          navigator.splashscreen.hide();
         },
         error:function(e){
           console.log(e);
@@ -164,6 +164,7 @@ export default {
 
 [class$="--disabled"],
 [class*="--disabled "] * {
-  background-color: hsla(0, 1%, 1%, 0.1) !important;
+    color: #757575 !important;
 }
+
 </style>

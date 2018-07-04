@@ -5,9 +5,6 @@
 
     <!-- vue 2.5 use slot-scope -->
 
-
-
-
     <v-layout v-if="loading" row justify-center>
       <v-container fill-height>
         <v-layout row justify-center align-center>
@@ -28,9 +25,11 @@
 
     <template slot="items" slot-scope="props">
       <tr @click="props.expanded = !props.expanded">
-        <td> Dans  {{ props.item.time }} </td>
-        <td class="text-xs-right"> à {{props.item.distance_from_driver}} </td>
-        <td class="text-xs-right">{{ props.item.estimated_time }} minutes</td>
+
+        <td class="text-xs-left"> {{ props.item.date_formatted }} </td>
+        <td class="text-xs-left"> à {{props.item.distance_from_driver}} </td>
+        <td class="text-xs-left">{{ props.item.estimated_time }} minutes</td>
+
       </tr>
     </template>
     <template slot="expand" slot-scope="props">
@@ -39,19 +38,46 @@
         <v-card-text> Livraison : {{props.item.end_position.address}}</v-card-text>
       </v-card>
 
-      <v-content>
-        <v-container grid-list-md fill-height>
-          <v-layout column>
 
-            <v-layout row wrap align-content-start>
-              {{props.item.bags}}
+      <v-list subheader>
+        <v-subheader> {{props.item.bags.length}} bagages</v-subheader>
+        <v-layout column>
+          <v-flex v-for="bag in props.item.bags" :key="bag.id">
 
+            <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+              <v-dialog v-model="detailBag" max-width="290">
+                <v-card>
+                  <v-card-title class="headline">Détail de ce bagage</v-card-title>
+                  <v-layout row>
+                    <v-flex xs10 offset-xs1>
+                      <div v-if="modelBag.details">
+                        {{modelBag.details}}
+                      </div>
+                      <div v-else>
+                        Aucune description n'a été indiquée par le client
+                      </div>
+                    </v-flex>
+                  </v-layout>
+                </v-card>
+              </v-dialog>
+              {{bag.name}}
+              <v-icon right>work</v-icon>
+            </v-chip>
 
-            </v-layout>
+            <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+              {{bag.name}}
+              <v-icon right>work</v-icon>
+            </v-chip>
 
-          </v-layout>
-        </v-container>
-      </v-content>
+            <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+              {{bag.name}}
+              <v-icon right>work</v-icon>
+            </v-chip>
+
+          </v-flex>
+        </v-layout>
+      </v-list>
+
       <v-btn flat color='green' @click.native="prendreEnCharge(props.item.id)">
         <span>M'engager sur cette demande</span>
       </v-btn>
@@ -92,14 +118,12 @@ export default {
       deliveries_list: [],
       user_pos:null,
       headers: [
-        {
-          text: 'Temps',
-          align: 'left',
-          value: 'time'
-        },
-        { text: 'Pris en charge', value: 'distance_from_driver'},
-        { text: 'Temps estimé', value: 'estimated_time' }
+        { text: 'Heure', value: 'date_formatted' , align: 'left'},
+        { text: 'Distance', value: 'distance_from_driver', align: 'left'},
+        { text: 'Temps estimé', value: 'estimated_time' ,align: 'left'}
       ],
+      detailBag:false,
+      modelBag:''
     }
   },
 
@@ -128,6 +152,8 @@ export default {
 
     prendreEnCharge(id){
 
+      let self=this;
+
       var req = {
         "mobile_token" : '12345',
         "delivery_id" : id
@@ -138,17 +164,12 @@ export default {
         type : 'POST',
         data : req,
         success: function(data){
+          self.getDeliveries();
         },
         error:function(e){
           console.log(e);
         },
       });
-    },
-
-    refresh(loaded){
-      loaded('done')
-      this.getDeliveries()
-      //this.$forceUpdate();
     },
 
     getDistanceFromDriver(){
@@ -166,28 +187,16 @@ export default {
       self.deliveries_list.forEach(function(elem,index,array){
 
 
-        var a = new Date(elem.start_date).valueOf();
-
+        let a = new Date(elem.start_date).valueOf();
+        elem.date_formatted=new Date(elem.start_date).toLocaleString().slice(0,18);
         console.log(a);
         console.log(b);
-
-        console.log(Math.floor((a - b) / msDay) + ' full days between');
-        var mins = Math.floor(((a - b) % msDay) / msMinute);
-        console.log(Math.floor(((a - b) % msDay) / msMinute) + ' full minutes between');
-
+        let mins = Math.floor(((a - b) % msDay) / msMinute);
         let h = Math.floor(mins / 60);
         let m = mins % 60;
         h = h < 10 ? '0' + h : h;
         m = m < 10 ? '0' + m : m;
         elem.time=(h+':'+m);
-
-        var bag = elem.bags;
-        console.log(bag);
-      //  console.log(bag[index]);
-
-        //self.bags[bag.type_id - 1].push(bag);
-      //  console.log(JSON.stringify(self.bags));
-
 
 
         var dest = elem.start_position.address;
@@ -201,42 +210,71 @@ export default {
             var dist = (rep.rows[0].elements[0].distance.text);
             elem.distance_from_driver=dist;
             if (index === array.length -1){
-              self.loading=false;
-              setTimeout(function(){ self.$forceUpdate(); }, 1000);
+
+              setTimeout(function(){ self.$forceUpdate(); self.loading=false;}, 1000);
 
             }
           });
         });
 
-      }
+      },
 
+      getUserPos(){
+        var self=this;
+        //let hard_gps = cordova.plugins.locationAccuracy;
 
+        navigator.geolocation.getCurrentPosition(
 
-    },
+          function(position){
+            alert('getting current pos');
+            self.user_pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            }
+            self.getDeliveries();
+            //self.user_marker.setMap(self.map);
+          },
+          function(error){
+            self.requestGps();
+            //self.requestGps();
+          });
 
-    mounted(){
-      var self=this;
-      //console.log(self);
+        },
 
-      navigator.geolocation.getCurrentPosition(
-        function(position){
+        requestGps(){
+          var self=this;
 
-          self.user_pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
+          cordova.plugins.locationAccuracy.request(
+            function(success){
+                self.getUserPos();
+              },
+           function(error){
+            self.requestGps();
+            },cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
           }
-          self.getDeliveries();
 
 
-          //self.user_marker.setMap(self.map);
-        },function(){
-          alert('fail - get current pos');
-        });
 
-      }
+      },
+
+      mounted(){
+        //console.log(self);
+        /*
+        cordova.plugins.locationAccuracy.request(function(){
+        self.getUserPos();
+      }, function(){
+      alert('Erreur - Tried to access GPS')} ,
+      cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
+
+      */
+      let self=this;
+    //  self.requestGps();
+    self.getUserPos();
+
     }
-    </script>
+  }
+  </script>
 
 
-    <style>
-    </style>
+  <style>
+  </style>

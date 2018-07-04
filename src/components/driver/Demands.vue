@@ -1,14 +1,11 @@
 <template>
-  <div id="home">
-    <p> Voici les demandes clients actuelles </p>
+  <div>
 
     <v-btn flat color="green darken-2" :to="{name :'demands-list' , params: {data:deliveries} }">
       <span>Accéder à la liste des demandes</span>
     </v-btn>
 
-    <v-flex xs6>
-      <v-subheader>Appended icon</v-subheader>
-    </v-flex>
+
     <v-flex xs6>
       <v-select
       :items="listDate"
@@ -27,11 +24,54 @@
     <div id="demand-description" v-if="active_demand !== null">
       <p> Descriptif de cette demande </p>
       <ul>
-        <li >
+        <li>
           <p> Commentaire : {{ active_demand.comment}} </p>
           <p> Prix : {{ active_demand.price}} </p>
           <p> Adresse de prise en charge : {{ active_demand.start_position.address}} </p>
           <p> Adresse de livraison : {{ active_demand.end_position.address}} </p>
+          <v-list subheader>
+            <v-subheader> {{active_demand.bags.length}} bagages</v-subheader>
+            <v-layout column>
+              <v-flex v-for="bag in active_demand.bags" :key="bag.id">
+
+
+
+                <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+                  <v-dialog v-model="detailBag" max-width="290">
+                    <v-card>
+                      <v-card-title class="headline">Détail de ce bagage</v-card-title>
+                      <v-layout row>
+                        <v-flex xs10 offset-xs1>
+                          <div v-if="modelBag.details">
+                            {{modelBag.details}}
+                          </div>
+                          <div v-else>
+                            Aucune description n'a été indiquée par le client
+                          </div>
+                        </v-flex>
+                      </v-layout>
+                    </v-card>
+                  </v-dialog>
+                  {{bag.name}}
+                  <v-icon right>work</v-icon>
+                </v-chip>
+
+                <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+                  {{bag.name}}
+                  <v-icon right>work</v-icon>
+                </v-chip>
+
+                <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+                  {{bag.name}}
+                  <v-icon right>work</v-icon>
+                </v-chip>
+
+
+
+
+              </v-flex>
+            </v-layout>
+          </v-list>
         </li>
       </ul>
 
@@ -40,8 +80,7 @@
       </v-btn>
 
     </div>
-    <p> Fin de la carte </p>
-    <db-menu> </db-menu>
+    <db-menu-driver> </db-menu-driver>
 
   </div>
 </template>
@@ -68,7 +107,9 @@ export default {
       deliveries_markers:[],
       markers:[],
       listDate:[],
-      activeDate:new Date().toLocaleString().slice(0,10)
+      activeDate:new Date().toLocaleString().slice(0,10),
+      detailBag:false,
+      modelBag:''
     }
   },
 
@@ -77,17 +118,19 @@ export default {
 
 
     prendreEnCharge(id){
-
+      let self=this;
       var req = {
+        "status_id" : '2',
         "mobile_token" : '12345',
         "delivery_id" : id
       }
 
       $.ajax({
-        url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/takeovers/start',
+        url: 'http://dev-deliverbag.supconception.fr/mobile/drivers/deliveries/edit-status',
         type : 'POST',
         data : req,
         success: function(data){
+          self.getDeliveries();
         },
         error:function(e){
           console.log(e);
@@ -175,12 +218,13 @@ export default {
           },
 
           getDeliveries(){
-
-            console.log('change');
             // J'utilise un alias de this pour avoir un accès aux données présentes dans 'data'
             // Autrement cet objet est overridden par les autres fonctions
             var self=this;
-
+            self.active_start_marker=null;
+            if (self.active_end_marker != null){
+              self.active_end_marker.setMap(null);
+            }
             self.markers.forEach(function(marker){
               marker.setMap(null);
             });
@@ -201,68 +245,68 @@ export default {
 
                   if (data_date === self.activeDate){
 
-                  console.log(data[i].start_position.address);
-                  var marker_start = new google.maps.Marker(
-                    {
-                      icon: 'http://maps.google.com/mapfiles/ms/icons/red.png' ,
-                      position : {
-                        lat: data[i].start_position.lat,
-                        lng: data[i].start_position.lng
-                      },
-                      infos : data[i]
-                    });
+                    console.log(data[i].start_position.address);
+                    var marker_start = new google.maps.Marker(
+                      {
+                        icon: 'http://maps.google.com/mapfiles/ms/icons/red.png' ,
+                        position : {
+                          lat: data[i].start_position.lat,
+                          lng: data[i].start_position.lng
+                        },
+                        infos : data[i]
+                      });
 
-                    console.log(self.deliveries_markers.includes(marker_start.position));
+                      console.log(self.deliveries_markers.includes(marker_start.position));
 
 
 
-                    if (self.deliveries_markers.filter(e => e == marker_start.position).length > 0) {
-                      var a = 360.0 / data.length;
-                      var newLat =marker_start.position.lat() + -.00004 * Math.cos((+a*i) / 180 * Math.PI);
-                      var newLng = marker_start.position.lng() + -.00004 * Math.sin((+a*i) / 180 * Math.PI);  //Y
-                      var latLng = new google.maps.LatLng(newLat,newLng);
-                      marker_start.setPosition(latLng);
-                    }
-
-                    self.deliveries_markers.push(marker_start.position);
-
-                    self.markers.push(marker_start);
-                    marker_start.setMap(self.map);
-                    var marker_end;
-
-                    marker_start.addListener('click', function() {
-
-                      if (self.active_start_marker != null){
-                        self.active_start_marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red.png');
+                      if (self.deliveries_markers.filter(e => e == marker_start.position).length > 0) {
+                        var a = 360.0 / data.length;
+                        var newLat =marker_start.position.lat() + -.00004 * Math.cos((+a*i) / 180 * Math.PI);
+                        var newLng = marker_start.position.lng() + -.00004 * Math.sin((+a*i) / 180 * Math.PI);  //Y
+                        var latLng = new google.maps.LatLng(newLat,newLng);
+                        marker_start.setPosition(latLng);
                       }
 
-                      this.setIcon('http://maps.google.com/mapfiles/ms/icons/blue.png');
-                      self.active_start_marker=this;
+                      self.deliveries_markers.push(marker_start.position);
 
-                      if (self.active_end_marker != null){
-                        self.active_end_marker.setMap(null)
-                      }
+                      self.markers.push(marker_start);
+                      marker_start.setMap(self.map);
+                      var marker_end;
+
+                      marker_start.addListener('click', function() {
+
+                        if (self.active_start_marker != null){
+                          self.active_start_marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red.png');
+                        }
+
+                        this.setIcon('http://maps.google.com/mapfiles/ms/icons/blue.png');
+                        self.active_start_marker=this;
+
+                        if (self.active_end_marker != null){
+                          self.active_end_marker.setMap(null)
+                        }
 
 
-                      marker_end = new google.maps.Marker(
-                        {
-                          icon: 'http://maps.google.com/mapfiles/ms/icons/blue.png' ,
-                          position : {
-                            lat: this.infos.end_position.lat ,
-                            lng: this.infos.end_position.lng
-                          }
+                        marker_end = new google.maps.Marker(
+                          {
+                            icon: 'http://maps.google.com/mapfiles/ms/icons/blue.png' ,
+                            position : {
+                              lat: this.infos.end_position.lat ,
+                              lng: this.infos.end_position.lng
+                            }
+
+                          });
+
+                          self.active_end_marker = marker_end;
+
+                          marker_end.setMap(self.map);
+                          self.active_demand = this.infos;
 
                         });
 
-                        self.active_end_marker = marker_end;
-
-                        marker_end.setMap(self.map);
-                        self.active_demand = this.infos;
-
-                      });
-
+                      }
                     }
-                  }
                     // pas une solution pour l'affichage des 2 markers de début et de fin
                     //var markerCluster = new MarkerClusterer(self.map,self.markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 
@@ -277,9 +321,8 @@ export default {
             // Une fois que Vue.js a initalisé et compilé les éléments
             mounted(){
 
-
-              var now = new Date();
-              var end = new Date();
+              let now = new Date();
+              let end = new Date();
               end.setDate(end.getDate()+15);
 
               var getDaysArray = function(s,e) {for(var a=[],d=s;d<=e;d.setDate(d.getDate()+1)){ a.push(new Date(d).toLocaleString().slice(0,10));}return a;};

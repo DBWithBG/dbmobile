@@ -1,6 +1,7 @@
 <template>
 
   <div>
+       {{this.$i18n.locale}}
     <div v-touch="{
       left:swipeLeft
       }">
@@ -118,7 +119,8 @@ export default {
       dialogRating:false,
       dialogDel:false,
       tabs: [this.$i18n.t("tab_en_cours"), this.$i18n.t("tab_en_attente"), this.$i18n.t("tab_passees")],
-      demandes: [[],[],[]]
+      demandes: [[],[],[]],
+      ratingLabel: this.$i18n.t("rating_label")
       }
     },
 
@@ -252,7 +254,7 @@ export default {
       "tab_passees" : "Past",
       "details_course":"Course details ",
       "suivi_course" : "Track my course",
-      "cancel_course":"Delete my order",
+      "cancel_course":"Cancel my order",
       "cancel":"Cancel",
       "delete" : "Delete",
       "rating" : "Course rating",
