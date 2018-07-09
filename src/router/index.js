@@ -19,6 +19,7 @@ import MenuDriver from '@/components/driver/MenuDriver'
 import Demands from '@/components/driver/Demands'
 import DemandsList from '@/components/driver/DemandsList'
 import MesCoursesDriver from '@/components/driver/MesCoursesDriver'
+import SettingsDriver from '@/components/driver/SettingsDriver'
 
 Vue.use(Router);
 Vue.component('db-menu',Menu);
@@ -43,6 +44,7 @@ export default new Router({
     { path: '/demands-list', component : DemandsList, name:'demands-list', props:true},
     { path: '/demand', component : Demand},
     { path: '/settings', component : Settings},
+    { path: '/settings-driver', component : SettingsDriver},
     { path: '/my-bags', component : MyBags},
     { path: '/', component : Login},
     { path : '*', redirect : '/'}

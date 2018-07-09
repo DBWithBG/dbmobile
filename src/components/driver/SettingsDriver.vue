@@ -7,36 +7,20 @@
     <v-flex xs12 sm6 offset-sm3>
       <v-card>
 
+
         <v-list three-line>
-
-          <v-list-tile to="/demands" avatar>
-            <v-list-tile-content >
-              <v-list-tile-title>Switch côté chauffeur</v-list-tile-title>
-
+          <v-list-tile to="/demand" avatar>
+            <v-list-tile-content>
+              <v-list-tile-title>Passer côté client</v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action>
-              <v-btn to="/demands" icon ripple>
+              <v-btn to="/demand" icon ripple>
                 <v-icon x-large>navigate_next</v-icon>
               </v-btn>
             </v-list-tile-action>
           </v-list-tile>
 
 
-          <v-list-tile to="/my-bags" avatar>
-            <v-list-tile-avatar>
-              <v-icon large>work</v-icon>
-            </v-list-tile-avatar>
-            <v-list-tile-content >
-              <v-list-tile-title>{{$t("bagages")}}</v-list-tile-title>
-
-              <v-list-tile-sub-title>{{$t("bagages_subt")}} </v-list-tile-sub-title>
-            </v-list-tile-content>
-            <v-list-tile-action>
-              <v-btn to="/my-bags" icon ripple>
-                <v-icon x-large>navigate_next</v-icon>
-              </v-btn>
-            </v-list-tile-action>
-          </v-list-tile>
 
           <v-divider></v-divider>
 
@@ -113,7 +97,7 @@
         </v-list>
       </v-card>
     </v-flex>
-    <db-menu> </db-menu>
+    <db-menu-driver> </db-menu-driver>
   </v-layout>
 </template>
 

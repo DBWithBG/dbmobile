@@ -5,7 +5,7 @@
     <v-layout v-if="loading" row justify-center>
       <v-container fill-height>
         <v-layout row justify-center align-center>
-          <v-progress-circular indeterminate :size="70" :width="5" color="green"></v-progress-circular>
+          <v-progress-circular indeterminate :size="70" :width="5" color="primary"></v-progress-circular>
         </v-layout>
       </v-container>
     </v-layout>
@@ -46,26 +46,12 @@
                       <v-subheader> {{props.item.delivery.bags.length}} bagages</v-subheader>
                       <v-layout column>
                         <v-flex v-for="bag in props.item.delivery.bags" :key="bag.id">
-
                           <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-                            <v-dialog v-model="detailBag" max-width="290">
-                              <v-card>
-                                <v-card-title class="headline">Détail de ce bagage</v-card-title>
-                                <v-layout row>
-                                  <v-flex xs10 offset-xs1>
-                                    <div v-if="modelBag.details">
-                                      {{modelBag.details}}
-                                    </div>
-                                    <div v-else>
-                                      Aucune description n'a été indiquée par le client
-                                    </div>
-                                  </v-flex>
-                                </v-layout>
-                              </v-card>
-                            </v-dialog>
+
                             {{bag.name}}
                             <v-icon right>work</v-icon>
                           </v-chip>
+
 
                           <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
                             {{bag.name}}
@@ -84,18 +70,18 @@
 
                   <div v-if="props.item.delivery.status === 2">
                     <v-btn small flat color="error" @click.native.stop="dialogDel = true,active=props.item.delivery">
-                      Annuler ma course
+                      {{$t('cancel_course')}}
                     </v-btn>
 
                     <v-btn  small flat color="action" @click.native.stop="takeBag(props.item.delivery)">
-                      Confirmer la prise des bagages
+                      {{$t('take_bags')}}
                     </v-btn>
 
                   </div>
 
                   <div v-if="props.item.delivery.status === 3">
                     <v-btn small flat color="action" @click.native.stop="endCourse(props.item.delivery)">
-                      Livrer les bagages
+                      {{$t('deliver_bags')}}
                     </v-btn>
                   </div>
                 </v-expansion-panel-content>
@@ -104,30 +90,54 @@
 
             </template>
 
+            <template slot="no-data">
+              {{$t('courses_empty')}}
+            </template>
 
 
           </v-data-table>
 
-        
+
 
       <v-dialog v-model="dialogDel" max-width="290">
         <v-card>
-          <v-card-title class="headline">Annuler votre prise en charge</v-card-title>
+          <v-card-title class="headline">{{$t('cancel_takeover')}}</v-card-title>
 
           <v-card-text>
-            Souhaitez vous vraiment annuler votre prise en charge?
+            {{$t('cancel_takeover_confirm')}}
           </v-card-text>
           <v-card-text>
-            Cette action entrainera des pénalités si la course devait avoir lieu bientôt.
+            {{$t('cancel_takeover_info')}}
           </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="action" flat @click.native.stop="dialogDel =false">Retour</v-btn>
-            <v-btn color="error" flat @click.native.stop="dialogDel=false,cancelTakeover(active)">Supprimer</v-btn>
+            <v-btn color="action" flat @click.native.stop="dialogDel =false">{{$t('cancel')}}</v-btn>
+            <v-btn color="error" flat @click.native.stop="dialogDel=false,cancelTakeover(active)">{{$t('delete')}}</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <v-dialog v-model="detailBag" max-width="290">
+        <v-card>
+          <v-card-title class="headline">{{$t('details_bag')}}</v-card-title>
+          <v-layout row>
+            <v-flex xs10 offset-xs1>
+              <div v-if="modelBag.details">
+                {{modelBag.details}}
+              </div>
+              <div v-else>
+                {{$t('descr_empty')}}
+              </div>
+            </v-flex>
+          </v-layout>
+        </v-card>
+      </v-dialog>
+
+
+    <v-snackbar v-model="snackbar" color="primary" bottom>
+      {{snackbarText}}
+    </v-snackbar>
 
 
     </v-tab-item>
@@ -155,17 +165,18 @@ export default {
   data () {
     return {
       open:-1,
-      snackbar:false,
+      snackbar:'',
+      snackbarText:'',
       headers: [
-        { text: 'Distance', value: 'distance' },
-        { text: 'Prix', value: 'price' },
-        { text: 'Temps estimé', value: 'estimated_time' },
+        { text: this.$i18n.t("distance"), value: 'distance' },
+        { text: this.$i18n.t("prix"), value: 'price' },
+        { text: this.$i18n.t("estimated_time"), value: 'estimated_time' },
       ],
 
       deviceid:'',
       dialogDel:false,
       tabs: [
-        'En cours', 'Passées'],
+        this.$i18n.t("tab_en_cours"), this.$i18n.t('tab_passees')],
         demandes: [
           [],
           []
@@ -193,7 +204,7 @@ export default {
 
 
         $.ajax({
-          url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/drivers?mobile_token='+'12345',
+          url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/drivers?mobile_token='+'41bccd72a3d20fe5',
           type : 'GET',
           datatype:'jsonp',
           //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
@@ -224,10 +235,6 @@ export default {
               return new Date(b.delivery.start_date) - new Date(a.delivery.start_date)
             });
 
-
-
-
-
           },
           error:function(e){
             alert(e);
@@ -245,7 +252,7 @@ export default {
           data : {
             "delivery_id" : delivery.id,
             "status_id" : "1",
-            "mobile_token" : '12345'
+            "mobile_token" : '41bccd72a3d20fe5'
           },
           //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
           success: function(data){
@@ -253,6 +260,8 @@ export default {
               [],[],[]
             ];
             self.getCourses();
+            self.snackbar=true;
+            self.snackbarText=self.$i18n.t("snackBar_cancel")
           },
           error:function(e){
             console.log(e);
@@ -269,7 +278,7 @@ export default {
           data : {
             "delivery_id" : delivery.id,
             "status_id" : "3",
-            "mobile_token" : '12345'
+            "mobile_token" : '41bccd72a3d20fe5'
           },
           //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
           success: function(data){
@@ -279,6 +288,7 @@ export default {
             self.getCourses();
             self.open=delivery.id;
             self.snackbar=true;
+            self.snackbarText=self.$i18n.t("snackBar_bags")
 
             //self.$forceUpdate();
           },
@@ -296,7 +306,7 @@ export default {
           data : {
             "status_id" : '5',
             "delivery_id" : delivery.id,
-            "mobile_token" : '12345'
+            "mobile_token" : '41bccd72a3d20fe5'
           },
           //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
           success: function(data){
@@ -307,6 +317,7 @@ export default {
             self.getCourses();
             self.open=delivery.id;
             self.snackbar=true;
+            self.snackbarText=self.$i18n.t("snackBar_dest")
           },
           error:function(e){
             console.log(e);
@@ -360,3 +371,51 @@ export default {
     width:100vw;
   }
   </style>
+
+
+  <i18n>
+  {
+    "fr": {
+      "snackBar_dest": "Bagages livrés à destination",
+      "snackBar_bags": "Bagages pris en charge",
+      "snackBar_cancel": "Course annulée",
+      "descr_empty" : "Aucune description indiquée par le client",
+      "tab_en_cours": "En cours",
+      "tab_passees" : "Passées",
+      "cancel_course":"Annuler ma course",
+      "cancel_takeover":"Annuler la prise en charge",
+      "cancel_takeover_confirm":"Souhaitez vous vraiment annuler la prise en charge?",
+      "cancel_takeover_info" : "Cette action entrainera des pénalités si la course devait avoir lieu bientôt",
+      "cancel":"Retour",
+      "delete" : "Supprimer",
+      "take_bags" : "Confirmer la prise des bagages",
+      "deliver_bags" : "Livrer les bagages",
+      "courses_empty" : "Il n'y a aucune course dans cette catégorie",
+      "distance" : "Distance",
+      "prix" : "Prix" ,
+      "estimated_time" : "Temps estimé",
+      "details_bag" : "Détails de ce bagage"
+    },
+    "en": {
+      "snackBar_dest": "Bags delivered to the destination",
+      "snackBar_bags": "Bags taken over",
+      "snackBar_cancel": "Canceled course",
+      "descr_empty" : "There is no description",
+      "tab_en_cours": "Ongoing",
+      "tab_passees" : "Past",
+      "cancel_course":"Cancel my course",
+      "cancel_takeover":"Cancel this takeover",
+      "cancel_takeover_confirm":"Do you really want to cancel this takeover?",
+      "cancel_takeover_info" : "This will result penalties depending on the scheduled start date.",
+      "cancel":"Cancel",
+      "delete" : "Delete",
+      "take_bags" : "Confirm bags takeover",
+      "deliver_bags" : "Deliver bags",
+      "courses_empty" : "There is not course to display",
+      "distance" : "Distance",
+      "prix" : "Price" ,
+      "estimated_time" : "Estimated time",
+      "details_bag" : "Bag details"
+    }
+  }
+  </i18n>

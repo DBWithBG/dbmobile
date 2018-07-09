@@ -8,7 +8,7 @@
     <v-layout v-if="loading" row justify-center>
       <v-container fill-height>
         <v-layout row justify-center align-center>
-          <v-progress-circular indeterminate :size="70" :width="5" color="green"></v-progress-circular>
+          <v-progress-circular indeterminate :size="70" :width="5" color="primary"></v-progress-circular>
         </v-layout>
       </v-container>
     </v-layout>
@@ -32,6 +32,11 @@
 
       </tr>
     </template>
+
+    <template slot="no-data">
+      Il n'y a aucune demande client.
+    </template>
+
     <template slot="expand" slot-scope="props">
       <v-card flat>
         <v-card-text> Prise en charge : {{props.item.start_position.address}}</v-card-text>
@@ -78,7 +83,7 @@
         </v-layout>
       </v-list>
 
-      <v-btn flat color='green' @click.native="prendreEnCharge(props.item.id)">
+      <v-btn flat color='primary' @click.native="prendreEnCharge(props.item.id)">
         <span>M'engager sur cette demande</span>
       </v-btn>
     </template>
@@ -155,7 +160,7 @@ export default {
       let self=this;
 
       var req = {
-        "mobile_token" : '12345',
+        "mobile_token" : '41bccd72a3d20fe5',
         "delivery_id" : id
       }
 
@@ -226,7 +231,6 @@ export default {
         navigator.geolocation.getCurrentPosition(
 
           function(position){
-            alert('getting current pos');
             self.user_pos = {
               lat: position.coords.latitude,
               lng: position.coords.longitude

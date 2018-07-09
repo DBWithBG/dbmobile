@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <v-btn flat color="green darken-2" :to="{name :'demands-list' , params: {data:deliveries} }">
+    <v-btn flat color="primary" :to="{name :'demands-list' , params: {data:deliveries} }">
       <span>Accéder à la liste des demandes</span>
     </v-btn>
 
@@ -75,7 +75,7 @@
         </li>
       </ul>
 
-      <v-btn flat color='green' @click.native="prendreEnCharge(active_demand.id)">
+      <v-btn flat color='primary' @click.native="prendreEnCharge(active_demand.id)">
         <span>M'engager sur cette demande</span>
       </v-btn>
 
@@ -121,7 +121,7 @@ export default {
       let self=this;
       var req = {
         "status_id" : '2',
-        "mobile_token" : '12345',
+        "mobile_token" : '41bccd72a3d20fe5',
         "delivery_id" : id
       }
 
@@ -130,7 +130,7 @@ export default {
         type : 'POST',
         data : req,
         success: function(data){
-          self.getDeliveries();
+          self.$router.replace({path: '/courses-driver'});
         },
         error:function(e){
           console.log(e);
@@ -208,7 +208,7 @@ export default {
                 if (!self.user_marker.getVisible()) self.user_marker.setVisible(true);
                 //self.user_marker.setMap(self.map);
               },function(){
-                alert('fail - get current pos');
+
               })
             },3000);
           },
