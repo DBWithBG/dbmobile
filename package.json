@@ -18,13 +18,14 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "browser-sync": "^2.24.4",
+    "browser-sync": "^2.24.5",
     "cheerio": "^0.22.0",
     "cordova-android": "^7.0.0",
     "cordova-browser": "^5.0.3",
     "cordova-plugin-camera": "^4.0.3",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-firebase-messaging": "^1.0.2",
+    "cordova-plugin-geolocation": "^4.0.1",
     "cordova-plugin-inappbrowser": "^3.0.0",
     "cordova-plugin-request-location-accuracy": "^2.2.3",
     "cordova-plugin-splashscreen": "^5.0.2",
@@ -35,15 +36,18 @@
     "elementtree": "^0.1.7",
     "glob": "^5.0.15",
     "material-design-icons-iconfont": "^3.0.3",
+    "moment": "^2.22.2",
     "plist": "^1.2.0",
     "q": "^1.5.1",
     "vue": "^2.5.2",
+    "vue-i18n": "^8.0.0",
     "vue-pull-to": "^0.1.6",
     "vue-router": "^3.0.1",
     "vue-star-rating": "^1.6.0",
     "vuetify": "^1.0.19"
   },
   "devDependencies": {
+    "@kazupon/vue-i18n-loader": "^0.3.0",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.22.1",
     "babel-eslint": "^8.2.1",
@@ -116,7 +120,8 @@
       "cordova-plugin-firebase-messaging": {
         "FIREBASE_MESSAGING_VERSION": "17.0.+",
         "ANDROID_SUPPORT_VERSION": "27.+"
-      }
+      },
+      "cordova-plugin-geolocation": {}
     },
     "platforms": [
       "browser",

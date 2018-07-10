@@ -1,16 +1,8 @@
 <template>
 
   <div>
-
-    <v-layout v-if="loading" row justify-center>
-      <v-container fill-height>
-        <v-layout row justify-center align-center>
-          <v-progress-circular indeterminate :size="70" :width="5" color="primary"></v-progress-circular>
-        </v-layout>
-      </v-container>
-    </v-layout>
-
-    <div v-if="!loading" v-touch="{
+       {{this.$i18n.locale}}
+    <div v-touch="{
       left:swipeLeft
       }">
       <v-tabs fixed-tabs>
@@ -27,8 +19,20 @@
                 <div slot="header">{{$t("suivi_course")}} {{props.item.id}}</div>
                 <div v-if="props.item.status === 5 && !ratingSent">
                   <v-layout row>
-                    <star-rating v-model="props.item.rating" :show-rating="false" @click.native.stop="active=props.item,dialogRating = true" @click.native="sendRating(props.item.id,props.item.rating)"> </star-rating>
-
+                    <star-rating v-model="props.item.rating" :show-rating="false" @click.native.stop="dialogRating = true" @click.native="sendRating(props.item.id,props.item.rating)"> </star-rating>
+                    <v-dialog v-model="dialogRating" max-width="290">
+                      <v-card>
+                        <v-card-title class="headline">{{$t("rating")}}</v-card-title>
+                        <v-layout row>
+                          <v-flex xs10 offset-xs1>
+                            <v-text-field v-bind:label="$t('rating_label')" v-model="props.item.details"> </v-text-field>
+                          </v-flex>
+                        </v-layout>
+                        <v-btn  flat color="green darken-2" @click.native="sendRating(props.item.id,props.item.rating,props.item.details),dialogRating = false">
+                          <span>{{$t("rating_button")}}</span>
+                        </v-btn>
+                      </v-card>
+                    </v-dialog>
                   </v-layout>
                 </div>
 
@@ -41,13 +45,13 @@
                 </v-flex>
                   <br>
                 <v-flex row xs12>
-                  <v-btn flat color='primary' @click.native="detailsCourse(props.item.id)">
+                  <v-btn flat color='green' @click.native="detailsCourse(props.item.id)">
                     <span> {{$t("suivi_course")}}</span>
                   </v-btn>
                 </v-flex>
                 <v-layout>
                   <v-flex row xs12 v-if="props.item.status === 1">
-                    <v-btn flat color='error' @click.native.stop="active=props.item,dialogDel = true">
+                    <v-btn flat color='red' @click.native.stop="dialogDel = true">
                       <span> {{$t("cancel_course")}}</span>
                     </v-btn>
 
@@ -57,9 +61,6 @@
             </v-expansion-panel>
           </template>
 
-          <template slot="no-data">
-            {{$t('courses_empty')}}
-          </template>
         </v-data-table>
 
       </v-tab-item>
@@ -84,28 +85,13 @@
     </v-layout>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="action" flat @click.native="dialogDel =false">
+      <v-btn color="primary" flat @click.native="dialogDel =false">
         <span> {{$t("cancel")}}</span>
       </v-btn>
-      <v-btn color="error" flat @click.native="dialogDel=false,cancelDelivery(active.id)">
+      <v-btn color="green darken-2" flat @click.native="dialogDel=false,cancelDelivery(props.item.id)">
         <span> {{$t("delete")}}</span>
       </v-btn>
     </v-card-actions>
-  </v-card>
-</v-dialog>
-
-
-<v-dialog v-model="dialogRating" max-width="290">
-  <v-card>
-    <v-card-title class="headline">{{$t("rating")}}</v-card-title>
-    <v-layout row>
-      <v-flex xs10 offset-xs1>
-        <v-text-field v-bind:label="$t('rating_label')" v-model="active.details"> </v-text-field>
-      </v-flex>
-    </v-layout>
-    <v-btn  flat color="primary" @click.native="sendRating(active.id,active.rating,active.details),dialogRating = false">
-      <span>{{$t("rating_button")}}</span>
-    </v-btn>
   </v-card>
 </v-dialog>
 
@@ -124,9 +110,7 @@ export default {
 
   data () {
     return {
-      loading:true,
       ratingSent:false,
-      active:'',
       headers: [
         { text: this.$i18n.t("distance"), value: 'distance' },
         { text: this.$i18n.t("prix"), value: 'price' },
@@ -135,7 +119,8 @@ export default {
       dialogRating:false,
       dialogDel:false,
       tabs: [this.$i18n.t("tab_en_cours"), this.$i18n.t("tab_en_attente"), this.$i18n.t("tab_passees")],
-      demandes: [[],[],[]]
+      demandes: [[],[],[]],
+      ratingLabel: this.$i18n.t("rating_label")
       }
     },
 
@@ -165,8 +150,6 @@ export default {
           // Dans la base, c'est l'index 5 qui correspond à
           // 'TERMINÉ'
           self.demandes[2].push.apply(self.demandes[2], data[5]);
-          self.loading=false;
-          self.$forceUpdate();
 
         },
         error:function(e){
@@ -190,7 +173,6 @@ export default {
           },
           //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
           success: function(data){
-          //  self.demandes[1].delete()
             console.log(data);
           },
           error:function(e){
@@ -254,18 +236,17 @@ export default {
       "tab_passees" : "Passées",
       "details_course":"Détails de la course",
       "suivi_course" : "Suivi de la course",
-      "cancel_course":"Supprimer ma demande",
+      "cancel_course":"Annuler ma demande",
       "cancel":"Annuler",
       "delete" : "Supprimer",
       "rating" : "Notation de la course",
       "rating_button" : "Envoyer mon avis",
       "rating_label" : "Commentaire",
-      "delete_ask" : "Souhaitez-vous vraiment supprimer votre demande?",
+      "delete_ask" : "Souhaitez-vous vraiment annuler votre demande?",
       "delete_info" : "Cette action est irreversible",
       "distance" : "Distance",
       "prix" : "Prix" ,
-      "temps_estime" : "Temps estimé",
-      "courses_empty" : "Il n'y a aucune course dans cette catégorie"
+      "temps_estime" : "Temps estimé"
     },
     "en": {
       "tab_en_cours": "Ongoing",
@@ -273,18 +254,17 @@ export default {
       "tab_passees" : "Past",
       "details_course":"Course details ",
       "suivi_course" : "Track my course",
-      "cancel_course":"Delete my order",
+      "cancel_course":"Cancel my order",
       "cancel":"Cancel",
       "delete" : "Delete",
       "rating" : "Course rating",
       "rating_button" : "Send my opinion",
       "rating_label" : "Comment",
-      "delete_ask" : "Do you really want to delete your order?",
+      "delete_ask" : "Do you really want to cancel your order?",
       "delete_info" : "This can't be undone",
       "distance" : "Distance",
       "prix" : "Price" ,
-      "temps_estime" : "Estimated time",
-      "courses_empty" : "There is nothing to display"
+      "temps_estime" : "Estimated time"
     }
   }
   </i18n>

@@ -13,8 +13,8 @@
             <div>
               <h3 class="headline mb-0 text-xs-center">
                 <v-icon left>add_location</v-icon>
-                {{$t("address")}}</h3>
-              <div class="text-xs-center"> {{$t("address_subt")}} </div>
+                J'indique une adresse</h3>
+              <div class="text-xs-center"> Choisissez un lieu et une heure de prise en charge pour vos bagages </div>
             </div>
           </v-card-title>
         </v-card>
@@ -28,8 +28,8 @@
             <div>
               <h3 class="headline mb-0 text-xs-center">
                 <v-icon left>train</v-icon>
-                {{$t("train")}}</h3>
-              <div class="text-xs-center"> {{$t("train_subt")}} </div>
+                J'arrive en train</h3>
+              <div class="text-xs-center"> Vos bagages seront pris en charge à l'arrivée de votre train en gare </div>
             </div>
           </v-card-title>
         </v-card>
@@ -44,8 +44,8 @@
             <div>
               <h3 class="headline mb-0 text-xs-center">
                 <v-icon left>flight</v-icon>
-                {{$t("flight")}}</h3>
-              <div class="text-xs-center"> {{$t("flight_subt")}} </div>
+                Je voyage en avion</h3>
+              <div class="text-xs-center"> Partez l'esprit serein en indiquant simplement votre numéro de vol </div>
             </div>
           </v-card-title>
         </v-card>
@@ -103,26 +103,3 @@ a {
 
 
 </style>
-
-
-
-<i18n>
-{
-  "fr": {
-    "address": "J'indique une adresse",
-    "address_subt" : "Définissez un lieu et une heure de prise en charge pour vos bagages",
-    "train": "J'arrive en train",
-    "train_subt" : "Vos bagages seront pris en charge à l'arrivée de votre train en gare",
-    "flight": "Je voyage en avion",
-    "flight_subt" : "Partez l'esprit serein en indiquant simplement votre numéro de vol"
-  },
-  "en": {
-    "address": "I select an address",
-    "address_subt" : "Set a pickup time and place for your luggage",
-    "train": "I'm coming in train",
-    "train_subt" : "Your luggage will be taken at the arrival of your train in station" ,
-    "flight": "I travel by air ",
-    "flight_subt" : "Make a request by simply indicating your flight number"
-  }
-}
-</i18n>

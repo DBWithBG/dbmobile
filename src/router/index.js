@@ -12,11 +12,14 @@ import Demand from '@/components/customer/Demand'
 import MesCourses from '@/components/customer/MesCourses'
 import Menu from '@/components/customer/Menu'
 import FormulaireDemande from '@/components/customer/FormulaireDemande'
-import ProfileCustomer from '@/components/customer/ProfileCustomer'
+import Settings from '@/components/customer/Settings'
+import MyBags from '@/components/customer/MyBags'
 
 import MenuDriver from '@/components/driver/MenuDriver'
 import Demands from '@/components/driver/Demands'
 import DemandsList from '@/components/driver/DemandsList'
+import MesCoursesDriver from '@/components/driver/MesCoursesDriver'
+import SettingsDriver from '@/components/driver/SettingsDriver'
 
 Vue.use(Router);
 Vue.component('db-menu',Menu);
@@ -27,18 +30,22 @@ Vue.component('star-rating',StarRating);
 Vue.component('pull-to',PullTo);
 
 Vue.component('demande-form',FormulaireDemande);
-Vue.component('profile-customer',ProfileCustomer);
+Vue.component('my-bags',MyBags);
 Vue.component('demands-list',DemandsList);
+Vue.component('demand',Demand);
 
 export default new Router({
   mode:'history',
   routes: [
     { path: '/demande-form', component: FormulaireDemande, name:'demande-form', props:true},
     { path: '/courses', component: MesCourses},
+    { path: '/courses-driver', component: MesCoursesDriver},
     { path: '/demands', component : Demands},
     { path: '/demands-list', component : DemandsList, name:'demands-list', props:true},
     { path: '/demand', component : Demand},
-    { path: '/profile-customer', component : ProfileCustomer},
+    { path: '/settings', component : Settings},
+    { path: '/settings-driver', component : SettingsDriver},
+    { path: '/my-bags', component : MyBags},
     { path: '/', component : Login},
     { path : '*', redirect : '/'}
   ]
