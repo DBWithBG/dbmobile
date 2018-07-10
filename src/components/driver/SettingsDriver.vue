@@ -130,6 +130,7 @@ export default{
 <style>
 </style>
 
+  <i18n src='@/assets/trad.json'></i18n>
 
 <i18n>
 {

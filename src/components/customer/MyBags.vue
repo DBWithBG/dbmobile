@@ -7,7 +7,7 @@
 
     <!-- Gestion des bagages -->
 
-    <back-header message="Mes bagages"> </back-header>
+    <back-header :message="$t('bagages')"> </back-header>
 
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
@@ -260,33 +260,8 @@ export default {
 
 
 </script>
-
+<i18n src='@/assets/trad.json'></i18n>
 <style>
 
 
 </style>
-
-<i18n>
-{
-  "fr": {
-    "bagage_nom": "Nom du bagage",
-    "bagage_descr" : "Description",
-    "bagages_update" : "Mettre à jour mes bagages",
-    "bagages_ajout" : "Ajouter un ",
-    "bagage_cabine" : "bagage cabine",
-    "bagage_soute" : "bagage soute",
-    "bagage_autre" : "autre bagage",
-    "bagage_required" : "Le nom est requis"
-  },
-  "en": {
-    "bagage_nom": "Bagage name",
-    "bagage_descr" : "Description",
-    "bagages_update" : "Update my bags",
-    "bagages_ajout" : "Add a",
-    "bagage_cabine" : "hand baggage",
-    "bagage_soute" : "hold baggage",
-    "bagage_autre" : "other bag",
-    "bagage_required" : "It is required to name your bag"
-  }
-}
-</i18n>

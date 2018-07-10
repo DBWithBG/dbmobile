@@ -27,7 +27,7 @@ export default{
 }
 
 </script>
-
+<i18n src='@/assets/trad.json'></i18n>
 <style>
 
 
@@ -36,18 +36,3 @@ body {
 }
 
 </style>
-
-<i18n>
-{
-  "fr": {
-    "courses": "Mes demandes",
-    "demande" : "Faire une demande",
-    "settings" : "Profil et réglages"
-  },
-  "en": {
-    "courses": "My orders",
-    "demande" : "Make a request",
-    "settings" : "Profile & Settings"
-  }
-}
-</i18n>

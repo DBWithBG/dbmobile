@@ -3,7 +3,7 @@
     <v-flex xs12>
       <v-toolbar>
         <v-btn @click="back" icon flat>
-          <v-icon >arrow_back</v-icon>
+          <v-icon>arrow_back</v-icon>
         </v-btn>
         <v-toolbar-title> {{message}} </v-toolbar-title>
       </v-toolbar>

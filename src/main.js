@@ -4,7 +4,7 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 import router from './router'
 import VueI18n from 'vue-i18n'
-import Moment from 'moment'
+//import moment from 'moment'
 
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
@@ -23,11 +23,14 @@ Vue.use(Vuetify, {
 });
 
 Vue.use(VueI18n);
-Vue.use(Moment);
+//Vue.use(moment);
+//Vue.prototype.moment =  moment ;
+
 
 var i18n = new VueI18n({
   locale: 'fr', // set locale
 });
+
 
 
 /* eslint-disable no-new */

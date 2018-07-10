@@ -7,15 +7,7 @@
 
 
     <v-flex xs6>
-      <v-select
-      :items="listDate"
-      v-model="activeDate"
-      label="Select"
-      single-line
-      auto
-      hide-details
-      @input="getDeliveries()"
-      ></v-select>
+      <v-select :items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
     </v-flex>
 
 
@@ -33,8 +25,6 @@
             <v-subheader> {{active_demand.bags.length}} bagages</v-subheader>
             <v-layout column>
               <v-flex v-for="bag in active_demand.bags" :key="bag.id">
-
-
 
                 <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
                   <v-dialog v-model="detailBag" max-width="290">
@@ -126,7 +116,7 @@ export default {
       }
 
       $.ajax({
-        url: 'http://dev-deliverbag.supconception.fr/mobile/drivers/deliveries/edit-status',
+        url: 'http://demo-deliverbag.supconception.fr/mobile/drivers/deliveries/edit-status',
         type : 'POST',
         data : req,
         success: function(data){
@@ -231,7 +221,7 @@ export default {
 
 
             $.ajax({
-              url: 'https://dev-deliverbag.supconception.fr/'+'deliveries?status=1',
+              url: 'https://demo-deliverbag.supconception.fr/'+'deliveries?status=1',
               dataType: 'jsonp',
               success: function(json){
                 // On a récupéré les données, on effectue le traitement ici
@@ -308,7 +298,7 @@ export default {
                       }
                     }
                     // pas une solution pour l'affichage des 2 markers de début et de fin
-                    //var markerCluster = new MarkerClusterer(self.map,self.markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+                    //var markerCluster = new MarkerClusterer(self.map,self.markers,{imagePath: 'https://demoelopers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 
 
                   },
@@ -342,6 +332,7 @@ export default {
 
 
           </script>
+          <i18n src='@/assets/trad.json'></i18n>
 
 
           <style scoped>

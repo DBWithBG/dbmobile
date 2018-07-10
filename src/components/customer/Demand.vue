@@ -88,7 +88,7 @@ export default{
 
 
 </script>
-
+<i18n src='@/assets/trad.json'></i18n>
 
 <style>
 
@@ -103,26 +103,3 @@ a {
 
 
 </style>
-
-
-
-<i18n>
-{
-  "fr": {
-    "address": "J'indique une adresse",
-    "address_subt" : "Définissez un lieu et une heure de prise en charge pour vos bagages",
-    "train": "J'arrive en train",
-    "train_subt" : "Vos bagages seront pris en charge à l'arrivée de votre train en gare",
-    "flight": "Je voyage en avion",
-    "flight_subt" : "Partez l'esprit serein en indiquant simplement votre numéro de vol"
-  },
-  "en": {
-    "address": "I select an address",
-    "address_subt" : "Set a pickup time and place for your luggage",
-    "train": "I'm coming in train",
-    "train_subt" : "Your luggage will be taken at the arrival of your train in station" ,
-    "flight": "I travel by air ",
-    "flight_subt" : "Make a request by simply indicating your flight number"
-  }
-}
-</i18n>

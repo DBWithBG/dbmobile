@@ -43,13 +43,13 @@
           <v-layout row>
             <v-flex xs10 >
               <!-- DATE PICKER -->
-              <v-menu ref="menu" :close-on-content-click="false" :nudge-right="40" :return-value.sync="date" transition="scale-transition" offset-y full-width min-width="290px">
+              <v-menu ref="menudate" :close-on-content-click="false" :nudge-right="40" :return-value.sync="date" transition="scale-transition" offset-y full-width min-width="290px">
                 <v-text-field
                 slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
               </v-text-field>
 
 
-              <v-date-picker v-model="date" :min="minDate" @input="$refs.menu.save(date)" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
+              <v-date-picker v-model="date" :min="minDate" @input="$refs.menudate.save(date)" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
 
               </v-date-picker>
             </v-menu>
@@ -60,20 +60,11 @@
           <div v-if="type == 'address'">
             <v-flex xs10>
               <!-- DATE PICKER -->
-              <v-menu ref="menu2" :close-on-content-click="false" :nudge-right="40" :return-value.sync="time" transition="scale-transition" offset-y lazy full-width min-width="290px">
+              <v-menu ref="menutime" :close-on-content-click="false" :nudge-right="40" :return-value.sync="time" transition="scale-transition" offset-y lazy full-width min-width="290px">
                 <v-text-field
                 slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" append-icon="access_time"  readonly>
               </v-text-field>
-
-
-              <v-time-picker v-model="time" :min="minTime"
-              :format="$t('date_format')"
-              @change="$refs.menu2.save(time)"
-              color="primary"
-              no-title
-              :locale="this.$root.$i18n.locale" >
-
-            </v-time-picker>
+              <v-time-picker v-model="time" :min="minTime" :format="$t('date_format')" @change="$refs.menutime.save(time)" color="primary" no-title :locale="this.$root.$i18n.locale" > </v-time-picker>
           </v-menu>
         </v-flex>
       </div>
@@ -140,21 +131,46 @@
       </v-flex>
     </v-layout>
 
+
+
+
+
     <v-layout v-if="!livraisonDirecte" row>
-      <v-flex xs10>
-        <!-- DATE PICKER -->
-        <v-menu ref="menu" :close-on-content-click="false" :nudge-right="40" :return-value.sync="end_date" transition="scale-transition" offset-y full-width min-width="290px">
+      <v-flex xs10 >
+        <!-- DATE PICKER SI CONSIGNE -->
+        <v-menu ref="menudateend" :close-on-content-click="false" :nudge-right="40" :return-value.sync="dateEnd" transition="scale-transition" offset-y full-width min-width="290px">
           <v-text-field
-          slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
+          slot="activator" v-model="displayDateEnd" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
         </v-text-field>
 
 
-        <v-date-picker v-model="date" :min="minDate" @input="$refs.menu.save(date)" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
+        <v-date-picker v-model="dateEnd" :min="minDateEnd" :max="maxDateEnd" @input="$refs.menudateend.save(dateEnd)" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
 
         </v-date-picker>
       </v-menu>
     </v-flex>
-    </v-layout>
+    <v-flex xs2>
+    </v-flex>
+    <!-- TIME PICKER SI CONSIGNE -->
+      <v-flex xs10>
+        <!-- DATE PICKER -->
+        <v-menu ref="menutimeend" :close-on-content-click="false" :nudge-right="40" :return-value.sync="timeEnd" transition="scale-transition" offset-y lazy full-width min-width="290px">
+          <v-text-field
+          slot="activator" v-model="displayTimeEnd" v-bind:label="$t('label_heure')" append-icon="access_time"  readonly>
+        </v-text-field>
+
+
+        <v-time-picker v-model="timeEnd" :min="minTimeEnd" :max="maxTimeEnd"
+        :format="$t('date_format')"
+        @change="$refs.menutimeend.save(timeEnd)"
+        color="primary"
+        no-title
+        :locale="this.$root.$i18n.locale" >
+
+      </v-time-picker>
+    </v-menu>
+  </v-flex>
+</v-layout>
 
 
 
@@ -326,15 +342,16 @@ export default {
 
       activeDeliveryId:'',
       step:0,
-      livraisonDirecte:true,
+      livraisonDirecte:false,
       message:'',
       slider:0,
       ticks:['Aujourd\'hui', 'Demain'],
       minDate:new Date().toISOString().substring(0,10),
       date:new Date().toJSON(),
       time:new Date(),
-      dateEnd:'',
-      timeEnd:'',
+      dateEnd:new Date().toJSON(),
+      timeEnd:new Date(),
+
       startPlace:'',
       endPlace:'',
       error:'',
@@ -367,9 +384,30 @@ export default {
       return this.date.getMonth();
     },
 
+
+
+    minDateEnd(){
+     return new Date(this.date).toISOString().substring(0,10);
+    },
+
+    maxDateEnd(){
+     return new Date(this.date).toISOString().substring(0,10);
+    },
+
+    minTimeEnd(){
+      return this.time.toLocaleString().substring(12,18) ;
+    },
+
+    maxTimeEnd(){
+      return this.time.toLocaleString().substring(12,18) ;
+    },
+
+    //return this.moment(this.date).add(1,'day').format('L');
+   //  return this.moment(this.time).add(24,'hours').format('LT');
+
     dateTime(){
       //console.log(this.time);
-      var date = new Date(this.date);
+      let date = new Date(this.date);
       if (typeof this.time === 'string'){
         date.setHours(this.time.match(/^(\d+)/)[1]);
         date.setMinutes(this.time.match(/:(\d+)/)[1]);
@@ -377,6 +415,20 @@ export default {
       else{
         date.setHours(this.time.getHours());
         date.setMinutes(this.time.getMinutes());
+      }
+      return date.toLocaleString();
+    },
+
+    dateTimeEnd(){
+      //console.log(this.time);
+      let date = new Date(this.dateEnd);
+      if (typeof this.timeEnd === 'string'){
+        date.setHours(this.timeEnd.match(/^(\d+)/)[1]);
+        date.setMinutes(this.timeEnd.match(/:(\d+)/)[1]);
+      }
+      else{
+        date.setHours(this.timeEnd.getHours());
+        date.setMinutes(this.timeEnd.getMinutes());
       }
       return date.toLocaleString();
     },
@@ -426,6 +478,14 @@ export default {
 
     displayTime(){
       return this.dateTime.substring(12,18);
+    },
+
+    displayDateEnd(){
+      return this.dateTimeEnd.substring(0,10);
+    },
+
+    displayTimeEnd(){
+      return this.dateTimeEnd.substring(12,18);
     }
 
   },
@@ -934,7 +994,7 @@ verifBagage(){
     }
   }
   </script>
-
+<i18n src='@/assets/trad.json'></i18n>
 
   <style scoped>
 
@@ -946,88 +1006,3 @@ verifBagage(){
   }
 
   </style>
-
-
-  <i18n>
-    {
-      "fr": {
-        "bagage_nom": "Nom du bagage",
-        "bagage_descr" : "Description",
-        "bagages_update" : "Mettre à jour mes bagages",
-        "bagages_ajout" : "Ajouter un ",
-        "bagage_cabine" : "bagage cabine",
-        "bagage_soute" : "bagage soute",
-        "bagage_autre" : "autre bagage",
-        "bagage_required" : "Il est requis de nommer votre bagage",
-        "error_404_sncf" : "Ce numéro de train ne correspond à aucun train circulant à cette date",
-        "error_401_sncf" : "Un problème d'autorisation d'accès est survenu",
-        "error_403_sncf" : "Requête correcte mais refusée par le serveur",
-        "error_500_sncf" : "Erreur interne liée au serveur",
-        "error_default_sncf" : "Le service n'est pas disponible actuellement",
-        "date_voyage_vide" : "Vous devez spécifier une date de voyage",
-        "header" : "Effectuer une demande",
-        "next" : "Suivant",
-        "prev" : "Précédent",
-        "payer" : "Payer",
-        "subt_1" : "Étape 1 : Prise en charge et livraison",
-        "subt_2" : "Étape 2 : Mes bagages",
-        "subt_3" : "Étape 3 : Récapitulatif",
-        "subt_4" : "Étape 4 : Paiement",
-        "info_1" : "Informations de prise en charge",
-        "info_2" : "Informations de livraison",
-        "livraison" : "Livraison dès que possible",
-        "label_date" : "Date",
-        "label_heure" : "Heure",
-        "label_address_depart" : "Adresse de départ",
-        "label_address_livraison" : "Adresse de livraison",
-        "date_format" : "24hr" ,
-        "select_gare" : "Choisir un arrêt",
-        "train_number" : "Numéro de train",
-        "flight_number" : "Numéro de vol",
-        "error_start_place" : "Le lieu souhaité pour la prise en charge",
-        "error_end_place" : "Le lieu souhaité pour la livraison",
-        "error_gare" : "L'arrêt souhaité",
-        "error_place" : " n'est pas encore desservi par nos services"
-
-      },
-      "en": {
-        "bagage_nom": "Bagage name",
-        "bagage_descr" : "Description",
-        "bagages_update" : "Update my bags",
-        "bagages_ajout" : "Add an",
-        "bagage_cabine" : "hand baggage",
-        "bagage_soute" : "hold baggage",
-        "bagage_autre" : "other bag",
-        "bagage_required" : "Name is required",
-        "error_404_sncf" : "Train number doesn't match any train at this date",
-        "error_401_sncf" : "Unauthorized access",
-        "error_403_sncf" : "Request denied from the server",
-        "error_500_sncf" : "Internal server error",
-        "error_default_sncf" : "The service is unviable",
-        "date_voyage_vide" : "Pleaser enter a travel date",
-        "header" : "Do a request",
-        "next" : "Next",
-        "prev" : "Previous",
-        "payer" : "Pay",
-        "subt_1" : "Step 1 : Takeover and delivery",
-        "subt_2" : "Step 2 : My bags",
-        "subt_3" : "Step 3 : Summary",
-        "subt_4" : "Step 4 : Payment",
-        "info_1" : "Takeover informations",
-        "info_2" : "Delivery informations",
-        "livraison" : "As soon as possible",
-        "label_date" : "Date",
-        "label_heure" : "Hour",
-        "label_address_depart" : "Takeover place",
-        "label_address_livraison" : "Delivery place",
-        "date_format" : "ampm" ,
-        "select_gare" : "Select a stop point",
-        "train_number" : "Train number",
-        "flight_number" : "Flight number",
-        "error_start_place" : "Place for the takeover",
-        "error_end_place" : "Place for the delivery",
-        "error_gare" : "This stop point",
-        "error_place" : " is not yet served by our service"
-      }
-    }
-  </i18n>

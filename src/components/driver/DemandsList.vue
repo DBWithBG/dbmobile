@@ -142,7 +142,7 @@ export default {
       var self=this;
 
       $.ajax({
-        url: 'https://dev-deliverbag.supconception.fr/'+'deliveries?status=1',
+        url: 'https://demo-deliverbag.supconception.fr/'+'deliveries?status=1',
         dataType: 'jsonp',
         success: function(json){
           console.log(json);
@@ -165,7 +165,7 @@ export default {
       }
 
       $.ajax({
-        url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/takeovers/start',
+        url: 'http://demo-deliverbag.supconception.fr/mobile/deliveries/takeovers/start',
         type : 'POST',
         data : req,
         success: function(data){

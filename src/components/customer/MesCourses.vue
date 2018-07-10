@@ -237,54 +237,10 @@ export default {
 
 
   </script>
-
+<i18n src='@/assets/trad.json'></i18n>
   <style>
 
   tbody li {
     width:100vw;
   }
   </style>
-
-
-  <i18n>
-  {
-    "fr": {
-      "tab_en_cours": "En cours",
-      "tab_en_attente":"En attente",
-      "tab_passees" : "Passées",
-      "details_course":"Détails de la course",
-      "suivi_course" : "Suivi de la course",
-      "cancel_course":"Supprimer ma demande",
-      "cancel":"Annuler",
-      "delete" : "Supprimer",
-      "rating" : "Notation de la course",
-      "rating_button" : "Envoyer mon avis",
-      "rating_label" : "Commentaire",
-      "delete_ask" : "Souhaitez-vous vraiment supprimer votre demande?",
-      "delete_info" : "Cette action est irreversible",
-      "distance" : "Distance",
-      "prix" : "Prix" ,
-      "temps_estime" : "Temps estimé",
-      "courses_empty" : "Il n'y a aucune course dans cette catégorie"
-    },
-    "en": {
-      "tab_en_cours": "Ongoing",
-      "tab_en_attente":"Pending",
-      "tab_passees" : "Past",
-      "details_course":"Course details ",
-      "suivi_course" : "Track my course",
-      "cancel_course":"Delete my order",
-      "cancel":"Cancel",
-      "delete" : "Delete",
-      "rating" : "Course rating",
-      "rating_button" : "Send my opinion",
-      "rating_label" : "Comment",
-      "delete_ask" : "Do you really want to delete your order?",
-      "delete_info" : "This can't be undone",
-      "distance" : "Distance",
-      "prix" : "Price" ,
-      "temps_estime" : "Estimated time",
-      "courses_empty" : "There is nothing to display"
-    }
-  }
-  </i18n>

@@ -47,33 +47,32 @@
                       <v-layout column>
                         <v-flex v-for="bag in props.item.delivery.bags" :key="bag.id">
                           <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-
                             {{bag.name}}
                             <v-icon right>work</v-icon>
                           </v-chip>
-
-
+                          <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+                            {{bag.name}}
+                            <v-icon right>work</v-icon>
+                          </v-chip>
                           <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
                             {{bag.name}}
                             <v-icon right>work</v-icon>
                           </v-chip>
-
                           <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
                             {{bag.name}}
                             <v-icon right>work</v-icon>
                           </v-chip>
-
                         </v-flex>
                       </v-layout>
                     </v-list>
                   </v-flex>
 
                   <div v-if="props.item.delivery.status === 2">
-                    <v-btn small flat color="error" @click.native.stop="dialogDel = true,active=props.item.delivery">
+                    <v-btn small flat color="error" @click.native.stop="dialogDel=true, active=props.item.delivery">
                       {{$t('cancel_course')}}
                     </v-btn>
 
-                    <v-btn  small flat color="action" @click.native.stop="takeBag(props.item.delivery)">
+                    <v-btn  small flat color="action" @click.native.stop="dialogBag=true, active=props.item.delivery">
                       {{$t('take_bags')}}
                     </v-btn>
 
@@ -112,11 +111,13 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="action" flat @click.native.stop="dialogDel =false">{{$t('cancel')}}</v-btn>
+            <v-btn color="action" flat @click.native.stop="dialogDel=false">{{$t('cancel')}}</v-btn>
             <v-btn color="error" flat @click.native.stop="dialogDel=false,cancelTakeover(active)">{{$t('delete')}}</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+
 
       <v-dialog v-model="detailBag" max-width="290">
         <v-card>
@@ -134,6 +135,40 @@
         </v-card>
       </v-dialog>
 
+      <v-dialog v-model="dialogBag" max-width="290">
+        <v-card>
+          <v-layout column>
+            <v-flex v-for="bag in active.bags" :key="bag.id">
+              <div class="text-xs-center" v-if="bag.type_id===1" >
+              <v-chip xs6 color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+                {{bag.name}}
+                <v-icon right>work</v-icon>
+              </v-chip>
+              <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
+            </div>
+
+            <div class="text-xs-center" v-if="bag.type_id===2" >
+              <v-chip color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+                {{bag.name}}
+                  <v-icon right>work</v-icon>
+              </v-chip>
+              <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
+              </div>
+
+              <div class="text-xs-center" v-if="bag.type_id===3" >
+              <v-chip color="teal darken-4" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+                {{bag.name}}
+                <v-icon right>work</v-icon>
+              </v-chip>
+              <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
+              </div>
+
+              </v-flex>
+              <v-btn :disabled="!edlOk()" class="text-xs-center" color="primary" @click.native.stop="edlBags(active.bags)">Valider </v-btn>
+          </v-layout>
+        </v-card>
+      </v-dialog>
+
 
     <v-snackbar v-model="snackbar" color="primary" bottom>
       {{snackbarText}}
@@ -146,8 +181,6 @@
 </v-tabs>
 
 </div>
-
-
 
 
 <db-menu-driver> </db-menu-driver>
@@ -175,8 +208,9 @@ export default {
 
       deviceid:'',
       dialogDel:false,
+      dialogBag:false,
       tabs: [
-        this.$i18n.t("tab_en_cours"), this.$i18n.t('tab_passees')],
+        this.$i18n.t('tab_en_cours'), this.$i18n.t('tab_passees')],
         demandes: [
           [],
           []
@@ -197,6 +231,20 @@ export default {
 
     methods:{
 
+      edlOk(){
+        let ok=true;
+        if (this.active != ''){
+          this.active.bags.forEach(function(elem){
+            if (elem.edl.length<0){
+              ok=false;
+            }
+          });
+        }
+        else{
+          ok=false;
+        }
+        return ok;
+      },
 
       getCourses(){
 
@@ -269,16 +317,55 @@ export default {
         });
       },
 
+      rateBag(bag){
 
-      takeBag(delivery){
+      },
+
+
+      edlBags(bags){
+        let self=this;
+        var details = [];
+        self.active.bags.forEach(function(elem){
+          details.push(
+            {
+              "bag_id" : elem.pivot.bag_id,
+              "detail" : elem.edl
+            }
+          );
+        });
+
+
+        $.ajax({
+          url: 'http://dev-deliverbag.supconception.fr/mobile/drivers/infobags/edit',
+          type : 'POST',
+          data : {
+            "delivery_id" : self.active.id,
+            "details" : details,
+            "mobile_token" : '41bccd72a3d20fe5',
+            "_method":"put"
+          },
+          success:function(data){
+            self.dialogBag=false;
+            self.takeBag();
+          },
+          error:function(e){
+            console.log(e);
+          }
+        });
+      },
+
+
+      takeBag(){
+
         let self=this;
         $.ajax({
           url: 'http://dev-deliverbag.supconception.fr/mobile/drivers/deliveries/edit-status',
           type : 'POST',
           data : {
-            "delivery_id" : delivery.id,
+            "delivery_id" : self.active.id,
             "status_id" : "3",
-            "mobile_token" : '41bccd72a3d20fe5'
+            "mobile_token" : '41bccd72a3d20fe5',
+
           },
           //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
           success: function(data){
@@ -286,9 +373,10 @@ export default {
               [],[],[]
             ];
             self.getCourses();
-            self.open=delivery.id;
+            self.open=self.active.id;
             self.snackbar=true;
-            self.snackbarText=self.$i18n.t("snackBar_bags")
+            self.snackbarText=self.$i18n.t("snackBar_bags");
+
 
             //self.$forceUpdate();
           },
@@ -372,50 +460,4 @@ export default {
   }
   </style>
 
-
-  <i18n>
-  {
-    "fr": {
-      "snackBar_dest": "Bagages livrés à destination",
-      "snackBar_bags": "Bagages pris en charge",
-      "snackBar_cancel": "Course annulée",
-      "descr_empty" : "Aucune description indiquée par le client",
-      "tab_en_cours": "En cours",
-      "tab_passees" : "Passées",
-      "cancel_course":"Annuler ma course",
-      "cancel_takeover":"Annuler la prise en charge",
-      "cancel_takeover_confirm":"Souhaitez vous vraiment annuler la prise en charge?",
-      "cancel_takeover_info" : "Cette action entrainera des pénalités si la course devait avoir lieu bientôt",
-      "cancel":"Retour",
-      "delete" : "Supprimer",
-      "take_bags" : "Confirmer la prise des bagages",
-      "deliver_bags" : "Livrer les bagages",
-      "courses_empty" : "Il n'y a aucune course dans cette catégorie",
-      "distance" : "Distance",
-      "prix" : "Prix" ,
-      "estimated_time" : "Temps estimé",
-      "details_bag" : "Détails de ce bagage"
-    },
-    "en": {
-      "snackBar_dest": "Bags delivered to the destination",
-      "snackBar_bags": "Bags taken over",
-      "snackBar_cancel": "Canceled course",
-      "descr_empty" : "There is no description",
-      "tab_en_cours": "Ongoing",
-      "tab_passees" : "Past",
-      "cancel_course":"Cancel my course",
-      "cancel_takeover":"Cancel this takeover",
-      "cancel_takeover_confirm":"Do you really want to cancel this takeover?",
-      "cancel_takeover_info" : "This will result penalties depending on the scheduled start date.",
-      "cancel":"Cancel",
-      "delete" : "Delete",
-      "take_bags" : "Confirm bags takeover",
-      "deliver_bags" : "Deliver bags",
-      "courses_empty" : "There is not course to display",
-      "distance" : "Distance",
-      "prix" : "Price" ,
-      "estimated_time" : "Estimated time",
-      "details_bag" : "Bag details"
-    }
-  }
-  </i18n>
+  <i18n src='@/assets/trad.json'></i18n>

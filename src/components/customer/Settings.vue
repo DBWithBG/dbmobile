@@ -143,37 +143,6 @@ export default{
 }
 
 </script>
+<i18n src='@/assets/trad.json'></i18n>
 <style>
 </style>
-
-
-<i18n>
-{
-  "fr": {
-    "bagages": "Mes bagages",
-    "bagages_subt":"Gérer mes bagages de voyage",
-    "profil" : "Mon profil",
-    "profil_sbt":"Accéder à mes informations personnelles",
-    "paiement" : "Paiement",
-    "paiement_sbt":"Consulter et modifier mes informations de paiement",
-    "langue" : "Langue",
-    "langue_sbt":"Modifier la langue de l'application",
-    "fr" : "Français",
-    "en" : "Anglais",
-    "choix_langue":"Choix de la langue"
-  },
-  "en": {
-    "bagages": "My bags",
-    "bagages_subt":"Manage my bags",
-    "profil" : "My profile",
-    "profil_sbt":"Get my personnal informations",
-    "paiement" : "Payment ",
-    "paiement_sbt":"Change my paiement method",
-    "langue" : "Language",
-    "langue_sbt":"Change the language of the app",
-    "fr" : "French",
-    "en" : "English",
-    "choix_langue" : "Choice of language"
-  }
-}
-</i18n>
