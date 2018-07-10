@@ -94,6 +94,21 @@
             </v-list-tile-action>
           </v-list-tile>
 
+          <v-list-tile @click.native="disconnect()" logout >
+            <v-list-tile-avatar>
+              <v-icon large>logout</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content >
+              <v-list-tile-title>{{$t("disconnect")}}</v-list-tile-title>
+              <v-list-tile-sub-title >{{$t("disconnect_sbt")}}</v-list-tile-sub-title>
+            </v-list-tile-content>
+            <v-list-tile-action>
+              <v-btn @click.native="disconnect()" icon ripple>
+                <v-icon x-large>navigate_next</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+          </v-list-tile>
+
         </v-list>
       </v-card>
     </v-flex>
@@ -121,7 +136,13 @@ export default{
       let tok = localStorage.getItem('deviceId');
       let t= '$("#chk_mobile_token").val("'+tok+'")';
     //  ref.executeScript( {code : t});
-  },
+    },
+
+    disconnect(){
+        localStorage.removeItem('deviceId');
+        this.$router.replace('/');
+
+    }
 
   }
 }
@@ -144,7 +165,9 @@ export default{
     "langue_sbt":"Modifier la langue de l'application",
     "fr" : "Français",
     "en" : "Anglais",
-    "choix_langue":"Choix de la langue"
+    "choix_langue":"Choix de la langue",
+    "disconnect":"Se déconnecter",
+    "disconnect_sbt":"Se déconnecter de l'application et retourner à l'écran d'accueil"
   },
   "en": {
     "bagages": "My bags",
@@ -157,7 +180,9 @@ export default{
     "langue_sbt":"Change the language of the app",
     "fr" : "French",
     "en" : "English",
-    "choix_langue" : "Choice of language"
+    "choix_langue" : "Choice of language",
+    "disconnect":"Log out",
+    "disconnect_sbt":"Log out and back to login page."
   }
 }
 </i18n>

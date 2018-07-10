@@ -204,7 +204,7 @@ export default {
 
 
         $.ajax({
-          url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/drivers?mobile_token='+'41bccd72a3d20fe5',
+          url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/drivers?mobile_token='+localStorage.getItem('deviceId'),
           type : 'GET',
           datatype:'jsonp',
           //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
@@ -252,7 +252,7 @@ export default {
           data : {
             "delivery_id" : delivery.id,
             "status_id" : "1",
-            "mobile_token" : '41bccd72a3d20fe5'
+            "mobile_token" : localStorage.getItem('deviceId')
           },
           //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
           success: function(data){
@@ -278,7 +278,7 @@ export default {
           data : {
             "delivery_id" : delivery.id,
             "status_id" : "3",
-            "mobile_token" : '41bccd72a3d20fe5'
+            "mobile_token" : localStorage.getItem('deviceId')
           },
           //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
           success: function(data){
@@ -306,7 +306,7 @@ export default {
           data : {
             "status_id" : '5',
             "delivery_id" : delivery.id,
-            "mobile_token" : '41bccd72a3d20fe5'
+            "mobile_token" : localStorage.getItem('deviceId')
           },
           //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
           success: function(data){
