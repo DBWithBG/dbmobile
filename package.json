@@ -20,8 +20,6 @@
     "babel-polyfill": "^6.26.0",
     "browser-sync": "^2.24.5",
     "cheerio": "^0.22.0",
-    "cordova-android": "^7.1.0",
-    "cordova-browser": "^5.0.3",
     "cordova-plugin-camera": "^4.0.3",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-firebase-messaging": "^1.0.2",
@@ -123,9 +121,6 @@
       },
       "cordova-plugin-geolocation": {}
     },
-    "platforms": [
-      "android",
-      "browser"
-    ]
+    "platforms": []
   }
 }
