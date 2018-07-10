@@ -84,7 +84,9 @@
     "temps_estime": "Temps estimé",
     "train": "J'arrive en train",
     "train_number": "Numéro de train",
-    "train_subt": "Vos bagages seront pris en charge à l'arrivée de votre train en gare"
+    "train_subt": "Vos bagages seront pris en charge à l'arrivée de votre train en gare",
+    "disconnect":"Se déconnecter",
+    "disconnect_sbt":"Se déconnecter de l'application et retourner à l'écran d'accueil"
 },
     "en": {
     "address": "I select an address",
@@ -171,7 +173,9 @@
     "temps_estime": "Estimated time",
     "train": "I'm coming in train",
     "train_number": "Train number",
-    "train_subt": "Your luggage will be taken at the arrival of your train in station"
+    "train_subt": "Your luggage will be taken at the arrival of your train in station",
+    "disconnect":"Log out",
+    "disconnect_sbt":"Log out and back to login page."
 },
     "es": {
       "address": "Doy una dirección",
@@ -251,7 +255,7 @@
       "es" : "Español",
       "choix_langue":"Elegir el idioma",
 
-      
+
 
       "snackBar_dest": "Bagages livrés à destination",
       "snackBar_bags": "Bagages pris en charge",

@@ -110,6 +110,20 @@
             </v-list-tile-action>
           </v-list-tile>
 
+          <v-list-tile @click.native="disconnect()" logout >
+            <v-list-tile-avatar>
+              <v-icon large>logout</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content >
+              <v-list-tile-title>{{$t("disconnect")}}</v-list-tile-title>
+              <v-list-tile-sub-title >{{$t("disconnect_sbt")}}</v-list-tile-sub-title>
+            </v-list-tile-content>
+            <v-list-tile-action>
+              <v-btn @click.native="disconnect()" icon ripple>
+                <v-icon x-large>navigate_next</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+          </v-list-tile>
         </v-list>
       </v-card>
     </v-flex>
@@ -137,7 +151,12 @@ export default{
       let tok = localStorage.getItem('deviceId');
       let t= '$("#chk_mobile_token").val("'+tok+'")';
     //  ref.executeScript( {code : t});
-  },
+      },
+    disconnect(){
+        localStorage.removeItem('deviceId');
+        this.$router.replace('/');
+
+    }
 
   }
 }

@@ -160,7 +160,7 @@ export default {
       let self=this;
 
       var req = {
-        "mobile_token" : '41bccd72a3d20fe5',
+        "mobile_token" : localStorage.getItem('deviceId'),
         "delivery_id" : id
       }
 
