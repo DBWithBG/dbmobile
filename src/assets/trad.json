@@ -86,7 +86,10 @@
     "train_number": "Numéro de train",
     "train_subt": "Vos bagages seront pris en charge à l'arrivée de votre train en gare",
     "disconnect":"Se déconnecter",
-    "disconnect_sbt":"Se déconnecter de l'application et retourner à l'écran d'accueil"
+    "disconnect_sbt":"Se déconnecter de l'application et retourner à l'écran d'accueil",
+    "details_bag" : "Détails du bagage",
+    "estimated_time" : "Temps estimé"
+
 },
     "en": {
     "address": "I select an address",
@@ -175,7 +178,9 @@
     "train_number": "Train number",
     "train_subt": "Your luggage will be taken at the arrival of your train in station",
     "disconnect":"Log out",
-    "disconnect_sbt":"Log out and back to login page."
+    "disconnect_sbt":"Log out and back to login page.",
+    "details_bag" : "Bag details",
+    "estimated_time" : "Estimated time"
 },
     "es": {
       "address": "Doy una dirección",
@@ -233,7 +238,6 @@
       "distance" : "Distancia",
       "prix" : "Precio" ,
       "temps_estime" : "Tiempo estimado",
-      "courses_empty" : "Aún no hay transporte en esta categoría",
       "bagage_nom": "Nombre del equipaje",
       "bagage_descr" : "Descripción",
       "bagages_update" : "Actualizar mis maletas",
@@ -254,18 +258,21 @@
       "en" : "Inglés",
       "es" : "Español",
       "choix_langue":"Elegir el idioma",
+      "snackBar_dest": "Maletas entregadas a destinación",
+      "snackBar_bags": "Maletas recogidas",
+      "snackBar_cancel": "Transporte cancelado",
+      "descr_empty" : "Ninguna descripción indicada por el cliento",
+      "cancel_takeover":"Cancelar la recogida",
+      "cancel_takeover_confirm":"¿ Está seguro que quiere cancelar la recogida ?",
+      "cancel_takeover_info" : "Esta acción causara penalidades si el transporte era programado próximamente",
+      "take_bags" : "Confirmar la recogida de las maletas",
+      "deliver_bags" : "Entregar las maletas",
+      "courses_empty" : "No hay transportes en esta categoría",
 
 
+      "details_bag" : "Détails du bagage",
+      "estimated_time" : "Temps estimé"
 
-      "snackBar_dest": "Bagages livrés à destination",
-      "snackBar_bags": "Bagages pris en charge",
-      "snackBar_cancel": "Course annulée",
-      "descr_empty" : "Aucune description indiquée par le client",
-      "cancel_takeover":"Annuler la prise en charge",
-      "cancel_takeover_confirm":"Souhaitez vous vraiment annuler la prise en charge?",
-      "cancel_takeover_info" : "Cette action entrainera des pénalités si la course devait avoir lieu prochainement",
-      "take_bags" : "Confirmer la prise des bagages",
-      "deliver_bags" : "Livrer les bagages",
-      "courses_empty" : "Il n'y a aucune course dans cette catégorie"
+
     }
 }

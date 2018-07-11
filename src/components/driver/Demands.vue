@@ -116,7 +116,7 @@ export default {
       }
 
       $.ajax({
-        url: 'http://demo-deliverbag.supconception.fr/mobile/drivers/deliveries/edit-status',
+        url: 'http://dev-deliverbag.supconception.fr/mobile/drivers/deliveries/edit-status',
         type : 'POST',
         data : req,
         success: function(data){
@@ -221,7 +221,7 @@ export default {
 
 
             $.ajax({
-              url: 'https://demo-deliverbag.supconception.fr/'+'deliveries?status=1',
+              url: 'https://dev-deliverbag.supconception.fr/'+'deliveries?status=1',
               dataType: 'jsonp',
               success: function(json){
                 // On a récupéré les données, on effectue le traitement ici
@@ -298,7 +298,7 @@ export default {
                       }
                     }
                     // pas une solution pour l'affichage des 2 markers de début et de fin
-                    //var markerCluster = new MarkerClusterer(self.map,self.markers,{imagePath: 'https://demoelopers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+                    //var markerCluster = new MarkerClusterer(self.map,self.markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 
 
                   },

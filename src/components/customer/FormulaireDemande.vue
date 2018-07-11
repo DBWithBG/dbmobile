@@ -391,7 +391,7 @@ export default {
     },
 
     maxDateEnd(){
-     return new Date(this.date).toISOString().substring(0,10);
+     //return new Date(this.date).toISOString().substring(0,10);
     },
 
     minTimeEnd(){
@@ -399,7 +399,7 @@ export default {
     },
 
     maxTimeEnd(){
-      return this.time.toLocaleString().substring(12,18) ;
+    //  return this.time.toLocaleString().substring(12,18) ;
     },
 
     //return this.moment(this.date).add(1,'day').format('L');
