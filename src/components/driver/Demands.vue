@@ -11,7 +11,6 @@
     </v-flex>
 
 
-
     <div id="google-map" > </div>
     <div id="demand-description" v-if="active_demand !== null">
       <p> Descriptif de cette demande </p>
@@ -99,7 +98,10 @@ export default {
       listDate:[],
       activeDate:new Date().toLocaleString().slice(0,10),
       detailBag:false,
-      modelBag:''
+      modelBag:'',
+
+
+
     }
   },
 

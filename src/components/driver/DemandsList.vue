@@ -19,47 +19,47 @@
 
       <v-expansion-panel popout>
         <v-expansion-panel-content>
-        <div slot="header">Filtrer les demandes</div>
+          <div slot="header">{{$t('filter_demands')}}</div>
+          <v-flex xs10 offset-xs1>
+            <v-subheader></v-subheader>
+            <v-slider
+            v-model="search[0].distance"
+            thumb-label="always"
+            :max="999"
+            thumb-size="45"
+            >
+            <template slot="thumb-label" slot-scope="props">
+              <span>
+                {{props.value}} km
+              </span>
+            </template>
+          </v-slider>
+        </v-flex>
+
         <v-flex xs10 offset-xs1>
-          <v-subheader>Distance du client</v-subheader>
+          <v-subheader>{{$t('max_bags')}}</v-subheader>
           <v-slider
-          v-model="search[0].distance"
+          v-model="search[0].bags"
           thumb-label="always"
-          :max="999"
-          thumb-size="45"
+          :max="10"
           >
-          <template slot="thumb-label" slot-scope="props">
-            <span>
-              {{props.value}} km
-            </span>
-          </template>
         </v-slider>
       </v-flex>
 
       <v-flex xs10 offset-xs1>
-        <v-subheader>Nombre de bagages max</v-subheader>
-        <v-slider
-        v-model="search[0].bags"
-        thumb-label="always"
-        :max="10"
-        >
-      </v-slider>
-    </v-flex>
-
-    <v-flex xs10 offset-xs1>
-      <v-subheader>Type de course</v-subheader>
-      <v-select multiple chips :items="listType" v-model="search[0].type" single-line auto hide-details></v-select>
-    </v-flex>
-
-    <v-layout class="pt-2" row>
-      <v-flex xs10 offset-xs1>
-        <v-subheader >Date de la course</v-subheader>
-        <v-select class="mb-5":items="listDate" v-model="search[0].date" single-line auto hide-details></v-select>
+        <v-subheader>{{$t('course_type')}}</v-subheader>
+        <v-select multiple chips :items="listType" v-model="search[0].type" single-line auto hide-details></v-select>
       </v-flex>
 
-    </v-layout>
-      </v-expansion-panel-content>
-    </v-expansion-panel>
+      <v-layout class="pt-2" row>
+        <v-flex xs10 offset-xs1>
+          <v-subheader >{{$t('course_date')}}</v-subheader>
+          <v-select class="mb-5":items="listDate" v-model="search[0].date" single-line auto hide-details></v-select>
+        </v-flex>
+
+      </v-layout>
+    </v-expansion-panel-content>
+  </v-expansion-panel>
 
 
 
@@ -68,87 +68,94 @@
 
 
 
-<v-data-table
-:headers="headers"
-:items="deliveries_list"
-:search="search"
-:custom-filter="customFilter"
-hide-actions
-item-key="id"
->
+  <v-data-table :headers="headers" :items="deliveries_list" :search="search" :custom-filter="customFilter" hide-actions item-key="id">
 
 
-<template slot="items" slot-scope="props">
-  <tr @click="props.expanded = !props.expanded">
+    <template slot="items" slot-scope="props">
 
-    <td class="text-xs-left"> {{props.item.date_formatted}} </td>
-    <td class="text-xs-left"> à {{props.item.distance_from_driver}} km </td>
-    <td class="text-xs-left"> {{props.item.estimated_time}} minutes</td>
+      <tr @click="props.expanded = !props.expanded">
 
-  </tr>
-</template>
+        <td class="text-xs-left"> {{moment(props.item.date_moment).fromNow()}} </td>
+        <td class="text-xs-left"> à {{props.item.distance_from_driver}} km </td>
+        <td class="text-xs-left"> {{props.item.estimated_time}} {{$t('minutes')}}</td>
 
-<template slot="no-data">
-  {{$t('courses_empty')}}
-</template>
-
-<template slot="no-results">
-  Aucune course ne correspond à ces critères.
-</template>
+      </tr>
 
 
 
-<template slot="expand" slot-scope="props">
-  <v-card flat>
-    <v-card-text> Prise en charge : {{props.item.start_position.address}}</v-card-text>
-    <v-card-text> Livraison : {{props.item.end_position.address}}</v-card-text>
-  </v-card>
+    </template>
+
+    <template slot="no-data">
+      {{$t('courses_empty')}}
+    </template>
+
+    <template slot="no-results">
+      {{$t('courses_no_results')}}
+    </template>
 
 
-  <v-list subheader>
-    <v-subheader> {{props.item.bags.length}} bagages </v-subheader>
-    <v-layout column>
 
-      <v-flex v-for="bag in props.item.bags" :key="bag.id">
-        <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-          <v-dialog v-model="detailBag" max-width="290">
-            <v-card>
-              <v-card-title class="headline">Détail de ce bagage</v-card-title>
-              <v-layout row>
-                <v-flex xs10 offset-xs1>
-                  <div v-if="modelBag.details">
-                    {{modelBag.details}}
-                  </div>
-                  <div v-else>
-                    Aucune description n'a été indiquée par le client
-                  </div>
-                </v-flex>
-              </v-layout>
-            </v-card>
-          </v-dialog>
-          {{bag.name}}
-          <v-icon right>work</v-icon>
-        </v-chip>
+    <template slot="expand" slot-scope="props">
 
-        <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-          {{bag.name}}
-          <v-icon right>work</v-icon>
-        </v-chip>
+      <v-card flat>
+        <v-card-text> {{$t('takeover_label')}} : {{props.item.start_position.address}} le {{props.item.date_formatted}}</v-card-text>
+        <v-card-text> {{$t('livraison_label')}} : {{props.item.end_position.address}} </v-card-text>
+      </v-card>
 
-        <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-          {{bag.name}}
-          <v-icon right>work</v-icon>
-        </v-chip>
 
-      </v-flex>
-    </v-layout>
-  </v-list>
 
-  <v-btn flat color='primary' @click.native="prendreEnCharge(props.item.id)">
-    <span>M'engager sur cette demande</span>
-  </v-btn>
-</template>
-</v-data-table>
+
+      <v-list subheader>
+        <v-subheader> {{props.item.bags.length}} {{$t('luggages')}} </v-subheader>
+        <v-layout column>
+
+          <v-flex v-for="bag in props.item.bags" :key="bag.id">
+            <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+              {{bag.name}}
+              <v-icon right>work</v-icon>
+            </v-chip>
+
+            <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+              {{bag.name}}
+              <v-icon right>work</v-icon>
+            </v-chip>
+
+            <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+              {{bag.name}}
+              <v-icon right>work</v-icon>
+            </v-chip>
+
+          </v-flex>
+        </v-layout>
+      </v-list>
+      <v-btn flat color='primary' @click.native="route(props.item.start_position.lat,props.item.start_position.lng)">
+        <span>{{$t('map_display')}}</span>
+      </v-btn>
+
+      <v-btn flat color='primary' @click.native="prendreEnCharge(props.item.id)">
+        <span>{{$t('confirm_demand')}}</span>
+      </v-btn>
+
+    </template>
+  </v-data-table>
+  <v-dialog v-model="detailBag" max-width="290">
+    <v-card>
+      <v-card-title class="headline">{{$t('bagage_descr')}}</v-card-title>
+      <v-layout row>
+        <v-flex xs10 offset-xs1>
+          <div v-if="modelBag.details">
+            {{modelBag.details}}
+          </div>
+          <div v-else>
+            {{$t('descr_empty')}}
+          </div>
+        </v-flex>
+      </v-layout>
+    </v-card>
+  </v-dialog>
+
+
+
 </div>
 </div>
 </template>
@@ -156,7 +163,7 @@ item-key="id"
 
 <script>
 
-
+import mapStyle from '@/assets/mapStyle.json'
 
 export default {
 
@@ -173,24 +180,52 @@ export default {
       deliveries_list: [],
       user_pos:null,
       listDate:[],
-      listType:[
-        'Livraison', 'Consigne'
-      ],
+      listType: [this.$i18n.t('livraison_label'),this.$i18n.t('consigne_label')],
       headers: [
-        { text: this.$i18n.t('label_heure'), value: 'date_formatted' , align: 'left'},
+        { text: this.$i18n.t('label_heure'), value: 'date_moment' , align: 'left'},
         { text: this.$i18n.t('distance'), value: 'distance_from_driver', align: 'left'},
         { text: this.$i18n.t('estimated_time'), value: 'estimated_time' ,align: 'left'}
       ],
       search:[
         {
-          date : new Date().toLocaleString().slice(0,10),
-          type : ['Livraison','Consigne'],
+          date : this.$i18n.t('any_date'),
+          type : [this.$i18n.t('livraison_label'),this.$i18n.t('consigne_label')],
           distance : 999,
           temps : '',
           bags:10
         }],
         detailBag:false,
-        modelBag:''
+        modelBag:'',
+        map:'',
+
+
+        apiKey:'AIzaSyB8Vjewz4EKG19ljWw37rIA_5po4xAjo_o',
+        zoom: 10, // required
+        center: 'Brooklyn+Bridge,New+York,NY',
+        format: 'png',
+        language: 'fr',
+        markers: [
+          {
+            label: 'B', color: 'blue', lat: 40.602147, lng: -74.015794, size: 'tiny',
+          },
+          {
+            label: 'Y', color: 'yellow', lat: 40.711614, lng: -74.012318, size: 'tiny',
+          },
+        ],
+        paths: [
+          {
+            color: 'blue',
+            weight: 8,
+            geodesic: false,
+            fillcolor: '0xFFFF0033',
+            locations: [
+              { startLat: 40.602147, endLng: -74.015794 },
+              { startLat: 40.711614, endLng: -74.012318 }
+            ],
+          },
+        ],
+        type: 'roadmap',
+        size: [200, 200],
       }
     },
 
@@ -206,6 +241,23 @@ export default {
         return this.search[0];
       },
 
+      // works on ANDROID
+      // Ouvre l'appli native et affiche l'itinéraire :
+      //  - origine = position actuelle
+      // - destination = coordonnées passées
+      route(lat,lng){
+        //window.open("google.navigation:q="+lat+","+lng+"&mode=d" , '_system');
+        let addressLongLat = {lat,lng};
+
+        if (device.platform == 'Android'){
+          window.open("geo:"+addressLongLat);
+        }
+        else{
+          window.open("http://maps.apple.com/?q="+addressLongLat, '_system');
+        }
+
+      },
+
       customFilter(items, search, filter) {
 
         //
@@ -216,7 +268,11 @@ export default {
         return items.filter(row =>
           //console.log(row["distance_from_driver"])
           (row["distance_from_driver"] <= search[0].distance)   &&
-          (new Date(row["start_date"]).toLocaleString().slice(0,10) === search[0].date) &&
+          (
+            new Date(row["start_date"]).toLocaleString().slice(0,10) === search[0].date
+            ||
+            search[0].date == this.$i18n.t('any_date')
+          ) &&
           (row["bags"].length <= search[0].bags)
 
         );
@@ -279,6 +335,7 @@ export default {
 
 
           let a = new Date(elem.start_date).valueOf();
+          elem.date_moment=new Date(elem.start_date)
           elem.date_formatted=new Date(elem.start_date).toLocaleString().slice(0,18);
           let mins = Math.floor(((a - b) % msDay) / msMinute);
           let h = Math.floor(mins / 60);
@@ -339,6 +396,20 @@ export default {
               function(error){
                 self.requestGps();
               },cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
+            },
+            initMap(){
+
+              var self=this;
+              setTimeout(function(){
+
+                self.map = new google.maps.Map(document.getElementById('google-map'), {
+                  center: {lat: 44.836151, lng: -0.580816},
+                  zoom: 12,
+                  disableDefaultUI: true,
+                  gestureHandling: "greedy",
+                  styles:mapStyle
+                });
+              },2000);
             }
 
 
@@ -355,15 +426,18 @@ export default {
           cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
 
           */
+
+
           let now = new Date();
           let end = new Date();
           end.setDate(end.getDate()+15);
           var getDaysArray = function(s,e) {for(var a=[],d=s;d<=e;d.setDate(d.getDate()+1)){ a.push(new Date(d).toLocaleString().slice(0,10));}return a;};
           this.listDate = getDaysArray(now,end);
-
+          this.listDate.unshift(this.$i18n.t('any_date'));
           let self=this;
           //  self.requestGps();
           self.getUserPos();
+
 
         }
       }
@@ -371,7 +445,7 @@ export default {
 
       <i18n src='@/assets/trad.json'></i18n>
 
-      <style>
+      <style scoped>
 
 
       th {
@@ -383,5 +457,10 @@ export default {
         padding-bottom: 20px!important;
         padding-top: 20px!important;
         border-bottom: 2px solid #ddd;
+      }
+
+      #google-map {
+        height:200px;
+        width: 100vw;
       }
       </style>

@@ -88,7 +88,24 @@
     "disconnect":"Se déconnecter",
     "disconnect_sbt":"Se déconnecter de l'application et retourner à l'écran d'accueil",
     "details_bag" : "Détails du bagage",
-    "estimated_time" : "Temps estimé"
+    "estimated_time" : "Temps estimé",
+
+	"filter_demands" : "Filtrer les demandes" ,
+	"distance_client" : "Distance du client",
+	"max_bags": "Nombre de bagages max",
+	"course_type" : "Type de course",
+	"course_date" : "Date de la course",
+	"minutes" : "minutes",
+	"courses_no_results" : "Aucune course ne correspond à ces critères.",
+	"takeover_label" : "Prise en charge ",
+	"livraison_label" : "Livraison ",
+	"consigne_label" : "Consigne ",
+	"confirm_demand" : "M'engager sur cette demande",
+	"any_date" : "Toutes les dates",
+	"luggages" : "bagages",
+	"map_display" : "Voir sur la carte",
+  "error_heure" : "L'heure d'arrivée à cet arrêt est passée"
+
 
 },
     "en": {

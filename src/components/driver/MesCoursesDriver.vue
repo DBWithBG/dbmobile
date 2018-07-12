@@ -43,7 +43,7 @@
                     </v-layout>
 
                     <v-list class="mt-4" subheader>
-                      <v-subheader> {{props.item.delivery.bags.length}} bagages</v-subheader>
+                      <v-subheader> {{props.item.delivery.bags.length}} {{$t('luggages')}} </v-subheader>
                       <v-layout column>
                         <v-flex v-for="bag in props.item.delivery.bags" :key="bag.id">
                           <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">

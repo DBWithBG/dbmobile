@@ -85,7 +85,8 @@
         <v-select
         :items="gares"
         v-model="selectedGare"
-        item-text="stop_point.name"
+        item-text="gare.stop_point.name"
+        item-value="gare"
         v-bind:label="$t('select_gare')"
         single-line
         v-on:input="verifGare"
@@ -360,7 +361,7 @@ export default {
       sncf_key:'7308cd76-a20f-4f01-9cc3-59d4742bba24',
       numTrain :'',
       gares:[],
-      selectedGare:'',
+      selectedGare:null,
 
       flight_app_id : '95a4eb71',
       flight_app_key : '84cb52736b8c4db53b753b8f87be34a8',
@@ -673,13 +674,29 @@ verifBagage(){
   },
 
   verifGare(){
+    //console.log(JSON.stringify(this.selectedGare));
     // Geocode recçoit des coordonées sous forme de nombre et non de Strings
     var lat = parseFloat(this.selectedGare.stop_point.coord.lat);
     var lng =  parseFloat(this.selectedGare.stop_point.coord.lon);
     var trainTime = this.selectedGare.arrival_time;
-    this.time=(trainTime.substring(0,2) + ':' + trainTime.substring(2,4) );
+    //this.time=(trainTime.substring(0,2) + ':' + trainTime.substring(2,4) );
+
+//    console.log("train : " + this.time);
+    this.time = this.moment(trainTime.substring(0,4), "hmm").format("HH:mm");
+
+      console.log("now : " + this.moment().format('LT'))
+      console.log("train : " + this.time)
+    console.log(this.time<this.moment().format('LT'));
+
+
+    if ( this.time<this.moment().format('LT') ){
+      this.errors['error_date'] = this.$i18n.t('error_heure');
+    }
+    else{
+      this.errors['error_date']='';
+    }
     //  this.time.setMinutes(parseInt(trainTime.substring(2,4)));
-    //  console.log(this.time);
+
     var pos = {lat : lat, lng : lng};
     var self=this;
 
@@ -830,7 +847,7 @@ verifBagage(){
             text=this.$i18n.t('error_gare');
           }
           this.errors[lieu]=text+this.$i18n.t('error_place');
-          console.log(this.errors);
+
           //console.log(this.errors);
         }
       },
@@ -943,16 +960,18 @@ verifBagage(){
 
     traitement_gares(data){
 
-      console.log(JSON.stringify(data.disruptions));
-      console.log(data);
+    //  console.log(JSON.stringify(data.disruptions));
+    //  console.log(data);
       var stops = data.vehicle_journeys[0].stop_times;
       for (var i=1 ;i<stops.length; i++){
         var pos = {  lat : parseFloat(stops[i].stop_point.coord.lat), lng : parseFloat(stops[i].stop_point.coord.lon) } ;
         //  $(`<br> <button  class="btn btn-medium border border-green uppercase xround-2 choix_gare" data-lat="${pos.lat}" data-lng="${pos.lng}"> ${stops[i].stop_point.name}  </button>`).insertAfter($('#input_train'));
-        console.log(stops[i].stop_point.name);
-        console.log('*************');
-        this.gares.push(stops[i]);
-        console.log(this.gares);
+    //  console.log(stops[i].stop_point.name);
+  //      console.log('*************');
+        this.gares.push({
+          'gare' : stops[i]
+        });
+    //    console.log(this.gares);
       }
     },
   },
