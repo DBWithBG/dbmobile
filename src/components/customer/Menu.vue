@@ -1,16 +1,17 @@
 
 <template>
-  <v-bottom-nav :value="true" :active.sync="element" fixed>
-      <v-btn flat color="primary" value="left" to="/courses">
-        <span> {{$t("courses")}}</span>
+
+  <v-bottom-nav color="primary" :value="true" :active.sync="element" fixed>
+      <v-btn dark flat value="left" to="/courses">
+        <span>{{$t("courses")}}</span>
         <v-icon>history</v-icon>
       </v-btn>
-    <v-btn flat color="primary" value="main" to="/demand">
+    <v-btn dark flat value="main" to="/demand">
       <span>{{$t("demande")}}</span>
       <v-icon>pan_tool</v-icon>
     </v-btn>
-    <v-btn flat color="primary" value="right" to="/settings">
-      <span>{{$t("settings")}} </span>
+    <v-btn dark flat  value="right" to="/settings">
+      <span>{{$t("settings")}}</span>
       <v-icon>settings</v-icon>
     </v-btn>
   </v-bottom-nav>
@@ -20,7 +21,7 @@
 export default{
   data(){
     return {
-      element:'main',
+      element:"main",
     }
   },
 

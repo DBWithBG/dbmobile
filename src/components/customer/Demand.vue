@@ -6,6 +6,9 @@
     right:swipeRight
     }">
 
+<!--
+  Pour accéder au formulaire de demande avec saisie d'adresses
+-->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
         <v-card elevation-5 :to="{name :'demande-form' , params: {type:'address'} }">
@@ -20,6 +23,11 @@
         </v-card>
       </v-flex>
     </v-layout>
+
+
+    <!--
+      Pour accéder au formulaire de demande avec saisie de numéro de train
+    -->
 
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
@@ -36,6 +44,9 @@
       </v-flex>
     </v-layout>
 
+    <!--
+      Pour accéder au formulaire de demande avec saisie de numéro de vol
+    -->
 
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
@@ -51,10 +62,6 @@
         </v-card>
       </v-flex>
     </v-layout>
-
-
-
-
     <db-menu> </db-menu>
   </div>
 
@@ -65,10 +72,7 @@
 <script>
 
 
-
 export default{
-
-
 
   data(){
     return {

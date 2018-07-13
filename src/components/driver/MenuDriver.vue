@@ -1,14 +1,14 @@
 <template>
-  <v-bottom-nav :value="true" :active.sync="element" fixed>
-      <v-btn flat color="primary" value="left" to="/courses-driver">
+  <v-bottom-nav color="primary" :value="true" :active.sync="element" fixed>
+      <v-btn dark  value="left" to="/courses-driver">
         <span> {{$t("courses")}}</span>
         <v-icon>history</v-icon>
       </v-btn>
-    <v-btn flat color="primary" value="main" to="/demands">
+    <v-btn dark  value="main" to="/demands">
       <span>{{$t("demandes")}}</span>
       <v-icon>map</v-icon>
     </v-btn>
-    <v-btn flat color="primary" value="right" to="/settings-driver">
+    <v-btn dark value="right" to="/settings-driver">
       <span>{{$t("settings")}}</span>
       <v-icon>settings</v-icon>
     </v-btn>

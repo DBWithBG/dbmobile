@@ -1,73 +1,103 @@
 <template>
 
   <div>
+    <!--
+    Ecran de chargement,
+    ce qui est affiché lorsque l'on attend la récupération des données du serveur
+  -->
+  <v-layout v-if="loading" row justify-center>
+    <v-container fill-height>
+      <v-layout row justify-center align-center>
+        <v-progress-circular indeterminate :size="70" :width="5" color="primary"></v-progress-circular>
+      </v-layout>
+    </v-container>
+  </v-layout>
 
-    <v-layout v-if="loading" row justify-center>
-      <v-container fill-height>
-        <v-layout row justify-center align-center>
-          <v-progress-circular indeterminate :size="70" :width="5" color="primary"></v-progress-circular>
+  <div v-if="!loading" v-touch="{
+    left:swipeLeft
+    }">
+
+    <!--
+    Définition des différents onglets
+  -->
+  <v-tabs fixed-tabs slider-color="primary">
+    <v-tab v-for="tab in tabs" :key="tab.id" >
+      {{ tab }}
+    </v-tab>
+    <v-tabs-items :v-model="tabs">
+      <v-tab-item
+      v-for="tab in demandes" :key="tab.id" >
+      <v-data-table :headers="headers" :items="tab" hide-actions class="elevation-1" hide-headers>
+        <template slot="items" slot-scope="props">
+          <v-expansion-panel>
+            <v-expansion-panel-content>
+
+              <!--
+              SLOT CONCERNANT LE HEADER DU PANEL
+            -->
+            <div slot="header">
+              {{$t("suivi_course")}} {{props.item.id}}
+            </div>
+
+            <!--
+            Notation de la course SI elle a déjà été effectuée
+          -->
+          <div v-if="props.item.status === 5 && !ratingSent">
+            <v-layout row>
+              <star-rating
+              v-model="props.item.rating" :show-rating="false"
+              @click.native.stop="active=props.item,dialogRating = true,sendRating(props.item.id,props.item.rating)" >
+            </star-rating>
+          </v-layout>
+        </div>
+
+        <!--
+        Contenu du panel lorsqu'il est étendu
+      -->
+
+      <v-flex row xs12>
+        <v-layout align-center justify-space-around>
+          <td> {{ props.item.start_position.address }} </td>
+          <v-icon align-center>arrow_forward</v-icon>
+          <td> {{ props.item.end_position.address }} </td>
         </v-layout>
-      </v-container>
-    </v-layout>
+      </v-flex>
+      <br>
+      <v-flex row xs12>
+        <v-btn flat color='primary' @click.native="detailsCourse(props.item.id)">
+          <span> {{$t("suivi_course")}}</span>
+        </v-btn>
+      </v-flex>
+      <v-layout>
+        <v-flex row xs12 v-if="props.item.status === 1">
+          <v-btn flat color='error' @click.native.stop="active=props.item,dialogDel = true">
+            <span> {{$t("cancel_course")}}</span>
+          </v-btn>
 
-    <div v-if="!loading" v-touch="{
-      left:swipeLeft
-      }">
-      <v-tabs fixed-tabs>
-        <v-tab v-for="tab in tabs" :key="tab.id" >
-          {{ tab }}
-        </v-tab>
-        <v-tabs-items :v-model="tabs">
-          <v-tab-item
-          v-for="tab in demandes" :key="tab.id" >
-          <v-data-table :headers="headers" :items="tab" hide-actions class="elevation-1" hide-headers>
-          <template slot="items" slot-scope="props">
-            <v-expansion-panel>
-              <v-expansion-panel-content>
-                <div slot="header">{{$t("suivi_course")}} {{props.item.id}}</div>
-                <div v-if="props.item.status === 5 && !ratingSent">
-                  <v-layout row>
-                    <star-rating v-model="props.item.rating" :show-rating="false" @click.native.stop="active=props.item,dialogRating = true" @click.native="sendRating(props.item.id,props.item.rating)"> </star-rating>
+        </v-flex>
+      </v-layout>
+    </v-expansion-panel-content>
+  </v-expansion-panel>
+</template>
 
-                  </v-layout>
-                </div>
+<!--
+SLOT affiché lorsqu'il n'y a pas de données à afficher
+-->
 
-                <v-flex row xs12>
-                  <v-layout align-center justify-space-around>
-                    <td> {{ props.item.start_position.address }} </td>
-                      <v-icon align-center>arrow_forward</v-icon>
-                    <td> {{ props.item.end_position.address }} </td>
-                  </v-layout>
-                </v-flex>
-                  <br>
-                <v-flex row xs12>
-                  <v-btn flat color='primary' @click.native="detailsCourse(props.item.id)">
-                    <span> {{$t("suivi_course")}}</span>
-                  </v-btn>
-                </v-flex>
-                <v-layout>
-                  <v-flex row xs12 v-if="props.item.status === 1">
-                    <v-btn flat color='error' @click.native.stop="active=props.item,dialogDel = true">
-                      <span> {{$t("cancel_course")}}</span>
-                    </v-btn>
+<template slot="no-data">
+  {{$t('courses_empty')}}
+</template>
+</v-data-table>
 
-                  </v-flex>
-                </v-layout>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </template>
-
-          <template slot="no-data">
-            {{$t('courses_empty')}}
-          </template>
-        </v-data-table>
-
-      </v-tab-item>
-    </v-tabs-items>
-  </v-tabs>
+</v-tab-item>
+</v-tabs-items>
+</v-tabs>
 
 </div>
 
+<!--
+Dialog popup concernant l'annulation d'une course
+-->
 
 <v-dialog v-model="dialogDel" max-width="290">
   <v-card>
@@ -94,6 +124,9 @@
   </v-card>
 </v-dialog>
 
+<!--
+Dialog popup concernant la notation d'une course
+-->
 
 <v-dialog v-model="dialogRating" max-width="290">
   <v-card>
@@ -124,24 +157,38 @@ export default {
 
   data () {
     return {
+      // pour savoir si les données sont chargées
       loading:true,
+      // pour savoir si une notation de course avec commentaire a été envoyée
       ratingSent:false,
+      // correspond à la course sélectionnée
       active:'',
+      // différents headers de la data table
       headers: [
         { text: this.$i18n.t("distance"), value: 'distance' },
         { text: this.$i18n.t("prix"), value: 'price' },
         { text: this.$i18n.t("temps_estime"), value: 'estimated_time' },
       ],
+      // dialog notation ouvert?
       dialogRating:false,
+      // dialog suppression de course ouvert?
       dialogDel:false,
+      // label des onglets
       tabs: [this.$i18n.t("tab_en_cours"), this.$i18n.t("tab_en_attente"), this.$i18n.t("tab_passees")],
+      // données récupérées du serveur que l'on stocke ensuite dans des arrays
       demandes: [[],[],[]]
-      }
-    },
+    }
+  },
 
+  // Ce qui est effectué dès que la page est créée
+  created(){
+    // On récupère les deliveries du client correspondant
+    this.getDeliveries();
+  },
 
-    mounted(){
+  methods:{
 
+    getDeliveries(){
       let self=this;
       $.ajax({
         url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/customers?mobile_token='+localStorage.getItem('deviceId'),
@@ -174,73 +221,82 @@ export default {
           console.log(e);
         }
       });
-
     },
 
-    methods:{
+    // méthode pour annuler une demande
+    // params : id de la delivery + mobile token pour vérifier que c'est un client
+    cancelDelivery(id){
+      let self=this;
+      $.ajax({
+        url: 'http://dev-deliverbag.supconception.fr/mobile/customers/deliveries/cancelDelivery',
+        type : 'POST',
+        data : {
+          "delivery_id" : id,
+          "mobile_token" : localStorage.getItem('deviceId')
+        },
+        //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
+        success: function(data){
 
-
-      cancelDelivery(id){
-        $.ajax({
-          url: 'http://dev-deliverbag.supconception.fr/mobile/customers/deliveries/cancelDelivery',
-          type : 'POST',
-          data : {
-            "delivery_id" : id,
-            "mobile_token" : localStorage.getItem('deviceId')
-          },
-          //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
-          success: function(data){
-          //  self.demandes[1].delete()
-            console.log(data);
-          },
-          error:function(e){
-            console.log(e);
-          }
-        });
-      },
-
-      sendRating(id,rating,com){
-
-        console.log(com);
-
-        if (com != undefined){
-          this.ratingSent=true;
+          // on reset les demandes et on recharge la page
+          self.demandes= [[],[],[]];
+          self.getDeliveries();
+          console.log(data);
+        },
+        error:function(e){
+          console.log(e);
         }
+      });
+    },
 
-        $.ajax({
-          url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/ratings',
-          type : 'POST',
-          data : {
-            "delivery_id" : id,
-            "mobile_token" : localStorage.getItem('deviceId'),
-            "details" : com,
-            "rating" : rating,
-          },
-          //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
-          success: function(data){
-            console.log(data);
-          },
-          error:function(e){
-            console.log(e);
-          }
-        });
-      },
-      swipeLeft(){
-        this.$router.replace({path: 'demand'});
-      },
-      detailsCourse(id){
-        let ref = window.open('http://dev-deliverbag.supconception.fr/mobile/deliveries/'+id+'?mobile_token='+localStorage.getItem('deviceId'), '_blank', 'location=no,zoom=no',);
+    // méthode pour envoyer la notation d'une course
+    // params : id de la delivery, mobile token du client, note attribuée et commentaire FACULTATIF
+    sendRating(id,rating,com){
 
+      console.log(com);
+
+      // si il y'a un commentaire, alors l'utilisateur ne peut pas à nouveau envoyer la notation
+      if (com != undefined){
+        this.ratingSent=true;
       }
+
+      $.ajax({
+        url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/ratings',
+        type : 'POST',
+        data : {
+          "delivery_id" : id,
+          "mobile_token" : localStorage.getItem('deviceId'),
+          "rating" : rating,
+          "details" : com
+        },
+        success: function(data){
+          // TODO: snacbar "notation envoyée, merci"
+          console.log(data);
+        },
+        error:function(e){
+          console.log(e);
+        }
+      });
+    },
+
+    // définition de l'action de swipe
+    swipeLeft(){
+      this.$router.replace({path: 'demand'});
+    },
+
+    // webview pour avoir le détail d'une course
+    // param : id de la course
+    detailsCourse(id){
+      let ref = window.open('http://dev-deliverbag.supconception.fr/mobile/deliveries/'+id+'?mobile_token='+localStorage.getItem('deviceId'), '_blank', 'location=no,zoom=no',);
+
     }
   }
+}
 
-
-  </script>
+</script>
 <i18n src='@/assets/trad.json'></i18n>
-  <style>
+<style>
 
-  tbody li {
-    width:100vw;
-  }
-  </style>
+tbody li {
+  width:100vw;
+}
+</style>

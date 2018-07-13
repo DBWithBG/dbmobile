@@ -1,55 +1,49 @@
 <template>
-  <div id="home">
+  <div>
+
+    <!-- header retourn arrière -->
     <back-header :message="$t('header')"> </back-header>
 
-    <!-- STEPPER -->
+    <!-- STEPPER Horizontal de progression-->
     <v-stepper v-model="step">
       <v-stepper-header>
+        <!-- étape 1 : infos de prise en chagre et livraison -->
         <v-stepper-step :complete="step > 1" step="1" > {{$t('subt_1')}}</v-stepper-step>
-        <v-divider></v-divider>
+        <!-- étape 2 : infos de bagages-->
         <v-stepper-step :complete="step > 2" step="2">{{$t('subt_2')}}</v-stepper-step>
-        <v-divider></v-divider>
+        <!-- étape 3 : récap et paiement-->
         <v-stepper-step step="3">{{$t('subt_3')}}</v-stepper-step>
       </v-stepper-header>
-
 
       <v-stepper-items>
         <!-- PRISE EN CHARGE -->
         <v-stepper-content step="1">
-          <v-subheader color="primary"> {{$t('subt_1')}}</v-subheader>
-          <v-layout row>
-            <v-flex mt-2 mb-2 xs12 sm6 offset-sm3>
+          <v-subheader > {{$t('subt_1')}}</v-subheader>
+            <v-flex mt-4 mb-3 xs12 >
               <span class="subheading" >{{$t('info_1')}}</span>
             </v-flex>
-          </v-layout>
 
           <!-- MESSAGES D'ERREURS -->
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+            <v-flex xs12>
               <div v-if="error.length">
                 <alert :message="error"> </alert>
               </div>
             </v-flex>
-          </v-layout>
 
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+            <v-flex xs12>
               <div v-for="error in errors">
                 <alert v-if="error !='' " :message="error"> </alert>
               </div>
             </v-flex>
-          </v-layout>
 
           <v-layout row>
-            <v-flex xs10 >
-              <!-- DATE PICKER -->
+            <v-flex xs10>
+              <!-- DATE PICKER START -->
               <v-menu ref="menudate" :close-on-content-click="false" :nudge-right="40" :return-value.sync="date" transition="scale-transition" offset-y full-width min-width="290px">
                 <v-text-field
                 slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
               </v-text-field>
-
-
-              <v-date-picker v-model="date" :min="minDate" @input="$refs.menudate.save(date)" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
+              <v-date-picker v-model="date" :min="minDate" @input="$refs.menudate.save(date),resetData()" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
 
               </v-date-picker>
             </v-menu>
@@ -62,7 +56,7 @@
               <!-- DATE PICKER -->
               <v-menu ref="menutime" :close-on-content-click="false" :nudge-right="40" :return-value.sync="time" transition="scale-transition" offset-y lazy full-width min-width="290px">
                 <v-text-field
-                slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" append-icon="access_time"  readonly>
+                slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" append-icon="access_time" readonly>
               </v-text-field>
               <v-time-picker v-model="time" :min="minTime" :format="$t('date_format')" @change="$refs.menutime.save(time)" color="primary" no-title :locale="this.$root.$i18n.locale" > </v-time-picker>
           </v-menu>
@@ -71,17 +65,22 @@
     </v-layout>
 
 
-    <v-layout v-if="type == 'train'" >
-      <v-flex row xs6 offset-xs3>
-        <!-- NUMERO DE TRAIN POUR TRAIN -->
+      <v-flex v-if="type == 'train'" row xs6 offset-xs3>
+        <!-- NUMERO DE TRAIN si arrivée par train -->
         <v-text-field v-model="numTrain" v-on:input="traitementTrain" v-on:click="resetData" pattern="\d*" type="number" :placeholder="$t('train_number')">
         </v-text-field>
       </v-flex>
-    </v-layout>
 
       <!-- SELECTION DE L'ARRET EN GARE POUR TRAIN -->
-      <v-layout row>
       <v-flex v-if="gares.length" xs12>
+
+        <!--
+        Le texte du select correspond au NOM de la gare
+        L'objet que l'on traite est un OBJET gare contentant plus d'infos
+        Lorsque l'on choisit une gare, on apelle verifGare() qui vérifie :
+        - le lieu
+        - les horaires
+        -->
         <v-select
         :items="gares"
         v-model="selectedGare"
@@ -92,48 +91,36 @@
         v-on:input="verifGare"
         ></v-select>
       </v-flex>
-      </v-layout>
 
 
     <!-- NUMERO DE VOL POUR VOL -->
-    <v-layout v-if="type == 'flight'" row>
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12 v-if="type == 'flight'">
         <input v-model="numVol" v-on:input="traitementVol" v-on:click="resetData" type="text"  maxlength="6" :placeholder="$t('flight_number')">
       </v-flex>
-    </v-layout>
 
     <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
-    <v-layout v-if="type == 'address'" row>
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12 v-if="type == 'address'">
         <input class="autocomplete" ref="autocomplete_start" v-bind:placeholder="$t('label_address_depart')"/>
       </v-flex>
-    </v-layout>
 
 
     <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
-    <v-layout row>
-      <v-flex mt-4 mb-3 xs12 sm6 offset-sm3>
+      <v-flex mt-4 mb-3 xs12 >
         <span class="subheading" >{{$t('info_2')}}</span>
       </v-flex>
-    </v-layout>
 
 
     <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
-    <v-layout row>
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12>
         <input class="autocomplete" ref="autocomplete_end" v-bind:placeholder="$t('label_address_livraison')" />
       </v-flex>
-    </v-layout>
 
-
-    <v-layout row>
-      <v-flex mt-4 mb-2 xs12 sm6 offset-sm3>
-        <v-switch v-bind:label="$t('livraison')" v-model="livraisonDirecte" color="success"> </v-switch>
+      <!-- SWITCH correspondant au type de prestation : livraison ou consigne
+       par défaut consigne
+     -->
+      <v-flex mt-3 mb-2 xs12>
+        <v-switch v-bind:label="$t('livraison')" v-model="livraisonDirecte" color="primary"> </v-switch>
       </v-flex>
-    </v-layout>
-
-
-
 
 
     <v-layout v-if="!livraisonDirecte" row>
@@ -144,9 +131,7 @@
           slot="activator" v-model="displayDateEnd" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
         </v-text-field>
 
-
         <v-date-picker v-model="dateEnd" :min="minDateEnd" :max="maxDateEnd" @input="$refs.menudateend.save(dateEnd)" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
-
         </v-date-picker>
       </v-menu>
     </v-flex>
@@ -159,15 +144,12 @@
           <v-text-field
           slot="activator" v-model="displayTimeEnd" v-bind:label="$t('label_heure')" append-icon="access_time"  readonly>
         </v-text-field>
-
-
         <v-time-picker v-model="timeEnd" :min="minTimeEnd" :max="maxTimeEnd"
         :format="$t('date_format')"
         @change="$refs.menutimeend.save(timeEnd)"
         color="primary"
         no-title
         :locale="this.$root.$i18n.locale" >
-
       </v-time-picker>
     </v-menu>
   </v-flex>
@@ -175,65 +157,50 @@
 
 
 
-
-<v-flex xs12 sm6 offset-sm3 >
+  <!-- Bouton pour continuer la saisie des Informations
+       Désactivé si le form n'est pas valide
+  -->
+<v-flex xs12 >
   <v-btn :disabled="!isFormOk()" color="primary" @click.native="step=2"dark >
     <span> {{$t('next')}}</span>
     <v-icon right>navigate_next</v-icon>
   </v-btn>
-
 </v-flex>
-<!--  this.$router.push( { name:'demand-next', params : {date : this.date, place : this.place} });
-
--->
 
 </v-stepper-content>
 
 
-
-
-
-
+<!-- Deuxième étape : saisie des bagages -->
 
 <v-stepper-content step="2">
-  Mes bagages
+  {{$t('luggages')}}
+
 
   <!-- Gestion des bagages -->
 
-
-
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
-
+    <v-flex xs12>
       <v-btn color="primary" @click.native="ajoutBagage('cabine')" dark > {{$t('bagages_ajout')}} {{$t('bagage_cabine')}}</v-btn>
       <div v-for="bag in bagagesCabine" :key="bag.id">
-
         <v-layout row>
           <v-flex xs2>
             <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
               <v-icon>delete</v-icon>
-            </v-btn>
-            <v-btn icon flat color="teal" >
-              <v-icon>photo</v-icon>
             </v-btn>
           </v-flex>
           <v-flex xs5>
             <v-text-field  box v-bind:label="$t('bagage_nom')" v-model="bag.name"
             ></v-text-field>
           </v-flex>
+          <v-divider vertical> </v-divider>
           <v-flex xs5>
             <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
           </v-flex>
         </v-layout>
-        <v-divider>
-        </v-divider>
       </div>
     </v-flex>
-  </v-layout>
 
 
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
+    <v-flex xs12 >
       <v-btn  color="primary" @click.native="ajoutBagage('soute')" dark >{{$t('bagages_ajout')}} {{$t('bagage_soute')}} </v-btn>
       <div v-for="bag in bagagesSoute" :key="bag.id">
         <v-layout row>
@@ -241,36 +208,27 @@
             <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
               <v-icon>delete</v-icon>
             </v-btn>
-            <v-btn icon flat color="teal" >
-              <v-icon>photo</v-icon>
-            </v-btn>
           </v-flex>
           <v-flex xs5>
             <v-text-field  box v-bind:label="$t('bagage_nom')" v-model="bag.name"
             ></v-text-field>
           </v-flex>
+          <v-divider vertical> </v-divider>
           <v-flex xs5>
             <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
           </v-flex>
         </v-layout>
-        <v-divider>
-        </v-divider>
+
       </div>
     </v-flex>
-  </v-layout>
 
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
+    <v-flex xs12>
       <v-btn  color="primary" @click.native="ajoutBagage('autre')" dark >{{$t('bagages_ajout')}} {{$t('bagage_autre')}}</v-btn>
       <div v-for="bag in bagagesAutre" :key="bag.id">
-
         <v-layout row>
           <v-flex xs2>
             <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
               <v-icon>delete</v-icon>
-            </v-btn>
-            <v-btn icon flat color="teal" >
-              <v-icon>photo</v-icon>
             </v-btn>
           </v-flex>
           <v-flex xs5>
@@ -278,21 +236,15 @@
             :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
             ></v-text-field>
           </v-flex>
+          <v-divider vertical> </v-divider>
           <v-flex xs5>
             <v-text-field box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
           </v-flex>
         </v-layout>
-        <v-divider>
-        </v-divider>
       </div>
     </v-flex>
-  </v-layout>
-
-
 
   <v-layout row>
-
-
     <v-flex xs4>
       <v-btn color="orange lighten-1" @click.native="step=1" dark >
         <v-icon>navigate_before</v-icon>
@@ -302,25 +254,23 @@
     <v-flex xs2>
     </v-flex>
     <v-flex xs5>
-      <v-btn :disabled="!verifBagage()" color="action" @click.native="step=3" dark >
+      <v-btn :disabled="!verifBagage()" color="primary" @click.native="step=3" dark >
         {{$t('next')}}
         <v-icon>navigate_next</v-icon>
       </v-btn>
     </v-flex>
-
   </v-layout>
 
 </v-stepper-content>
 
 <v-stepper-content step="3">
-
+  <!-- Récapitulatif -->
   <v-card>
     {{reponse()}}
   </v-card>
 
-
   <v-btn  color="orange lighten-1" @click.native="step=2" dark >{{$t('prev')}}</v-btn>
-  <v-btn  color="action" @click.native="payer()" dark >{{$t('payer')}} </v-btn>
+  <v-btn  color="primary" @click.native="payer()" dark >{{$t('payer')}} </v-btn>
 </v-stepper-content>
 </v-stepper-items>
 
@@ -341,71 +291,127 @@ export default {
   data(){
     return {
 
-      activeDeliveryId:'',
+      // définit l'étape actuelle du formulaire
       step:0,
+
+      // correspond à l'id de la delivery
+      // id utilisé pour payer après la création d'une demande
+      activeDeliveryId:'',
+
+      // définit le type de prestation souhaitée, true=livraison, false=consigne
       livraisonDirecte:false,
-      message:'',
-      slider:0,
-      ticks:['Aujourd\'hui', 'Demain'],
+
+      // date minimum pour le picker, correspond à la date actuelle fromatée pour le picker
       minDate:new Date().toISOString().substring(0,10),
+
+      // correspond à la date de prise en charge
       date:new Date().toJSON(),
+
+      // correspond à l'heure de prise en charge
       time:new Date(),
+
+      // correspond à la date de livraison
       dateEnd:new Date().toJSON(),
+
+      // correspond à l'heure de livraison
       timeEnd:new Date(),
 
+      // lieu de prise en charge
       startPlace:'',
+
+      // lieu de livraison
       endPlace:'',
+
+      // message d'erreur
       error:'',
+
+      // toutes les erreurs lors de la saisie (date incorrecte, lieu non desservi...)
       errors:{},
+
+      // les départements authorisés qui seront pris en compte
       authorized:[],
+
+      // api key sncf
       sncf_key:'7308cd76-a20f-4f01-9cc3-59d4742bba24',
+
+      // numéro de train saisi
       numTrain :'',
+
+      // liste des gares correspondant à ce train
       gares:[],
+
+      // arrêt choisi par le client
       selectedGare:null,
 
+      // app id flightstats
       flight_app_id : '95a4eb71',
+
+      // app key flightstats
       flight_app_key : '84cb52736b8c4db53b753b8f87be34a8',
+
+      // numéro de vol saisi
       numVol : '',
 
+      // array des bagages cabine
       bagagesCabine : [],
+
+      // array des bagages soute
       bagagesSoute : [],
+
+      // array des bagages autre
       bagagesAutre : []
     }
   },
 
+// les proprités computed sont des données qui sont réactives au changement
+// on les utilise de la même manière que les données classiques
+
   computed:{
+
+    // Id de la compagnie aérienne
     compagnyId(){
       return this.numVol.substring(0,2);
     },
+    // Id du vol
     flightId(){
       return this.numVol.substring(2,6);
     },
-    dateFormated(){
-      if (this.date != null)
-      return this.date.getMonth();
+
+    // Date minimale pour la prise en charge
+    // si la date est aujourd'hui, restriction (pas avant l'heure courante)
+    minTime(){
+      let time;
+      if (this.dateTime.substring(0,10) != new Date().toLocaleString().substring(0,10)) {
+        time = '';
+      }
+      else{
+        time = new Date().toLocaleString().substring(12,18);
+      }
+      return time;
     },
 
-
-
+    // Date minimale pour la consigne en fonction à la date de prise en charge indiquée
     minDateEnd(){
-     return new Date(this.date).toISOString().substring(0,10);
+      this.dateEnd = new Date(this.date).toISOString().substring(0,10)
+      return new Date(this.date).toISOString().substring(0,10);
     },
 
+    // Date max pour la consigne
+    // TODO: plage horaire continue ou non, restrictions à définir
     maxDateEnd(){
      //return new Date(this.date).toISOString().substring(0,10);
     },
 
+    // Heure min pour la consigne
     minTimeEnd(){
-      return this.time.toLocaleString().substring(12,18) ;
+
     },
 
+    // Heure max pour la consigne
     maxTimeEnd(){
-    //  return this.time.toLocaleString().substring(12,18) ;
     },
 
-    //return this.moment(this.date).add(1,'day').format('L');
-   //  return this.moment(this.time).add(24,'hours').format('LT');
-
+    // assemblage et formatage de la date et de l'heure de départ
     dateTime(){
       //console.log(this.time);
       let date = new Date(this.date);
@@ -420,6 +426,7 @@ export default {
       return date.toLocaleString();
     },
 
+    // assemblage et formatage de la date et de l'heure de livraison
     dateTimeEnd(){
       //console.log(this.time);
       let date = new Date(this.dateEnd);
@@ -434,32 +441,10 @@ export default {
       return date.toLocaleString();
     },
 
-    minTime(){
-      let time;
-      if (this.dateTime.substring(0,10) != new Date().toLocaleString().substring(0,10)) {
-        time = '';
-      }
-      else{
-        time = new Date().toLocaleString().substring(12,18);
-      }
-      return time;
-    },
 
-    maxDateTime(){
-      var date = new Date(this.dateToJson);
-      date.setDate(date.getDate() + 1);
-      return date.toLocaleString().substring(0,18)
-    },
-
-    maxDate(){
-      return this.maxDateTime.substring(0,10);
-    },
-
-    maxTime(){
-      return this.maxDateTime.substring(12,18);
-    },
-
-    dateToJson(){
+    // assemblage et formatage de la date et de l'heure de prise en charge
+    // utilisée pour l'envoi des données au serveur
+    dateStartToJson(){
       console.log(this.time);
       var date = new Date(this.date);
       if (typeof this.time === 'string'){
@@ -473,32 +458,49 @@ export default {
       return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(),  date.getHours(), date.getMinutes(), date.getSeconds())).toJSON().split('.')[0].replace('T',' ');
     },
 
+    // assemblage et formatage de la date et de l'heure de livraison
+    // utilisée pour l'envoi des données au serveur
+    dateEndToJson(){
+      console.log(this.timeEnd);
+      var date = new Date(this.dateEnd);
+      if (typeof this.timeEnd === 'string'){
+        date.setHours(this.timeEnd.match(/^(\d+)/)[1]);
+        date.setMinutes(this.timeEnd.match(/:(\d+)/)[1]);
+      }
+      else{
+        date.setHours(this.timeEnd.getHours());
+        date.setMinutes(this.timeEnd.getMinutes());
+      }
+      return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(),  date.getHours(), date.getMinutes(), date.getSeconds())).toJSON().split('.')[0].replace('T',' ');
+    },
+
+    // Affichage du label du datepicker PRISE EN CHARGE de manière plus "humaine" pour l'utilisateur
     displayDate(){
       return this.dateTime.substring(0,10);
     },
 
+    // Affichage du label du timepicker PRISE EN CHARGE de manière plus "humaine" pour l'utilisateur
     displayTime(){
       return this.dateTime.substring(12,18);
     },
 
+    // Affichage du label du datepicker LIVRAISON de manière plus "humaine" pour l'utilisateur
     displayDateEnd(){
       return this.dateTimeEnd.substring(0,10);
     },
 
+    // Affichage du label du timepicker LIVRAISON de manière plus "humaine" pour l'utilisateur
     displayTimeEnd(){
       return this.dateTimeEnd.substring(12,18);
     }
 
   },
 
-
   methods : {
 
     reponse(){
 
       if (this.step==3) {
-
-        //alert(typeof(this.startPlace.geometry.location));
         var req =
         {
           "start_position":
@@ -520,7 +522,8 @@ export default {
           "delivery" :
           {
             "comment" : "Un commentaire... sur une demande de prise en charge...",
-            "start_date" : this.dateToJson,
+            "start_date" : this.dateStartToJson,
+            "end_date" : this.dateEndToJson,
             "livraisonDirecte":this.livraisonDirecte
           },
           "bagages" : {
@@ -573,34 +576,6 @@ export default {
 
     },
 
-    /*
-    openCamera(){
-    navigator.camera.getPicture(function(photo){
-    // traitement de la camera
-  }, onFail, {
-  quality: 100,
-  destinationType: navigator.camera.DestinationType.NATIVE_URI, // dataURL -> Return base64 encoded string.
-  correctOrientation: true,
-  encodingType : navigator.camera.EncodingType.JPEG,
-  targetWidth : 400,
-  targetHeight : 400
-});
-},
-
-openGalery() {
-navigator.camera.getPicture(function(photo){
-//traitement de la galerie
-}, onFail, {
-quality: 100,
-destinationType: navigator.camera.DestinationType.NATIVE_URI,
-sourceType: pictureSource.PHOTOLIBRARY,
-correctOrientation: true,
-targetWidth : 400,
-targetHeight : 400 });
-},
-
-*/
-
 ajoutBagage(type){
   switch(type){
     case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'descr' : ''});
@@ -624,6 +599,7 @@ resetData(){
   this.numTrain='';
   this.gares=[];
   this.error='';
+  this.errors={}
 
 },
 
@@ -704,7 +680,6 @@ verifBagage(){
     geocoder.geocode({
       'latLng': pos},
       function(results,status){
-        // c'est un appel asynchrone donc on doit vérifier que le retour est correct
         if (status !== google.maps.GeocoderStatus.OK) {
           alert("Erreur lors de l'appel a geocode");
           console.log(status);
@@ -729,7 +704,6 @@ verifBagage(){
             self.authorized.push(JSON.parse(json)[i].number.toString());
             self.authorized.push(JSON.parse(json)[i].name);
           }
-          //console.log(JSON.stringify(self.authorized));
         },
         error : function(error){
           console.log('error ');
@@ -746,7 +720,6 @@ verifBagage(){
         url: 'http://dev-deliverbag.supconception.fr/mobile/bags/users/'+localStorage.getItem('deviceId'),
         type : 'GET',
         datatype : 'jsonp' ,
-        //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
         success: function(data){
           data = JSON.parse(data);
           console.log(JSON.stringify(data));
@@ -789,7 +762,6 @@ verifBagage(){
       geocoder.geocode({
         'latLng': pos},
         function(results,status){
-          // c'est un appel asynchrone donc on doit vérifier que le retour est correct
           if (status !== google.maps.GeocoderStatus.OK) {
             alert("Erreur lors de l'appel a geocode");
             console.log(status);
@@ -800,17 +772,9 @@ verifBagage(){
           }
         });
       },
-      /*
-      ** Verify that the input place is in the service étrange
-      ** Actually fixed on '33' , Gironde
-      ** @param place : place objet that contains adresse & geolocation informations
-      */
+
       verifyDepartment(place,lieu){
-        //  console.log(this.startPlace);
-        //  console.log(res);
-        //var bdx_metropole = {33130, 33370 ,33110,33170,33700,33185,33530,33127,33400,33810,33290,33150,33520,33160,33310,33440,33270,33140,33560,33600,33320,33800,33100,33000,33200,33300};
-        //this.error='';
-        var res = place.address_components;
+            var res = place.address_components;
         var found = false;
         var isInrange = false;
         for (var i = 0; i < res.length; i++) {
@@ -820,7 +784,6 @@ verifBagage(){
             if ( res[i].types[j] == "postal_code" || res[i].types[j] == "administrative_area_level_2" ) {
               found = true;
               var dep = res[i].short_name;
-              //  console.log(dep);
               // On prend les 2 premiers chiffres pour vérifier le département
               if (this.authorized.includes(dep.substr(0,2)) || this.authorized.includes(dep)) {
                 isInrange=true;
@@ -830,14 +793,9 @@ verifBagage(){
         }
         if (isInrange){
           this.errors[lieu]='';
-          // on redirige l'utilisateur sur la page suivante
-
-          //this.$router.push( { name:'demand-next', params : {date : this.date, place : this.place} });
         }
         else{
-          //console.log(this.$router);
-          //this.$router.replace(this.$router.history.current.path);
-          // on met une alerte pour lui dire que la gare sélectionnée n'est pas encore desservie
+          // on met une alerte pour lui dire que le lieu n'est pas encore desservi
           var text=this.$i18n.t('error_start_place');
 
           if (lieu=='end'){
@@ -847,8 +805,6 @@ verifBagage(){
             text=this.$i18n.t('error_gare');
           }
           this.errors[lieu]=text+this.$i18n.t('error_place');
-
-          //console.log(this.errors);
         }
       },
       traitementVol(){
@@ -923,8 +879,6 @@ verifBagage(){
 
     traitementTrain(){
       var self=this;
-
-
       if (this.numTrain.length==4){
         var dateTrain =( (this.date.split('T'))[0] + "T000000" );
         //console.log(dateTrain);
@@ -951,11 +905,8 @@ verifBagage(){
               self.error=self.$i18n.t("date_voyage_vide");
             }
           }
-
-
         });
       }
-
     },
 
     traitement_gares(data){
@@ -981,9 +932,7 @@ verifBagage(){
     this.getBagages();
     this.getDepartments();
     var self=this;
-    // VueJs "transforme" les HTMLInput elemnt en 'div'
-    // On doit donc récupérer cet objet en passant par l'objet $refs et en definissant une propriété ref='***' dans notre input field
-    var boundsGironde = new google.maps.LatLngBounds(
+      var boundsGironde = new google.maps.LatLngBounds(
       new google.maps.LatLng(44.1939019, -1.2614241),
       new google.maps.LatLng(45.573636, 0.315137));
 
@@ -998,8 +947,6 @@ verifBagage(){
         self.endPlace=this.getPlace();
         self.verifyDepartment(self.endPlace,'end');
       });
-
-
 
       if (this.type=='address'){
         var addressStart = this.$refs.autocomplete_start;
