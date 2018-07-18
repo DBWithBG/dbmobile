@@ -6,7 +6,7 @@
     </v-btn>
 
 
-    <v-flex xs6>
+    <v-flex xs6 offset-xs3>
       <v-select :items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
     </v-flex>
 
@@ -54,9 +54,6 @@
                   {{bag.name}}
                   <v-icon right>work</v-icon>
                 </v-chip>
-
-
-
 
               </v-flex>
             </v-layout>

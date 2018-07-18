@@ -4,7 +4,7 @@
   <v-layout row>
 
 
-    <v-flex xs12 sm6 offset-sm3>
+    <v-flex xs12>
       <v-card>
 
         <v-list three-line>
@@ -103,6 +103,9 @@
         </v-list>
       </v-card>
     </v-flex>
+
+
+
     <db-menu> </db-menu>
   </v-layout>
 </template>
@@ -117,7 +120,8 @@ export default{
       {code : 'fr' ,text: this.$i18n.t("fr")},
       {code : 'en' ,text: this.$i18n.t("en")},
       {code : 'es' ,text: this.$i18n.t("es")}
-    ],
+    ]
+
     }
   },
   methods:{

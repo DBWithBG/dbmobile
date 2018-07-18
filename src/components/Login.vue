@@ -10,8 +10,6 @@
 </template>
 
 
-
-
 <script>
 
 export default {
@@ -165,10 +163,7 @@ export default {
 [class$="--disabled"],
 [class*="--disabled "] * {
     color: #757575 !important;
-},
-
-body{
-
 }
+
 
 </style>

@@ -76,7 +76,7 @@
     "subt_2": "Étape 2 : Mes bagages",
     "subt_3": "Étape 3 : Récapitulatif",
     "subt_4": "Étape 4 : Paiement",
-    "suivi_course": "Suivi de la course",
+    "suivi_course": "Détails de la course",
     "tab_en_attente": "En attente",
     "tab_en_cours": "En cours",
     "tab_passees": "Passées",
@@ -104,8 +104,11 @@
 	"any_date" : "Toutes les dates",
 	"luggages" : "bagages",
 	"map_display" : "Voir sur la carte",
-  "error_heure" : "L'heure d'arrivée à cet arrêt est passée"
-
+	"error_heure" : "L'heure d'arrivée à cet arrêt est passée",
+	"declarer_litige" : "Déclarer un litige",
+	"declaration_litige" : "Déclaration d'un litige",
+	"litige_label" : "Raison du litige"
+	
 
 },
     "en": {

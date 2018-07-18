@@ -498,6 +498,293 @@ export default {
 
   methods : {
 
+
+    // Méthode qui permet de récupérer les départements authorisés par l'application
+    getDepartments(){
+      var self=this;
+      $.ajax({
+        url: 'https://dev-deliverbag.supconception.fr/'+'departments/authorized',
+        dataType: 'jsonp',
+        success: function(json){
+          for (var i=0; i<JSON.parse(json).length; i++){
+            self.authorized.push(JSON.parse(json)[i].number.toString());
+            self.authorized.push(JSON.parse(json)[i].name);
+          }
+        },
+        error : function(error){
+          console.log('error ');
+          console.log(error);
+        }
+      });
+    },
+
+
+    // Méthode qui permet de récupérer les bagages du client
+    getBagages(){
+      var self=this;
+      $.ajax({
+        url: 'http://dev-deliverbag.supconception.fr/mobile/bags/users/'+localStorage.getItem('deviceId'),
+        type : 'GET',
+        datatype : 'jsonp' ,
+        success: function(data){
+          data = JSON.parse(data);
+          console.log(JSON.stringify(data));
+          self.bagagesCabine=[];
+          self.bagagesSoute=[];
+          self.bagagesAutre=[];
+          if (data.length){
+            for (let i=0;i<data.length;i++){
+              switch (data[i].type_id){
+                case 1 :
+                self.bagagesCabine.push(data[i]);
+                break;
+                case 2:
+                self.bagagesSoute.push(data[i]);
+                break;
+                case 3 :
+                self.bagagesAutre.push(data[i]);
+                break;
+              }
+            }
+          }
+        },
+        error:function(e){
+          alert('erreur de connexion');
+          console.log(e);
+        }
+      });
+    },
+
+
+    // C'est la méthode qui est appelé lors de la saisie du numéro de train
+    // si le numéro est correct, alors un récupère les différents arrêts du voyage
+    traitementTrain(){
+      var self=this;
+      // Les numéros de trains sont composés d'au moins 4 caractères
+      if (this.numTrain.length>=4){
+        // On formatte la date de voyage pour correspondre au format attendu par l' API SNCF
+        var dateTrain =( (this.date.split('T'))[0] + "T000000" );
+        $.get(`https://api.sncf.com/v1/coverage/sncf/vehicle_journeys/?headsign=${this.numTrain}&since=${dateTrain}&key=${this.sncf_key} `, function(data)
+        {
+          let stops = data.vehicle_journeys[0].stop_times;
+          for (let i=1 ;i<stops.length; i++){
+              self.gares.push({
+              'gare' : stops[i]
+            });
+          }
+        })
+        .fail(function(error) {
+          switch(error.status){
+            case 404 : self.error=self.$i18n.t("error_404_sncf");
+            break;
+            case 401 : self.error=self.$i18n.t("error_401_sncf");
+            break;
+            case 403 : self.error=self.$i18n.t("error_403_sncf");
+            break;
+            case 500 : self.error=self.$i18n.t("error_500_sncf");
+            break;
+            default:
+            if (self.date.length){
+              self.error=self.$i18n.t("error_default_sncf");
+            }
+            else{
+              self.error=self.$i18n.t("date_voyage_vide");
+            }
+          }
+        });
+      }
+    },
+
+
+  // Méthode qui est appelée lorsque le client sélectionne une gare
+    verifGare(){
+      // On récupère les informatons de localisation ainsi que l'heure d'arrivée en gare
+      var lat = parseFloat(this.selectedGare.stop_point.coord.lat);
+      var lng =  parseFloat(this.selectedGare.stop_point.coord.lon);
+      var trainTime = this.selectedGare.arrival_time;
+
+      this.time = this.moment(trainTime.substring(0,4), "hmm").format("HH:mm");
+
+      // Si l'heure d'arrivée en gare est antérieure à l'heure actuelle, alors on déclenche une erreur
+
+      if ( this.time<this.moment().format('LT') ){
+        this.errors['error_date'] = this.$i18n.t('error_heure');
+      }
+      else{
+        this.errors['error_date']='';
+      }
+      //  this.time.setMinutes(parseInt(trainTime.substring(2,4)));
+
+      var pos = {lat : lat, lng : lng};
+      var self=this;
+
+      // On géocode à partir de la position (lat,lng)
+      // afin d'obtenir une adresse formatée sous forme d'objet PLACE
+
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode({
+        'latLng': pos},
+        function(results,status){
+          if (status !== google.maps.GeocoderStatus.OK) {
+            alert("Erreur lors de l'appel a geocode");
+            console.log(status);
+          }
+          if (status == google.maps.GeocoderStatus.OK) {
+            self.startPlace=results[1];
+            // Si le géocodage se passe correctement, on vérifie alors que le lieu souhaité est inclus dans les départements authorisés
+            self.verifyDepartment(self.startPlace,'gare');
+
+          }
+        });
+
+      },
+
+      // Méthode qui permet de vérifier le département d'un objet PLACE
+      // Le second paramètre LIEU permet de connaître l'origine de la demande (adresse, gare ou aéroport)
+      verifyDepartment(place,lieu){
+        let res = place.address_components;
+        let found = false;
+        let isInrange = false;
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].types.length; j++) {
+            // Certains objets retournés par Google Maps n'ont pas de code "postal_code"
+            // On vérifie alors la région, que l'on retrouve dans l'objet "administrative_area_level_2"
+            if ( res[i].types[j] == "postal_code" || res[i].types[j] == "administrative_area_level_2" ) {
+              found = true;
+              let dep = res[i].short_name;
+              // On prend les 2 premiers chiffres pour vérifier le département
+              if (this.authorized.includes(dep.substr(0,2)) || this.authorized.includes(dep)) {
+                isInrange=true;
+              }
+            }
+          }
+        }
+        if (isInrange){
+          this.errors[lieu]='';
+        }
+        else{
+          // on met une alerte pour lui dire que le lieu n'est pas encore desservi
+          let text=this.$i18n.t('error_start_place');
+
+          if (lieu=='end'){
+            text=this.$i18n.t('error_end_place');
+          }
+          if (lieu=='gare'){
+            text=this.$i18n.t('error_gare');
+          }
+          this.errors[lieu]=text+this.$i18n.t('error_place');
+        }
+      },
+
+
+
+
+      // Geocode est utilisé pour transformer un objet pos en objet PLACE
+
+      geocode(pos){
+        var self=this;
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({
+          'latLng': pos},
+          function(results,status){
+            if (status !== google.maps.GeocoderStatus.OK) {
+              alert("Erreur lors de l'appel a geocode");
+              console.log(status);
+              return null;
+            }
+            if (status == google.maps.GeocoderStatus.OK) {
+              return results[1];
+            }
+          });
+        },
+
+
+        // Méthode qui remet à zéro les messages d'erreurs et les informations de train ou de vol
+        // On l'apelle par exemple lorsque le client change la date
+        resetData(){
+          this.numVol='';
+          this.numTrain='';
+          this.gares=[];
+          this.error='';
+          this.errors={}
+
+        },
+
+        // On vérifie que les données saisies par le client sont correctes
+        isFormOk(){
+          if (this.error=='' && this.startPlace !='' && this.endPlace != '' && this.date !='' && this.checkErrors() ){
+            return true;
+          }
+        },
+
+        // On vérifie qu'il n y a plus d'erreurs : localisation non desservie, heure incorrecte...
+        checkErrors(){
+          var ok=true;
+          for (var error in this.errors){
+            if (this.errors[error] != ''){
+              ok=false;
+            }
+          }
+          return ok;
+        },
+
+
+        // Méthode pour ajouter un bagage en fonction du type
+        ajoutBagage(type){
+          switch(type){
+            case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'descr' : ''});
+            break;
+            case 'soute' : this.bagagesSoute.push({'name' : '' + '' , 'descr' : ''});
+            break;
+            case 'autre' : this.bagagesAutre.push({ 'name' : '' + '' , 'descr' : ''});
+            break;
+          }
+        },
+
+        // Méthode pour supprimer un bagage
+        supprBagage(array,obj){
+          let index = array.indexOf(obj);
+          if (index > -1) {
+            array.splice(index, 1);
+          }
+        },
+
+        // On vérifie que la partie concernant les bagages est correcte
+        // - il faut qu'il y ait au minimum un bagage
+        // - on vérifie également que les bagages autres soient nommés (facultatifs pour les autres)
+        // TODO: définir une limite max de bagages que le client peut ajouter
+        verifBagage(){
+          return (
+            (this.bagagesCabine.length || this.bagagesSoute.length || this.bagagesAutre.length)
+            && this.bagageOk(this.bagagesAutre) ) ;
+
+          },
+
+        //on vérifie également que les bagages autres soient nommés
+          bagageOk(tab){
+
+            var noms=[];
+            var ok=true;
+            if (tab.length){
+              var self=this;
+              for (var i=0; i<tab.length;i++){
+                if (tab[i].name == ''){
+                  ok=false;
+                }
+                else{
+                  if (noms.includes(tab[i].name)){
+                    ok=false;
+                  }
+                  else{
+                    noms.push(tab[i].name)
+                  }
+                }
+              }
+            }
+            return ok;
+          },
+
+
     reponse(){
 
       if (this.step==3) {
@@ -550,8 +837,6 @@ export default {
           },
         });
       }
-
-
       return req;
     },
 
@@ -576,237 +861,6 @@ export default {
 
     },
 
-ajoutBagage(type){
-  switch(type){
-    case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'descr' : ''});
-    break;
-    case 'soute' : this.bagagesSoute.push({'name' : '' + '' , 'descr' : ''});
-    break;
-    case 'autre' : this.bagagesAutre.push({ 'name' : '' + '' , 'descr' : ''});
-    break;
-  }
-},
-
-supprBagage(array,obj){
-  var index = array.indexOf(obj);
-  if (index > -1) {
-    array.splice(index, 1);
-  }
-},
-
-resetData(){
-  this.numVol='';
-  this.numTrain='';
-  this.gares=[];
-  this.error='';
-  this.errors={}
-
-},
-
-isFormOk(){
-  if (this.error=='' && this.startPlace !='' && this.endPlace != '' && this.date !='' && this.checkErrors() ){
-    return true;
-  }
-},
-
-checkErrors(){
-  var ok=true;
-  for (var error in this.errors){
-    if (this.errors[error] != ''){
-      ok=false;
-    }
-  }
-  return ok;
-},
-
-verifBagage(){
-  return (
-    (this.bagagesCabine.length || this.bagagesSoute.length || this.bagagesAutre.length)
-    && this.bagageOk(this.bagagesAutre) ) ;
-
-  },
-
-  bagageOk(tab){
-
-    var noms=[];
-    var ok=true;
-    if (tab.length){
-      var self=this;
-      for (var i=0; i<tab.length;i++){
-        if (tab[i].name == ''){
-          ok=false;
-        }
-        else{
-          if (noms.includes(tab[i].name)){
-            ok=false;
-          }
-          else{
-            noms.push(tab[i].name)
-          }
-        }
-      }
-    }
-    return ok;
-  },
-
-  verifGare(){
-    //console.log(JSON.stringify(this.selectedGare));
-    // Geocode recçoit des coordonées sous forme de nombre et non de Strings
-    var lat = parseFloat(this.selectedGare.stop_point.coord.lat);
-    var lng =  parseFloat(this.selectedGare.stop_point.coord.lon);
-    var trainTime = this.selectedGare.arrival_time;
-    //this.time=(trainTime.substring(0,2) + ':' + trainTime.substring(2,4) );
-
-//    console.log("train : " + this.time);
-    this.time = this.moment(trainTime.substring(0,4), "hmm").format("HH:mm");
-
-      console.log("now : " + this.moment().format('LT'))
-      console.log("train : " + this.time)
-    console.log(this.time<this.moment().format('LT'));
-
-
-    if ( this.time<this.moment().format('LT') ){
-      this.errors['error_date'] = this.$i18n.t('error_heure');
-    }
-    else{
-      this.errors['error_date']='';
-    }
-    //  this.time.setMinutes(parseInt(trainTime.substring(2,4)));
-
-    var pos = {lat : lat, lng : lng};
-    var self=this;
-
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({
-      'latLng': pos},
-      function(results,status){
-        if (status !== google.maps.GeocoderStatus.OK) {
-          alert("Erreur lors de l'appel a geocode");
-          console.log(status);
-        }
-        if (status == google.maps.GeocoderStatus.OK) {
-          self.startPlace=results[1];
-          self.verifyDepartment(self.startPlace,'gare');
-
-        }
-      });
-
-    },
-
-
-    getDepartments(){
-      var self=this;
-      $.ajax({
-        url: 'https://dev-deliverbag.supconception.fr/'+'departments/authorized',
-        dataType: 'jsonp',
-        success: function(json){
-          for (var i=0; i<JSON.parse(json).length; i++){
-            self.authorized.push(JSON.parse(json)[i].number.toString());
-            self.authorized.push(JSON.parse(json)[i].name);
-          }
-        },
-        error : function(error){
-          console.log('error ');
-          console.log(error);
-        }
-      });
-    },
-
-
-
-    getBagages(){
-      var self=this;
-      $.ajax({
-        url: 'http://dev-deliverbag.supconception.fr/mobile/bags/users/'+localStorage.getItem('deviceId'),
-        type : 'GET',
-        datatype : 'jsonp' ,
-        success: function(data){
-          data = JSON.parse(data);
-          console.log(JSON.stringify(data));
-          self.bagagesCabine=[];
-          self.bagagesSoute=[];
-          self.bagagesAutre=[];
-          if (data.length){
-            for (let i=0;i<data.length;i++){
-              switch (data[i].type_id){
-                case 1 :
-                self.bagagesCabine.push(data[i]);
-                break;
-                case 2:
-                self.bagagesSoute.push(data[i]);
-                break;
-                case 3 :
-                self.bagagesAutre.push(data[i]);
-                break;
-              }
-            }
-          }
-        },
-        error:function(e){
-          alert('erreur de connexion');
-          console.log(e);
-        }
-      });
-    },
-
-    /*
-    ** geocode is used to transform a latLng objet into a Place objet
-    ** usefull in case of user_pos
-    ** the function also calls verifyDepartment after the objet's conversion
-    ** @param pos : pos objet that contains latLng
-    */
-
-    geocode(pos){
-      var self=this;
-      var geocoder = new google.maps.Geocoder();
-      geocoder.geocode({
-        'latLng': pos},
-        function(results,status){
-          if (status !== google.maps.GeocoderStatus.OK) {
-            alert("Erreur lors de l'appel a geocode");
-            console.log(status);
-            return null;
-          }
-          if (status == google.maps.GeocoderStatus.OK) {
-            return results[1];
-          }
-        });
-      },
-
-      verifyDepartment(place,lieu){
-            var res = place.address_components;
-        var found = false;
-        var isInrange = false;
-        for (var i = 0; i < res.length; i++) {
-          for (var j = 0; j < res[i].types.length; j++) {
-            // Certains objets retournés par Google Maps n'ont pas de code "postal_code"
-            // On vérifie alors la région, que l'on retrouve dans l'objet "administrative_area_level_2"
-            if ( res[i].types[j] == "postal_code" || res[i].types[j] == "administrative_area_level_2" ) {
-              found = true;
-              var dep = res[i].short_name;
-              // On prend les 2 premiers chiffres pour vérifier le département
-              if (this.authorized.includes(dep.substr(0,2)) || this.authorized.includes(dep)) {
-                isInrange=true;
-              }
-            }
-          }
-        }
-        if (isInrange){
-          this.errors[lieu]='';
-        }
-        else{
-          // on met une alerte pour lui dire que le lieu n'est pas encore desservi
-          var text=this.$i18n.t('error_start_place');
-
-          if (lieu=='end'){
-            text=this.$i18n.t('error_end_place');
-          }
-          if (lieu=='gare'){
-            text=this.$i18n.t('error_gare');
-          }
-          this.errors[lieu]=text+this.$i18n.t('error_place');
-        }
-      },
       traitementVol(){
 
         var self=this;
@@ -877,70 +931,26 @@ verifBagage(){
       }
     },
 
-    traitementTrain(){
-      var self=this;
-      if (this.numTrain.length==4){
-        var dateTrain =( (this.date.split('T'))[0] + "T000000" );
-        //console.log(dateTrain);
-        $.get(`https://api.sncf.com/v1/coverage/sncf/vehicle_journeys/?headsign=${this.numTrain}&since=${dateTrain}&key=${this.sncf_key} `, function(data)
-        {
-          //console.log(data);
-          self.traitement_gares(data);
-        })
-        .fail(function(error) {
-          switch(error.status){
-            case 404 : self.error=self.$i18n.t("error_404_sncf");
-            break;
-            case 401 : self.error=self.$i18n.t("error_401_sncf");
-            break;
-            case 403 : self.error=self.$i18n.t("error_403_sncf");
-            break;
-            case 500 : self.error=self.$i18n.t("error_500_sncf");
-            break;
-            default:
-            if (self.date.length){
-              self.error=self.$i18n.t("error_default_sncf");
-            }
-            else{
-              self.error=self.$i18n.t("date_voyage_vide");
-            }
-          }
-        });
-      }
-    },
 
-    traitement_gares(data){
-
-    //  console.log(JSON.stringify(data.disruptions));
-    //  console.log(data);
-      var stops = data.vehicle_journeys[0].stop_times;
-      for (var i=1 ;i<stops.length; i++){
-        var pos = {  lat : parseFloat(stops[i].stop_point.coord.lat), lng : parseFloat(stops[i].stop_point.coord.lon) } ;
-        //  $(`<br> <button  class="btn btn-medium border border-green uppercase xround-2 choix_gare" data-lat="${pos.lat}" data-lng="${pos.lng}"> ${stops[i].stop_point.name}  </button>`).insertAfter($('#input_train'));
-    //  console.log(stops[i].stop_point.name);
-  //      console.log('*************');
-        this.gares.push({
-          'gare' : stops[i]
-        });
-    //    console.log(this.gares);
-      }
-    },
   },
 
   mounted(){
 
+    // On récupère les bagages du client et les départements authorisés
     this.getBagages();
     this.getDepartments();
     var self=this;
+    // On crée les bornes de recherches pour orienter les résultats des autocompletes en GIRONDE
       var boundsGironde = new google.maps.LatLngBounds(
       new google.maps.LatLng(44.1939019, -1.2614241),
       new google.maps.LatLng(45.573636, 0.315137));
 
-      var options = {
+      let options = {
         bounds : boundsGironde,
         componentRestrictions : {'country' : 'fr'}
       };
 
+      // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de la livraison
       var addressEnd = this.$refs.autocomplete_end;
       var endPlace = new google.maps.places.Autocomplete(addressEnd, options);
       endPlace.addListener('place_changed', function() {
@@ -949,9 +959,10 @@ verifBagage(){
       });
 
       if (this.type=='address'){
+        // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de prise en charge
+        // UNQIUEMENT SI ON EST EN SAISIE D'ADRESSE
         var addressStart = this.$refs.autocomplete_start;
         var startPlace = new google.maps.places.Autocomplete(addressStart, options);
-
         startPlace.addListener('place_changed', function() {
           self.startPlace=this.getPlace();
           self.verifyDepartment(self.startPlace,'start');

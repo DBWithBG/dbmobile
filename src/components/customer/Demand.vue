@@ -9,9 +9,9 @@
 <!--
   Pour accéder au formulaire de demande avec saisie d'adresses
 -->
-    <v-layout row>
+
       <v-flex xs12 sm6 offset-sm3>
-        <v-card elevation-5 :to="{name :'demande-form' , params: {type:'address'} }">
+        <v-card class="vh33" color="green lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'address'} }">
           <v-card-title primary-title>
             <div>
               <h3 class="headline mb-0 text-xs-center">
@@ -22,35 +22,30 @@
           </v-card-title>
         </v-card>
       </v-flex>
-    </v-layout>
-
 
     <!--
       Pour accéder au formulaire de demande avec saisie de numéro de train
     -->
 
-    <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <v-card elevation-5 :to="{name :'demande-form' , params: {type:'train'} }">
+        <v-card class="vh33" color="light-green lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'train'} }">
           <v-card-title primary-title>
             <div>
               <h3 class="headline mb-0 text-xs-center">
                 <v-icon left>train</v-icon>
-                {{$t("train")}}</h3>
+                {{$t("train")}}
+              </h3>
               <div class="text-xs-center"> {{$t("train_subt")}} </div>
             </div>
           </v-card-title>
         </v-card>
       </v-flex>
-    </v-layout>
 
     <!--
       Pour accéder au formulaire de demande avec saisie de numéro de vol
     -->
-
-    <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <v-card elevation-5 :to="{name :'demande-form' , params: {type:'flight'} }">
+        <v-card class="vh33" color="lime lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'flight'} }">
           <v-card-title primary-title>
             <div>
               <h3 class="headline mb-0 text-xs-center">
@@ -61,7 +56,7 @@
           </v-card-title>
         </v-card>
       </v-flex>
-    </v-layout>
+
     <db-menu> </db-menu>
   </div>
 
@@ -76,6 +71,7 @@ export default{
 
   data(){
     return {
+      value:''
     }
   },
 
@@ -103,6 +99,10 @@ p {
 
 a {
   text-decoration:none;
+}
+
+.vh33{
+  height:30vh;
 }
 
 

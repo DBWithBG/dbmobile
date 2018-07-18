@@ -75,9 +75,9 @@
 
       <tr @click="props.expanded = !props.expanded">
 
-        <td class="text-xs-left"> {{moment(props.item.date_moment).fromNow()}} </td>
-        <td class="text-xs-left"> à {{props.item.distance_from_driver}} km </td>
-        <td class="text-xs-left"> {{props.item.estimated_time}} {{$t('minutes')}}</td>
+        <td> {{moment(props.item.date_moment).fromNow()}} </td>
+        <td class="text-xs-center"> à {{props.item.distance_from_driver}} km </td>
+        <td class="text-xs-center"> {{props.item.estimated_time}} {{$t('minutes')}}</td>
 
       </tr>
 
@@ -132,12 +132,13 @@
         <span>{{$t('map_display')}}</span>
       </v-btn>
 
-      <v-btn flat color='primary' @click.native="prendreEnCharge(props.item.id)">
+      <v-btn flat color='primary' @click.native="active=props.item.id,dialogTake=true ">
         <span>{{$t('confirm_demand')}}</span>
       </v-btn>
 
     </template>
   </v-data-table>
+
   <v-dialog v-model="detailBag" max-width="290">
     <v-card>
       <v-card-title class="headline">{{$t('bagage_descr')}}</v-card-title>
@@ -150,6 +151,20 @@
             {{$t('descr_empty')}}
           </div>
         </v-flex>
+      </v-layout>
+    </v-card>
+  </v-dialog>
+
+
+  <v-dialog v-model="dialogTake" max-width="290">
+    <v-card>
+      <v-card-title class="headline">Confirmation de la prise en charge </v-card-title>
+      <v-layout row>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="action" flat @click.native.stop="dialogTake=false">{{$t('cancel')}}</v-btn>
+          <v-btn color="primary" flat @click.native.stop="dialogTake  =false,prendreEnCharge(active)">Confirmer</v-btn>
+        </v-card-actions>
       </v-layout>
     </v-card>
   </v-dialog>
@@ -176,6 +191,7 @@ export default {
         []  ,
         []
       ],
+      active:'',
       loading:true,
       deliveries_list: [],
       user_pos:null,
@@ -195,6 +211,7 @@ export default {
           bags:10
         }],
         detailBag:false,
+        dialogTake:false,
         modelBag:'',
         map:'',
 
@@ -448,15 +465,13 @@ export default {
       <style scoped>
 
 
-      th {
-        background-color: #59A34E;
-        color: white!important;
-      }
 
       td {
-        padding-bottom: 20px!important;
-        padding-top: 20px!important;
+
         border-bottom: 2px solid #ddd;
+      }
+      tr {
+        height:100px;
       }
 
       #google-map {
