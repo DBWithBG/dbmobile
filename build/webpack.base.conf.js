@@ -80,7 +80,11 @@ module.exports = {
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]'),
           publicPath: process.env.NODE_ENV === 'production' ? '../../' : '/'  // forum trick
         }
-      }
+      },
+      {
+      test: /\.styl$/,
+      loader: ['style-loader', 'css-loader', 'stylus-loader']
+    }
     ]
   },
   node: {
