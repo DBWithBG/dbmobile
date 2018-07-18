@@ -120,29 +120,25 @@
 
     <v-dialog v-model="dialogContact" max-width="auto">
       <v-card>
-        <v-card-title class="headline">Contacter Deliverbag</v-card-title>
+        <v-card-title class="headline">{{$t('contact_db')}}</v-card-title>
         <v-layout column>
 
           <v-card-text class="text-xs-center">
-            Numéro de téléphone : {{$t('db_tel')}}
+            {{$t('tel_number')}} : {{$t('db_tel')}}
             <v-btn flat color="primary" @click.native="openTel()">
               <v-icon large>call</v-icon>
             </v-btn>
           </v-card-text>
 
           <v-card-text class="text-xs-center" >
-            Email : {{$t('db_email')}}
+            {{$t('email')}} : {{$t('db_email')}}
             <v-btn flat color="primary" @click.native="openMail()">
               <v-icon large>mail</v-icon>
             </v-btn>
           </v-card-text>
-
-
         </v-layout>
       </v-card>
-
     </v-dialog>
-
     <db-menu> </db-menu>
   </div>
 </template>
@@ -164,15 +160,18 @@ export default{
   },
   methods:{
 
+    // redirection sur l'appli de messagerie selectionnée par le client
     openMail(){
       window.open('mailto:bordeaux@deliverbag.com', '_system');
     },
 
+    // redirection sur l'écran d'appel
     openTel(){
       let tel = this.$i18n.t('db_tel').split(' ').join('');
       window.open('tel:' + tel, '_system');
     },
 
+    // webview du profil détaillé de l'utilisateur
     getProfile(){
       let url = "http://dev-deliverbag.supconception.fr/customers/profile?mobile_token=" + localStorage.getItem('deviceId') ;
       let ref = window.open(url, '_blank', 'location=no,zoom=no');
@@ -180,6 +179,9 @@ export default{
       let t= '$("#chk_mobile_token").val("'+tok+'")';
       //  ref.executeScript( {code : t});
     },
+
+    // on clean le cache contenant le keep login
+    // on redirige l'utilisateur sur l'écran de connexion
     disconnect(){
       localStorage.removeItem('deviceId');
       this.$router.replace('/');

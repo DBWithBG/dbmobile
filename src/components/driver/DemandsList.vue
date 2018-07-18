@@ -46,10 +46,14 @@
         </v-slider>
       </v-flex>
 
-      <v-flex xs10 offset-xs1>
-        <v-subheader>{{$t('course_type')}}</v-subheader>
-        <v-select multiple chips :items="listType" v-model="search[0].type" single-line auto hide-details></v-select>
+      <v-layout row>
+        <v-flex xs4 offset-xs1>
+        <v-switch label="Livraisons"color="primary" v-model="search[0].livraisons"> </v-switch>
       </v-flex>
+      <v-flex xs4 offset-xs1>
+        <v-switch label="Consignes"color="primary" v-model="search[0].consignes"> </v-switch>
+          </v-flex>
+      </v-layout>
 
       <v-layout class="pt-4" row>
         <v-flex xs10 offset-xs1>
@@ -110,17 +114,17 @@
         <v-layout column>
 
           <v-flex v-for="bag in props.item.bags" :key="bag.id">
-            <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+            <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
               {{bag.name}}
               <v-icon right>work</v-icon>
             </v-chip>
 
-            <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+            <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
               {{bag.name}}
               <v-icon right>work</v-icon>
             </v-chip>
 
-            <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+            <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
               {{bag.name}}
               <v-icon right>work</v-icon>
             </v-chip>
@@ -139,7 +143,7 @@
     </template>
   </v-data-table>
 
-  <v-dialog v-model="detailBag" max-width="290">
+  <v-dialog v-model="dialogBag" max-width="290">
     <v-card>
       <v-card-title class="headline">{{$t('bagage_descr')}}</v-card-title>
       <v-layout row>
@@ -186,63 +190,48 @@ export default {
 
   data () {
     return {
-      bags:[
-        [],
-        []  ,
-        []
-      ],
+      // liste des bagages pour une demande
+      bags:[[],[],[]],
+      // demande active selectionnée par le chauffeur
       active:'',
+      // données en attente de chargement?
       loading:true,
+      // liste de toutes les demandes clients
       deliveries_list: [],
+      // position actuelle du chauffeur
       user_pos:null,
-      listDate:[],
-      listType: [this.$i18n.t('livraison_label'),this.$i18n.t('consigne_label')],
+      // header de la data table
       headers: [
         { text: this.$i18n.t('label_heure'), value: 'date_moment' , align: 'left'},
         { text: this.$i18n.t('distance'), value: 'distance_from_driver', align: 'left'},
         { text: this.$i18n.t('estimated_time'), value: 'estimated_time' ,align: 'left'}
       ],
+
+      // dialog détail bagages
+      dialogBag:false,
+      // dialog confirmation de prise en charge
+      dialogTake:false,
+      // model du bagage
+      modelBag:'',
+
+      map:'',
+      // FILTRE
+
+      // liste des dates selectionnables
+      listDate:[],
+
+      // filtre personnalisé
       search:[
         {
           date : this.$i18n.t('any_date'),
-          type : [this.$i18n.t('livraison_label'),this.$i18n.t('consigne_label')],
+          livraisons : true,
+          consignes : true,
           distance : 999,
           temps : '',
           bags:10
         }],
-        detailBag:false,
-        dialogTake:false,
-        modelBag:'',
-        map:'',
 
 
-        apiKey:'AIzaSyB8Vjewz4EKG19ljWw37rIA_5po4xAjo_o',
-        zoom: 10, // required
-        center: 'Brooklyn+Bridge,New+York,NY',
-        format: 'png',
-        language: 'fr',
-        markers: [
-          {
-            label: 'B', color: 'blue', lat: 40.602147, lng: -74.015794, size: 'tiny',
-          },
-          {
-            label: 'Y', color: 'yellow', lat: 40.711614, lng: -74.012318, size: 'tiny',
-          },
-        ],
-        paths: [
-          {
-            color: 'blue',
-            weight: 8,
-            geodesic: false,
-            fillcolor: '0xFFFF0033',
-            locations: [
-              { startLat: 40.602147, endLng: -74.015794 },
-              { startLat: 40.711614, endLng: -74.012318 }
-            ],
-          },
-        ],
-        type: 'roadmap',
-        size: [200, 200],
       }
     },
 

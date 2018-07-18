@@ -1,7 +1,21 @@
 <template>
 
+  <!--
+  Ecran de chargement,
+  ce qui est affiché lorsque l'on attend la récupération des données du serveur
+-->
+<div>
 
-  <div v-touch="{
+<v-layout v-if="loading" row justify-center>
+  <v-container fill-height>
+    <v-layout row justify-center align-center>
+      <v-progress-circular indeterminate :size="70" :width="5" color="primary"></v-progress-circular>
+    </v-layout>
+  </v-container>
+</v-layout>
+
+
+  <div v-if="!loading" v-touch="{
     right:swipeRight
     }">
 
@@ -31,8 +45,6 @@
               <v-text-field box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
             </v-flex>
           </v-layout>
-          <v-divider>
-          </v-divider>
         </div>
       </v-flex>
     </v-layout>
@@ -53,6 +65,7 @@
               :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
               ></v-text-field>
             </v-flex>
+            <v-divider vertical></v-divider>
             <v-flex xs5>
               <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
             </v-flex>
@@ -79,6 +92,7 @@
               :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
               ></v-text-field>
             </v-flex>
+            <v-divider vertical></v-divider>
             <v-flex xs5>
               <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
             </v-flex>
@@ -97,11 +111,11 @@
     </v-layout>
 
     <v-snackbar v-model="snackbar" color="primary" bottom>
-      Bagages mis à jour !
+      {{$t('snackbar_bags_update')}}
     </v-snackbar>
 
   </div>
-
+</div>
 </template>
 
 
@@ -118,7 +132,8 @@ export default {
       bagagesAutre : [],
       // boolean utilisé pour éviter les conflits liés à l'update des bagages
       connecting:false,
-      snackbar:false
+      snackbar:false,
+      loading:true
     }
   },
 
@@ -164,11 +179,12 @@ export default {
             }
           }
         }
+        self.loading=false;
         self.connecting=false;
 
       },
       error:function(e){
-        alert('erreur de connexion');
+        alert('Non autorisé');
         console.log(e);
         self.connecting=false;
       }
