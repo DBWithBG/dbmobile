@@ -5,8 +5,8 @@
     Deliverbag facilite le transport de vos bagages
   </description>
     <author email="direction@sup.sarl">
-    System'Up
-  </author>
+      System'Up
+    </author>
     <content src="dist/index.html" />
     <access origin="*" />
     <access origin="http://*" />
@@ -103,5 +103,5 @@
     </plugin>
     <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
     <engine name="browser" spec="^5.0.3" />
-    <engine name="android" spec="~7.1.0" />
+    <engine name="android" spec="^7.1.0" />
 </widget>
