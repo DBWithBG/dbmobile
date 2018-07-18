@@ -21,7 +21,7 @@
         <v-expansion-panel-content>
           <div slot="header">{{$t('filter_demands')}}</div>
           <v-flex xs10 offset-xs1>
-            <v-subheader></v-subheader>
+            <v-subheader>{{$t('distance_client')}}</v-subheader>
             <v-slider
             v-model="search[0].distance"
             thumb-label="always"
@@ -51,7 +51,7 @@
         <v-select multiple chips :items="listType" v-model="search[0].type" single-line auto hide-details></v-select>
       </v-flex>
 
-      <v-layout class="pt-2" row>
+      <v-layout class="pt-4" row>
         <v-flex xs10 offset-xs1>
           <v-subheader >{{$t('course_date')}}</v-subheader>
           <v-select class="mb-5":items="listDate" v-model="search[0].date" single-line auto hide-details></v-select>
@@ -267,9 +267,10 @@ export default {
         let addressLongLat = {lat,lng};
 
         if (device.platform == 'Android'){
-          window.open("geo:"+addressLongLat);
+          window.open("google.navigation:q="+lat+","+lng+"&mode=d" , '_system')
+        //  window.open("geo:"+addressLongLat);
         }
-        else{
+        if (device.platform == 'iOS'){
           window.open("http://maps.apple.com/?q="+addressLongLat, '_system');
         }
 

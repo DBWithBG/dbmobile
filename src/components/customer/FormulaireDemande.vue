@@ -244,6 +244,8 @@
       </div>
     </v-flex>
 
+    {{compteurBagages()}}
+
   <v-layout row>
     <v-flex xs4>
       <v-btn color="orange lighten-1" @click.native="step=1" dark >
@@ -750,8 +752,8 @@ export default {
         },
 
         // On vérifie que la partie concernant les bagages est correcte
-        // - il faut qu'il y ait au minimum un bagage
-        // - on vérifie également que les bagages autres soient nommés (facultatifs pour les autres)
+        // - il faut qu'il y ait au minimum un bagage (peu importe la catégorie)
+        // - on vérifie également que les bagages de type AUTRE soient nommés (facultatifs pour les types cabine et soute)
         // TODO: définir une limite max de bagages que le client peut ajouter
         verifBagage(){
           return (
@@ -760,7 +762,7 @@ export default {
 
           },
 
-        //on vérifie également que les bagages autres soient nommés
+          //on vérifie également que les bagages autres soient nommés
           bagageOk(tab){
 
             var noms=[];
@@ -782,6 +784,11 @@ export default {
               }
             }
             return ok;
+          },
+
+          //méthode qui compte le nombre de bagages indiqués par le client
+          compteurBagages(){
+            return (this.bagagesCabine.length + this.bagagesSoute.length + this.bagagesAutre.length);
           },
 
 

@@ -205,6 +205,16 @@ Dialog popup concernant la déclaration d'un litige d'une course
 </v-dialog>
 
 
+<v-snackbar v-model="snackbarRating" color="primary" bottom>
+  {{$t('snackbar_rating')}}
+</v-snackbar>
+
+<v-snackbar v-model="snackbarLitige" color="primary" bottom>
+  {{$t('snackbar_litige')}}
+</v-snackbar>
+
+
+
 <db-menu> </db-menu>
 </div>
 
@@ -254,7 +264,13 @@ export default {
       demandes: [[],[],[]],
 
       // correspond au texte du litige
-      litigeText:''
+      litigeText:'',
+
+      // snackbar rating envoyé
+      snackbarRating:false,
+
+      // snackbar litige envoyé
+      snackbarLitige:false
 
 
     }
@@ -331,7 +347,7 @@ export default {
     // méthode pour envoyer la notation d'une course
     // params : id de la delivery, mobile token du client, note attribuée et commentaire FACULTATIF
     sendRating(id,rating,com){
-
+      let self=this;
       console.log(com);
 
       // si il y'a un commentaire, alors l'utilisateur ne peut pas à nouveau envoyer la notation
@@ -349,7 +365,7 @@ export default {
           "details" : com
         },
         success: function(data){
-          // TODO: snacbar "notation envoyée, merci"
+          self.snackbarRating=true;
           console.log(data);
         },
         error:function(e){
@@ -375,7 +391,7 @@ export default {
           "reason" : com
         },
         success: function(data){
-          // TODO: snacbar "litige envoyé, on vous recontacte"
+          self.snackbarLitige=true;
           self.litigeText=''
           console.log(data);
         },
