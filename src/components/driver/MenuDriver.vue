@@ -1,15 +1,15 @@
 <template>
-  <v-bottom-nav :value="true" :active.sync="element" fixed>
-      <v-btn flat color="primary" value="left" to="/courses-driver">
-        <span>Mes courses</span>
+  <v-bottom-nav color="primary" :value="true" :active.sync="element" fixed>
+      <v-btn dark  value="left" to="/courses-driver">
+        <span> {{$t("courses")}}</span>
         <v-icon>history</v-icon>
       </v-btn>
-    <v-btn flat color="primary" value="main" to="/demands">
-      <span>Demandes</span>
+    <v-btn dark  value="main" to="/demands">
+      <span>{{$t("demandes")}}</span>
       <v-icon>map</v-icon>
     </v-btn>
-    <v-btn flat color="primary" value="right" to="/settings-driver">
-      <span>Profil et paramètres</span>
+    <v-btn dark value="right" to="/settings-driver">
+      <span>{{$t("settings")}}</span>
       <v-icon>settings</v-icon>
     </v-btn>
   </v-bottom-nav>
@@ -26,6 +26,7 @@ export default{
 }
 
 </script>
+<i18n src='@/assets/trad.json'></i18n>
 
 <style>
 

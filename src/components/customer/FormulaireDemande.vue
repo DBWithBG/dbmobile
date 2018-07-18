@@ -1,55 +1,49 @@
 <template>
-  <div id="home">
+  <div>
+
+    <!-- header retourn arrière -->
     <back-header :message="$t('header')"> </back-header>
 
-    <!-- STEPPER -->
+    <!-- STEPPER Horizontal de progression-->
     <v-stepper v-model="step">
       <v-stepper-header>
+        <!-- étape 1 : infos de prise en chagre et livraison -->
         <v-stepper-step :complete="step > 1" step="1" > {{$t('subt_1')}}</v-stepper-step>
-        <v-divider></v-divider>
+        <!-- étape 2 : infos de bagages-->
         <v-stepper-step :complete="step > 2" step="2">{{$t('subt_2')}}</v-stepper-step>
-        <v-divider></v-divider>
+        <!-- étape 3 : récap et paiement-->
         <v-stepper-step step="3">{{$t('subt_3')}}</v-stepper-step>
       </v-stepper-header>
-
 
       <v-stepper-items>
         <!-- PRISE EN CHARGE -->
         <v-stepper-content step="1">
-          <v-subheader color="primary"> {{$t('subt_1')}}</v-subheader>
-          <v-layout row>
-            <v-flex mt-2 mb-2 xs12 sm6 offset-sm3>
+          <v-subheader > {{$t('subt_1')}}</v-subheader>
+            <v-flex mt-4 mb-3 xs12 >
               <span class="subheading" >{{$t('info_1')}}</span>
             </v-flex>
-          </v-layout>
 
           <!-- MESSAGES D'ERREURS -->
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+            <v-flex xs12>
               <div v-if="error.length">
                 <alert :message="error"> </alert>
               </div>
             </v-flex>
-          </v-layout>
 
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+            <v-flex xs12>
               <div v-for="error in errors">
                 <alert v-if="error !='' " :message="error"> </alert>
               </div>
             </v-flex>
-          </v-layout>
 
           <v-layout row>
-            <v-flex xs10 >
-              <!-- DATE PICKER -->
-              <v-menu ref="menu" :close-on-content-click="false" :nudge-right="40" :return-value.sync="date" transition="scale-transition" offset-y full-width min-width="290px">
+            <v-flex xs10>
+              <!-- DATE PICKER START -->
+              <v-menu ref="menudate" :close-on-content-click="false" :nudge-right="40" :return-value.sync="date" transition="scale-transition" offset-y full-width min-width="290px">
                 <v-text-field
                 slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
               </v-text-field>
-
-
-              <v-date-picker v-model="date" :min="minDate" @input="$refs.menu.save(date)" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
+              <v-date-picker v-model="date" :min="minDate" @input="$refs.menudate.save(date),resetData()" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
 
               </v-date-picker>
             </v-menu>
@@ -60,163 +54,153 @@
           <div v-if="type == 'address'">
             <v-flex xs10>
               <!-- DATE PICKER -->
-              <v-menu ref="menu2" :close-on-content-click="false" :nudge-right="40" :return-value.sync="time" transition="scale-transition" offset-y lazy full-width min-width="290px">
+              <v-menu ref="menutime" :close-on-content-click="false" :nudge-right="40" :return-value.sync="time" transition="scale-transition" offset-y lazy full-width min-width="290px">
                 <v-text-field
-                slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" append-icon="access_time"  readonly>
+                slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" append-icon="access_time" readonly>
               </v-text-field>
-
-
-              <v-time-picker v-model="time" :min="minTime"
-              :format="$t('date_format')"
-              @change="$refs.menu2.save(time)"
-              color="primary"
-              no-title
-              :locale="this.$root.$i18n.locale" >
-
-            </v-time-picker>
+              <v-time-picker v-model="time" :min="minTime" :format="$t('date_format')" @change="$refs.menutime.save(time)" color="primary" no-title :locale="this.$root.$i18n.locale" > </v-time-picker>
           </v-menu>
         </v-flex>
       </div>
     </v-layout>
 
 
-    <v-layout v-if="type == 'train'" >
-      <v-flex row xs6 offset-xs3>
-        <!-- NUMERO DE TRAIN POUR TRAIN -->
+      <v-flex v-if="type == 'train'" row xs6 offset-xs3>
+        <!-- NUMERO DE TRAIN si arrivée par train -->
         <v-text-field v-model="numTrain" v-on:input="traitementTrain" v-on:click="resetData" pattern="\d*" type="number" :placeholder="$t('train_number')">
         </v-text-field>
       </v-flex>
-    </v-layout>
 
       <!-- SELECTION DE L'ARRET EN GARE POUR TRAIN -->
-      <v-layout row>
       <v-flex v-if="gares.length" xs12>
+
+        <!--
+        Le texte du select correspond au NOM de la gare
+        L'objet que l'on traite est un OBJET gare contentant plus d'infos
+        Lorsque l'on choisit une gare, on apelle verifGare() qui vérifie :
+        - le lieu
+        - les horaires
+        -->
         <v-select
         :items="gares"
         v-model="selectedGare"
-        item-text="stop_point.name"
+        item-text="gare.stop_point.name"
+        item-value="gare"
         v-bind:label="$t('select_gare')"
         single-line
         v-on:input="verifGare"
         ></v-select>
       </v-flex>
-      </v-layout>
 
 
     <!-- NUMERO DE VOL POUR VOL -->
-    <v-layout v-if="type == 'flight'" row>
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12 v-if="type == 'flight'">
         <input v-model="numVol" v-on:input="traitementVol" v-on:click="resetData" type="text"  maxlength="6" :placeholder="$t('flight_number')">
       </v-flex>
-    </v-layout>
 
     <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
-    <v-layout v-if="type == 'address'" row>
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12 v-if="type == 'address'">
         <input class="autocomplete" ref="autocomplete_start" v-bind:placeholder="$t('label_address_depart')"/>
       </v-flex>
-    </v-layout>
 
 
     <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
-    <v-layout row>
-      <v-flex mt-4 mb-3 xs12 sm6 offset-sm3>
+      <v-flex mt-4 mb-3 xs12 >
         <span class="subheading" >{{$t('info_2')}}</span>
       </v-flex>
-    </v-layout>
 
 
     <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
-    <v-layout row>
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12>
         <input class="autocomplete" ref="autocomplete_end" v-bind:placeholder="$t('label_address_livraison')" />
       </v-flex>
-    </v-layout>
 
-
-    <v-layout row>
-      <v-flex mt-4 mb-2 xs12 sm6 offset-sm3>
-        <v-switch v-bind:label="$t('livraison')" v-model="livraisonDirecte" color="success"> </v-switch>
+      <!-- SWITCH correspondant au type de prestation : livraison ou consigne
+       par défaut consigne
+     -->
+      <v-flex mt-3 mb-2 xs12>
+        <v-switch v-bind:label="$t('livraison')" v-model="livraisonDirecte" color="primary"> </v-switch>
       </v-flex>
-    </v-layout>
+
 
     <v-layout v-if="!livraisonDirecte" row>
-      <v-flex xs10>
-        <!-- DATE PICKER -->
-        <v-menu ref="menu" :close-on-content-click="false" :nudge-right="40" :return-value.sync="end_date" transition="scale-transition" offset-y full-width min-width="290px">
+      <v-flex xs10 >
+        <!-- DATE PICKER SI CONSIGNE -->
+        <v-menu ref="menudateend" :close-on-content-click="false" :nudge-right="40" :return-value.sync="dateEnd" transition="scale-transition" offset-y full-width min-width="290px">
           <v-text-field
-          slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
+          slot="activator" v-model="displayDateEnd" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
         </v-text-field>
 
-
-        <v-date-picker v-model="date" :min="minDate" @input="$refs.menu.save(date)" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
-
+        <v-date-picker v-model="dateEnd" :min="minDateEnd" :max="maxDateEnd" @input="$refs.menudateend.save(dateEnd)" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
         </v-date-picker>
       </v-menu>
     </v-flex>
-    </v-layout>
+    <v-flex xs2>
+    </v-flex>
+    <!-- TIME PICKER SI CONSIGNE -->
+      <v-flex xs10>
+        <!-- DATE PICKER -->
+        <v-menu ref="menutimeend" :close-on-content-click="false" :nudge-right="40" :return-value.sync="timeEnd" transition="scale-transition" offset-y lazy full-width min-width="290px">
+          <v-text-field
+          slot="activator" v-model="displayTimeEnd" v-bind:label="$t('label_heure')" append-icon="access_time"  readonly>
+        </v-text-field>
+        <v-time-picker v-model="timeEnd" :min="minTimeEnd" :max="maxTimeEnd"
+        :format="$t('date_format')"
+        @change="$refs.menutimeend.save(timeEnd)"
+        color="primary"
+        no-title
+        :locale="this.$root.$i18n.locale" >
+      </v-time-picker>
+    </v-menu>
+  </v-flex>
+</v-layout>
 
 
 
-
-<v-flex xs12 sm6 offset-sm3 >
+  <!-- Bouton pour continuer la saisie des Informations
+       Désactivé si le form n'est pas valide
+  -->
+<v-flex xs12 >
   <v-btn :disabled="!isFormOk()" color="primary" @click.native="step=2"dark >
     <span> {{$t('next')}}</span>
     <v-icon right>navigate_next</v-icon>
   </v-btn>
-
 </v-flex>
-<!--  this.$router.push( { name:'demand-next', params : {date : this.date, place : this.place} });
-
--->
 
 </v-stepper-content>
 
 
-
-
-
-
+<!-- Deuxième étape : saisie des bagages -->
 
 <v-stepper-content step="2">
-  Mes bagages
+  {{$t('luggages')}}
+
 
   <!-- Gestion des bagages -->
 
-
-
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
-
+    <v-flex xs12>
       <v-btn color="primary" @click.native="ajoutBagage('cabine')" dark > {{$t('bagages_ajout')}} {{$t('bagage_cabine')}}</v-btn>
       <div v-for="bag in bagagesCabine" :key="bag.id">
-
         <v-layout row>
           <v-flex xs2>
             <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
               <v-icon>delete</v-icon>
-            </v-btn>
-            <v-btn icon flat color="teal" >
-              <v-icon>photo</v-icon>
             </v-btn>
           </v-flex>
           <v-flex xs5>
             <v-text-field  box v-bind:label="$t('bagage_nom')" v-model="bag.name"
             ></v-text-field>
           </v-flex>
+          <v-divider vertical> </v-divider>
           <v-flex xs5>
             <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
           </v-flex>
         </v-layout>
-        <v-divider>
-        </v-divider>
       </div>
     </v-flex>
-  </v-layout>
 
 
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
+    <v-flex xs12 >
       <v-btn  color="primary" @click.native="ajoutBagage('soute')" dark >{{$t('bagages_ajout')}} {{$t('bagage_soute')}} </v-btn>
       <div v-for="bag in bagagesSoute" :key="bag.id">
         <v-layout row>
@@ -224,36 +208,27 @@
             <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
               <v-icon>delete</v-icon>
             </v-btn>
-            <v-btn icon flat color="teal" >
-              <v-icon>photo</v-icon>
-            </v-btn>
           </v-flex>
           <v-flex xs5>
             <v-text-field  box v-bind:label="$t('bagage_nom')" v-model="bag.name"
             ></v-text-field>
           </v-flex>
+          <v-divider vertical> </v-divider>
           <v-flex xs5>
             <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
           </v-flex>
         </v-layout>
-        <v-divider>
-        </v-divider>
+
       </div>
     </v-flex>
-  </v-layout>
 
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
+    <v-flex xs12>
       <v-btn  color="primary" @click.native="ajoutBagage('autre')" dark >{{$t('bagages_ajout')}} {{$t('bagage_autre')}}</v-btn>
       <div v-for="bag in bagagesAutre" :key="bag.id">
-
         <v-layout row>
           <v-flex xs2>
             <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
               <v-icon>delete</v-icon>
-            </v-btn>
-            <v-btn icon flat color="teal" >
-              <v-icon>photo</v-icon>
             </v-btn>
           </v-flex>
           <v-flex xs5>
@@ -261,21 +236,15 @@
             :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
             ></v-text-field>
           </v-flex>
+          <v-divider vertical> </v-divider>
           <v-flex xs5>
             <v-text-field box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
           </v-flex>
         </v-layout>
-        <v-divider>
-        </v-divider>
       </div>
     </v-flex>
-  </v-layout>
-
-
 
   <v-layout row>
-
-
     <v-flex xs4>
       <v-btn color="orange lighten-1" @click.native="step=1" dark >
         <v-icon>navigate_before</v-icon>
@@ -285,25 +254,23 @@
     <v-flex xs2>
     </v-flex>
     <v-flex xs5>
-      <v-btn :disabled="!verifBagage()" color="action" @click.native="step=3" dark >
+      <v-btn :disabled="!verifBagage()" color="primary" @click.native="step=3" dark >
         {{$t('next')}}
         <v-icon>navigate_next</v-icon>
       </v-btn>
     </v-flex>
-
   </v-layout>
 
 </v-stepper-content>
 
 <v-stepper-content step="3">
-
+  <!-- Récapitulatif -->
   <v-card>
     {{reponse()}}
   </v-card>
 
-
   <v-btn  color="orange lighten-1" @click.native="step=2" dark >{{$t('prev')}}</v-btn>
-  <v-btn  color="action" @click.native="payer()" dark >{{$t('payer')}} </v-btn>
+  <v-btn  color="primary" @click.native="payer()" dark >{{$t('payer')}} </v-btn>
 </v-stepper-content>
 </v-stepper-items>
 
@@ -324,63 +291,94 @@ export default {
   data(){
     return {
 
-      activeDeliveryId:'',
+      // définit l'étape actuelle du formulaire
       step:0,
-      livraisonDirecte:true,
-      message:'',
-      slider:0,
-      ticks:['Aujourd\'hui', 'Demain'],
-      minDate:new Date().toISOString().substring(0,10),
-      date:new Date().toJSON(),
-      time:new Date(),
-      dateEnd:'',
-      timeEnd:'',
-      startPlace:'',
-      endPlace:'',
-      error:'',
-      errors:{},
-      authorized:[],
-      sncf_key:'7308cd76-a20f-4f01-9cc3-59d4742bba24',
-      numTrain :'',
-      gares:[],
-      selectedGare:'',
 
+      // correspond à l'id de la delivery
+      // id utilisé pour payer après la création d'une demande
+      activeDeliveryId:'',
+
+      // définit le type de prestation souhaitée, true=livraison, false=consigne
+      livraisonDirecte:false,
+
+      // date minimum pour le picker, correspond à la date actuelle fromatée pour le picker
+      minDate:new Date().toISOString().substring(0,10),
+
+      // correspond à la date de prise en charge
+      date:new Date().toJSON(),
+
+      // correspond à l'heure de prise en charge
+      time:new Date(),
+
+      // correspond à la date de livraison
+      dateEnd:new Date().toJSON(),
+
+      // correspond à l'heure de livraison
+      timeEnd:new Date(),
+
+      // lieu de prise en charge
+      startPlace:'',
+
+      // lieu de livraison
+      endPlace:'',
+
+      // message d'erreur
+      error:'',
+
+      // toutes les erreurs lors de la saisie (date incorrecte, lieu non desservi...)
+      errors:{},
+
+      // les départements authorisés qui seront pris en compte
+      authorized:[],
+
+      // api key sncf
+      sncf_key:'7308cd76-a20f-4f01-9cc3-59d4742bba24',
+
+      // numéro de train saisi
+      numTrain :'',
+
+      // liste des gares correspondant à ce train
+      gares:[],
+
+      // arrêt choisi par le client
+      selectedGare:null,
+
+      // app id flightstats
       flight_app_id : '95a4eb71',
+
+      // app key flightstats
       flight_app_key : '84cb52736b8c4db53b753b8f87be34a8',
+
+      // numéro de vol saisi
       numVol : '',
 
+      // array des bagages cabine
       bagagesCabine : [],
+
+      // array des bagages soute
       bagagesSoute : [],
+
+      // array des bagages autre
       bagagesAutre : []
     }
   },
 
+// les proprités computed sont des données qui sont réactives au changement
+// on les utilise de la même manière que les données classiques
+
   computed:{
+
+    // Id de la compagnie aérienne
     compagnyId(){
       return this.numVol.substring(0,2);
     },
+    // Id du vol
     flightId(){
       return this.numVol.substring(2,6);
     },
-    dateFormated(){
-      if (this.date != null)
-      return this.date.getMonth();
-    },
 
-    dateTime(){
-      //console.log(this.time);
-      var date = new Date(this.date);
-      if (typeof this.time === 'string'){
-        date.setHours(this.time.match(/^(\d+)/)[1]);
-        date.setMinutes(this.time.match(/:(\d+)/)[1]);
-      }
-      else{
-        date.setHours(this.time.getHours());
-        date.setMinutes(this.time.getMinutes());
-      }
-      return date.toLocaleString();
-    },
-
+    // Date minimale pour la prise en charge
+    // si la date est aujourd'hui, restriction (pas avant l'heure courante)
     minTime(){
       let time;
       if (this.dateTime.substring(0,10) != new Date().toLocaleString().substring(0,10)) {
@@ -392,21 +390,61 @@ export default {
       return time;
     },
 
-    maxDateTime(){
-      var date = new Date(this.dateToJson);
-      date.setDate(date.getDate() + 1);
-      return date.toLocaleString().substring(0,18)
+    // Date minimale pour la consigne en fonction à la date de prise en charge indiquée
+    minDateEnd(){
+      this.dateEnd = new Date(this.date).toISOString().substring(0,10)
+      return new Date(this.date).toISOString().substring(0,10);
     },
 
-    maxDate(){
-      return this.maxDateTime.substring(0,10);
+    // Date max pour la consigne
+    // TODO: plage horaire continue ou non, restrictions à définir
+    maxDateEnd(){
+     //return new Date(this.date).toISOString().substring(0,10);
     },
 
-    maxTime(){
-      return this.maxDateTime.substring(12,18);
+    // Heure min pour la consigne
+    minTimeEnd(){
+
     },
 
-    dateToJson(){
+    // Heure max pour la consigne
+    maxTimeEnd(){
+    },
+
+    // assemblage et formatage de la date et de l'heure de départ
+    dateTime(){
+      //console.log(this.time);
+      let date = new Date(this.date);
+      if (typeof this.time === 'string'){
+        date.setHours(this.time.match(/^(\d+)/)[1]);
+        date.setMinutes(this.time.match(/:(\d+)/)[1]);
+      }
+      else{
+        date.setHours(this.time.getHours());
+        date.setMinutes(this.time.getMinutes());
+      }
+      return date.toLocaleString();
+    },
+
+    // assemblage et formatage de la date et de l'heure de livraison
+    dateTimeEnd(){
+      //console.log(this.time);
+      let date = new Date(this.dateEnd);
+      if (typeof this.timeEnd === 'string'){
+        date.setHours(this.timeEnd.match(/^(\d+)/)[1]);
+        date.setMinutes(this.timeEnd.match(/:(\d+)/)[1]);
+      }
+      else{
+        date.setHours(this.timeEnd.getHours());
+        date.setMinutes(this.timeEnd.getMinutes());
+      }
+      return date.toLocaleString();
+    },
+
+
+    // assemblage et formatage de la date et de l'heure de prise en charge
+    // utilisée pour l'envoi des données au serveur
+    dateStartToJson(){
       console.log(this.time);
       var date = new Date(this.date);
       if (typeof this.time === 'string'){
@@ -420,228 +458,48 @@ export default {
       return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(),  date.getHours(), date.getMinutes(), date.getSeconds())).toJSON().split('.')[0].replace('T',' ');
     },
 
+    // assemblage et formatage de la date et de l'heure de livraison
+    // utilisée pour l'envoi des données au serveur
+    dateEndToJson(){
+      console.log(this.timeEnd);
+      var date = new Date(this.dateEnd);
+      if (typeof this.timeEnd === 'string'){
+        date.setHours(this.timeEnd.match(/^(\d+)/)[1]);
+        date.setMinutes(this.timeEnd.match(/:(\d+)/)[1]);
+      }
+      else{
+        date.setHours(this.timeEnd.getHours());
+        date.setMinutes(this.timeEnd.getMinutes());
+      }
+      return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(),  date.getHours(), date.getMinutes(), date.getSeconds())).toJSON().split('.')[0].replace('T',' ');
+    },
+
+    // Affichage du label du datepicker PRISE EN CHARGE de manière plus "humaine" pour l'utilisateur
     displayDate(){
       return this.dateTime.substring(0,10);
     },
 
+    // Affichage du label du timepicker PRISE EN CHARGE de manière plus "humaine" pour l'utilisateur
     displayTime(){
       return this.dateTime.substring(12,18);
+    },
+
+    // Affichage du label du datepicker LIVRAISON de manière plus "humaine" pour l'utilisateur
+    displayDateEnd(){
+      return this.dateTimeEnd.substring(0,10);
+    },
+
+    // Affichage du label du timepicker LIVRAISON de manière plus "humaine" pour l'utilisateur
+    displayTimeEnd(){
+      return this.dateTimeEnd.substring(12,18);
     }
 
   },
-
 
   methods : {
 
-    reponse(){
 
-      if (this.step==3) {
-
-        //alert(typeof(this.startPlace.geometry.location));
-        var req =
-        {
-          "start_position":
-          {
-            "name": this.startPlace.name,
-            "address":this.startPlace.formatted_address,
-            "lat" :this.startPlace.geometry.location.lat(),
-            "lng":this.startPlace.geometry.location.lng()
-          }
-          ,
-          "end_position":
-          {
-            "name": this.endPlace.name,
-            "address":this.endPlace.formatted_address,
-            "lat" :this.endPlace.geometry.location.lat(),
-            "lng":this.endPlace.geometry.location.lng()
-          }
-          ,
-          "delivery" :
-          {
-            "comment" : "Un commentaire... sur une demande de prise en charge...",
-            "start_date" : this.dateToJson,
-            "livraisonDirecte":this.livraisonDirecte
-          },
-          "bagages" : {
-            '1' : this.bagagesCabine,
-            '2' : this.bagagesSoute,
-            '3' : this.bagagesAutre
-          },
-          "mobile_token":localStorage.getItem('deviceId'),
-
-        }
-        var self=this;
-
-        $.ajax({
-          url: 'http://dev-deliverbag.supconception.fr/create/delivery',
-          type : 'POST',
-          data : req,
-          success: function(data){
-            console.log(data.id);
-            self.activeDeliveryId=data.id;
-            console.log(data);
-          },
-          error:function(e){
-            console.log(e);
-          },
-        });
-      }
-
-
-      return req;
-    },
-
-
-    payer(){
-
-      var self=this;
-      $.ajax({
-        url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/payment',
-        type : 'POST',
-        data : {
-          "delivery_id" : self.activeDeliveryId,
-          "mobile_token": localStorage.getItem('deviceId')
-        },
-        success: function(data){
-          console.log(data);
-        },
-        error:function(e){
-          console.log(e);
-        },
-      });
-
-    },
-
-    /*
-    openCamera(){
-    navigator.camera.getPicture(function(photo){
-    // traitement de la camera
-  }, onFail, {
-  quality: 100,
-  destinationType: navigator.camera.DestinationType.NATIVE_URI, // dataURL -> Return base64 encoded string.
-  correctOrientation: true,
-  encodingType : navigator.camera.EncodingType.JPEG,
-  targetWidth : 400,
-  targetHeight : 400
-});
-},
-
-openGalery() {
-navigator.camera.getPicture(function(photo){
-//traitement de la galerie
-}, onFail, {
-quality: 100,
-destinationType: navigator.camera.DestinationType.NATIVE_URI,
-sourceType: pictureSource.PHOTOLIBRARY,
-correctOrientation: true,
-targetWidth : 400,
-targetHeight : 400 });
-},
-
-*/
-
-ajoutBagage(type){
-  switch(type){
-    case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'descr' : ''});
-    break;
-    case 'soute' : this.bagagesSoute.push({'name' : '' + '' , 'descr' : ''});
-    break;
-    case 'autre' : this.bagagesAutre.push({ 'name' : '' + '' , 'descr' : ''});
-    break;
-  }
-},
-
-supprBagage(array,obj){
-  var index = array.indexOf(obj);
-  if (index > -1) {
-    array.splice(index, 1);
-  }
-},
-
-resetData(){
-  this.numVol='';
-  this.numTrain='';
-  this.gares=[];
-  this.error='';
-
-},
-
-isFormOk(){
-  if (this.error=='' && this.startPlace !='' && this.endPlace != '' && this.date !='' && this.checkErrors() ){
-    return true;
-  }
-},
-
-checkErrors(){
-  var ok=true;
-  for (var error in this.errors){
-    if (this.errors[error] != ''){
-      ok=false;
-    }
-  }
-  return ok;
-},
-
-verifBagage(){
-  return (
-    (this.bagagesCabine.length || this.bagagesSoute.length || this.bagagesAutre.length)
-    && this.bagageOk(this.bagagesAutre) ) ;
-
-  },
-
-  bagageOk(tab){
-
-    var noms=[];
-    var ok=true;
-    if (tab.length){
-      var self=this;
-      for (var i=0; i<tab.length;i++){
-        if (tab[i].name == ''){
-          ok=false;
-        }
-        else{
-          if (noms.includes(tab[i].name)){
-            ok=false;
-          }
-          else{
-            noms.push(tab[i].name)
-          }
-        }
-      }
-    }
-    return ok;
-  },
-
-  verifGare(){
-    // Geocode recçoit des coordonées sous forme de nombre et non de Strings
-    var lat = parseFloat(this.selectedGare.stop_point.coord.lat);
-    var lng =  parseFloat(this.selectedGare.stop_point.coord.lon);
-    var trainTime = this.selectedGare.arrival_time;
-    this.time=(trainTime.substring(0,2) + ':' + trainTime.substring(2,4) );
-    //  this.time.setMinutes(parseInt(trainTime.substring(2,4)));
-    //  console.log(this.time);
-    var pos = {lat : lat, lng : lng};
-    var self=this;
-
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({
-      'latLng': pos},
-      function(results,status){
-        // c'est un appel asynchrone donc on doit vérifier que le retour est correct
-        if (status !== google.maps.GeocoderStatus.OK) {
-          alert("Erreur lors de l'appel a geocode");
-          console.log(status);
-        }
-        if (status == google.maps.GeocoderStatus.OK) {
-          self.startPlace=results[1];
-          self.verifyDepartment(self.startPlace,'gare');
-
-        }
-      });
-
-    },
-
-
+    // Méthode qui permet de récupérer les départements authorisés par l'application
     getDepartments(){
       var self=this;
       $.ajax({
@@ -652,7 +510,6 @@ verifBagage(){
             self.authorized.push(JSON.parse(json)[i].number.toString());
             self.authorized.push(JSON.parse(json)[i].name);
           }
-          //console.log(JSON.stringify(self.authorized));
         },
         error : function(error){
           console.log('error ');
@@ -662,14 +519,13 @@ verifBagage(){
     },
 
 
-
+    // Méthode qui permet de récupérer les bagages du client
     getBagages(){
       var self=this;
       $.ajax({
         url: 'http://dev-deliverbag.supconception.fr/mobile/bags/users/'+localStorage.getItem('deviceId'),
         type : 'GET',
         datatype : 'jsonp' ,
-        //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
         success: function(data){
           data = JSON.parse(data);
           console.log(JSON.stringify(data));
@@ -699,51 +555,103 @@ verifBagage(){
       });
     },
 
-    /*
-    ** geocode is used to transform a latLng objet into a Place objet
-    ** usefull in case of user_pos
-    ** the function also calls verifyDepartment after the objet's conversion
-    ** @param pos : pos objet that contains latLng
-    */
 
-    geocode(pos){
+    // C'est la méthode qui est appelé lors de la saisie du numéro de train
+    // si le numéro est correct, alors un récupère les différents arrêts du voyage
+    traitementTrain(){
       var self=this;
+      // Les numéros de trains sont composés d'au moins 4 caractères
+      if (this.numTrain.length>=4){
+        // On formatte la date de voyage pour correspondre au format attendu par l' API SNCF
+        var dateTrain =( (this.date.split('T'))[0] + "T000000" );
+        $.get(`https://api.sncf.com/v1/coverage/sncf/vehicle_journeys/?headsign=${this.numTrain}&since=${dateTrain}&key=${this.sncf_key} `, function(data)
+        {
+          let stops = data.vehicle_journeys[0].stop_times;
+          for (let i=1 ;i<stops.length; i++){
+              self.gares.push({
+              'gare' : stops[i]
+            });
+          }
+        })
+        .fail(function(error) {
+          switch(error.status){
+            case 404 : self.error=self.$i18n.t("error_404_sncf");
+            break;
+            case 401 : self.error=self.$i18n.t("error_401_sncf");
+            break;
+            case 403 : self.error=self.$i18n.t("error_403_sncf");
+            break;
+            case 500 : self.error=self.$i18n.t("error_500_sncf");
+            break;
+            default:
+            if (self.date.length){
+              self.error=self.$i18n.t("error_default_sncf");
+            }
+            else{
+              self.error=self.$i18n.t("date_voyage_vide");
+            }
+          }
+        });
+      }
+    },
+
+
+  // Méthode qui est appelée lorsque le client sélectionne une gare
+    verifGare(){
+      // On récupère les informatons de localisation ainsi que l'heure d'arrivée en gare
+      var lat = parseFloat(this.selectedGare.stop_point.coord.lat);
+      var lng =  parseFloat(this.selectedGare.stop_point.coord.lon);
+      var trainTime = this.selectedGare.arrival_time;
+
+      this.time = this.moment(trainTime.substring(0,4), "hmm").format("HH:mm");
+
+      // Si l'heure d'arrivée en gare est antérieure à l'heure actuelle, alors on déclenche une erreur
+
+      if ( this.time<this.moment().format('LT') ){
+        this.errors['error_date'] = this.$i18n.t('error_heure');
+      }
+      else{
+        this.errors['error_date']='';
+      }
+      //  this.time.setMinutes(parseInt(trainTime.substring(2,4)));
+
+      var pos = {lat : lat, lng : lng};
+      var self=this;
+
+      // On géocode à partir de la position (lat,lng)
+      // afin d'obtenir une adresse formatée sous forme d'objet PLACE
+
       var geocoder = new google.maps.Geocoder();
       geocoder.geocode({
         'latLng': pos},
         function(results,status){
-          // c'est un appel asynchrone donc on doit vérifier que le retour est correct
           if (status !== google.maps.GeocoderStatus.OK) {
             alert("Erreur lors de l'appel a geocode");
             console.log(status);
-            return null;
           }
           if (status == google.maps.GeocoderStatus.OK) {
-            return results[1];
+            self.startPlace=results[1];
+            // Si le géocodage se passe correctement, on vérifie alors que le lieu souhaité est inclus dans les départements authorisés
+            self.verifyDepartment(self.startPlace,'gare');
+
           }
         });
+
       },
-      /*
-      ** Verify that the input place is in the service étrange
-      ** Actually fixed on '33' , Gironde
-      ** @param place : place objet that contains adresse & geolocation informations
-      */
+
+      // Méthode qui permet de vérifier le département d'un objet PLACE
+      // Le second paramètre LIEU permet de connaître l'origine de la demande (adresse, gare ou aéroport)
       verifyDepartment(place,lieu){
-        //  console.log(this.startPlace);
-        //  console.log(res);
-        //var bdx_metropole = {33130, 33370 ,33110,33170,33700,33185,33530,33127,33400,33810,33290,33150,33520,33160,33310,33440,33270,33140,33560,33600,33320,33800,33100,33000,33200,33300};
-        //this.error='';
-        var res = place.address_components;
-        var found = false;
-        var isInrange = false;
-        for (var i = 0; i < res.length; i++) {
-          for (var j = 0; j < res[i].types.length; j++) {
+        let res = place.address_components;
+        let found = false;
+        let isInrange = false;
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].types.length; j++) {
             // Certains objets retournés par Google Maps n'ont pas de code "postal_code"
             // On vérifie alors la région, que l'on retrouve dans l'objet "administrative_area_level_2"
             if ( res[i].types[j] == "postal_code" || res[i].types[j] == "administrative_area_level_2" ) {
               found = true;
-              var dep = res[i].short_name;
-              //  console.log(dep);
+              let dep = res[i].short_name;
               // On prend les 2 premiers chiffres pour vérifier le département
               if (this.authorized.includes(dep.substr(0,2)) || this.authorized.includes(dep)) {
                 isInrange=true;
@@ -753,15 +661,10 @@ verifBagage(){
         }
         if (isInrange){
           this.errors[lieu]='';
-          // on redirige l'utilisateur sur la page suivante
-
-          //this.$router.push( { name:'demand-next', params : {date : this.date, place : this.place} });
         }
         else{
-          //console.log(this.$router);
-          //this.$router.replace(this.$router.history.current.path);
-          // on met une alerte pour lui dire que la gare sélectionnée n'est pas encore desservie
-          var text=this.$i18n.t('error_start_place');
+          // on met une alerte pour lui dire que le lieu n'est pas encore desservi
+          let text=this.$i18n.t('error_start_place');
 
           if (lieu=='end'){
             text=this.$i18n.t('error_end_place');
@@ -770,10 +673,194 @@ verifBagage(){
             text=this.$i18n.t('error_gare');
           }
           this.errors[lieu]=text+this.$i18n.t('error_place');
-          console.log(this.errors);
-          //console.log(this.errors);
         }
       },
+
+
+
+
+      // Geocode est utilisé pour transformer un objet pos en objet PLACE
+
+      geocode(pos){
+        var self=this;
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({
+          'latLng': pos},
+          function(results,status){
+            if (status !== google.maps.GeocoderStatus.OK) {
+              alert("Erreur lors de l'appel a geocode");
+              console.log(status);
+              return null;
+            }
+            if (status == google.maps.GeocoderStatus.OK) {
+              return results[1];
+            }
+          });
+        },
+
+
+        // Méthode qui remet à zéro les messages d'erreurs et les informations de train ou de vol
+        // On l'apelle par exemple lorsque le client change la date
+        resetData(){
+          this.numVol='';
+          this.numTrain='';
+          this.gares=[];
+          this.error='';
+          this.errors={}
+
+        },
+
+        // On vérifie que les données saisies par le client sont correctes
+        isFormOk(){
+          if (this.error=='' && this.startPlace !='' && this.endPlace != '' && this.date !='' && this.checkErrors() ){
+            return true;
+          }
+        },
+
+        // On vérifie qu'il n y a plus d'erreurs : localisation non desservie, heure incorrecte...
+        checkErrors(){
+          var ok=true;
+          for (var error in this.errors){
+            if (this.errors[error] != ''){
+              ok=false;
+            }
+          }
+          return ok;
+        },
+
+
+        // Méthode pour ajouter un bagage en fonction du type
+        ajoutBagage(type){
+          switch(type){
+            case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'descr' : ''});
+            break;
+            case 'soute' : this.bagagesSoute.push({'name' : '' + '' , 'descr' : ''});
+            break;
+            case 'autre' : this.bagagesAutre.push({ 'name' : '' + '' , 'descr' : ''});
+            break;
+          }
+        },
+
+        // Méthode pour supprimer un bagage
+        supprBagage(array,obj){
+          let index = array.indexOf(obj);
+          if (index > -1) {
+            array.splice(index, 1);
+          }
+        },
+
+        // On vérifie que la partie concernant les bagages est correcte
+        // - il faut qu'il y ait au minimum un bagage
+        // - on vérifie également que les bagages autres soient nommés (facultatifs pour les autres)
+        // TODO: définir une limite max de bagages que le client peut ajouter
+        verifBagage(){
+          return (
+            (this.bagagesCabine.length || this.bagagesSoute.length || this.bagagesAutre.length)
+            && this.bagageOk(this.bagagesAutre) ) ;
+
+          },
+
+        //on vérifie également que les bagages autres soient nommés
+          bagageOk(tab){
+
+            var noms=[];
+            var ok=true;
+            if (tab.length){
+              var self=this;
+              for (var i=0; i<tab.length;i++){
+                if (tab[i].name == ''){
+                  ok=false;
+                }
+                else{
+                  if (noms.includes(tab[i].name)){
+                    ok=false;
+                  }
+                  else{
+                    noms.push(tab[i].name)
+                  }
+                }
+              }
+            }
+            return ok;
+          },
+
+
+    reponse(){
+
+      if (this.step==3) {
+        var req =
+        {
+          "start_position":
+          {
+            "name": this.startPlace.name,
+            "address":this.startPlace.formatted_address,
+            "lat" :this.startPlace.geometry.location.lat(),
+            "lng":this.startPlace.geometry.location.lng()
+          }
+          ,
+          "end_position":
+          {
+            "name": this.endPlace.name,
+            "address":this.endPlace.formatted_address,
+            "lat" :this.endPlace.geometry.location.lat(),
+            "lng":this.endPlace.geometry.location.lng()
+          }
+          ,
+          "delivery" :
+          {
+            "comment" : "Un commentaire... sur une demande de prise en charge...",
+            "start_date" : this.dateStartToJson,
+            "end_date" : this.dateEndToJson,
+            "livraisonDirecte":this.livraisonDirecte
+          },
+          "bagages" : {
+            '1' : this.bagagesCabine,
+            '2' : this.bagagesSoute,
+            '3' : this.bagagesAutre
+          },
+          "mobile_token":localStorage.getItem('deviceId'),
+
+        }
+        var self=this;
+
+        $.ajax({
+          url: 'http://dev-deliverbag.supconception.fr/create/delivery',
+          type : 'POST',
+          data : req,
+          success: function(data){
+            console.log(data.id);
+            self.activeDeliveryId=data.id;
+            console.log(data);
+          },
+          error:function(e){
+            console.log(e);
+          },
+        });
+      }
+      return req;
+    },
+
+
+    payer(){
+
+      var self=this;
+      $.ajax({
+        url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/payment',
+        type : 'POST',
+        data : {
+          "delivery_id" : self.activeDeliveryId,
+          "mobile_token": localStorage.getItem('deviceId')
+        },
+        success: function(data){
+          console.log(data);
+        },
+        error:function(e){
+          console.log(e);
+        },
+      });
+
+    },
+
       traitementVol(){
 
         var self=this;
@@ -844,75 +931,26 @@ verifBagage(){
       }
     },
 
-    traitementTrain(){
-      var self=this;
 
-
-      if (this.numTrain.length==4){
-        var dateTrain =( (this.date.split('T'))[0] + "T000000" );
-        //console.log(dateTrain);
-        $.get(`https://api.sncf.com/v1/coverage/sncf/vehicle_journeys/?headsign=${this.numTrain}&since=${dateTrain}&key=${this.sncf_key} `, function(data)
-        {
-          //console.log(data);
-          self.traitement_gares(data);
-        })
-        .fail(function(error) {
-          switch(error.status){
-            case 404 : self.error=self.$i18n.t("error_404_sncf");
-            break;
-            case 401 : self.error=self.$i18n.t("error_401_sncf");
-            break;
-            case 403 : self.error=self.$i18n.t("error_403_sncf");
-            break;
-            case 500 : self.error=self.$i18n.t("error_500_sncf");
-            break;
-            default:
-            if (self.date.length){
-              self.error=self.$i18n.t("error_default_sncf");
-            }
-            else{
-              self.error=self.$i18n.t("date_voyage_vide");
-            }
-          }
-
-
-        });
-      }
-
-    },
-
-    traitement_gares(data){
-
-      console.log(JSON.stringify(data.disruptions));
-      console.log(data);
-      var stops = data.vehicle_journeys[0].stop_times;
-      for (var i=1 ;i<stops.length; i++){
-        var pos = {  lat : parseFloat(stops[i].stop_point.coord.lat), lng : parseFloat(stops[i].stop_point.coord.lon) } ;
-        //  $(`<br> <button  class="btn btn-medium border border-green uppercase xround-2 choix_gare" data-lat="${pos.lat}" data-lng="${pos.lng}"> ${stops[i].stop_point.name}  </button>`).insertAfter($('#input_train'));
-        console.log(stops[i].stop_point.name);
-        console.log('*************');
-        this.gares.push(stops[i]);
-        console.log(this.gares);
-      }
-    },
   },
 
   mounted(){
 
+    // On récupère les bagages du client et les départements authorisés
     this.getBagages();
     this.getDepartments();
     var self=this;
-    // VueJs "transforme" les HTMLInput elemnt en 'div'
-    // On doit donc récupérer cet objet en passant par l'objet $refs et en definissant une propriété ref='***' dans notre input field
-    var boundsGironde = new google.maps.LatLngBounds(
+    // On crée les bornes de recherches pour orienter les résultats des autocompletes en GIRONDE
+      var boundsGironde = new google.maps.LatLngBounds(
       new google.maps.LatLng(44.1939019, -1.2614241),
       new google.maps.LatLng(45.573636, 0.315137));
 
-      var options = {
+      let options = {
         bounds : boundsGironde,
         componentRestrictions : {'country' : 'fr'}
       };
 
+      // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de la livraison
       var addressEnd = this.$refs.autocomplete_end;
       var endPlace = new google.maps.places.Autocomplete(addressEnd, options);
       endPlace.addListener('place_changed', function() {
@@ -920,12 +958,11 @@ verifBagage(){
         self.verifyDepartment(self.endPlace,'end');
       });
 
-
-
       if (this.type=='address'){
+        // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de prise en charge
+        // UNQIUEMENT SI ON EST EN SAISIE D'ADRESSE
         var addressStart = this.$refs.autocomplete_start;
         var startPlace = new google.maps.places.Autocomplete(addressStart, options);
-
         startPlace.addListener('place_changed', function() {
           self.startPlace=this.getPlace();
           self.verifyDepartment(self.startPlace,'start');
@@ -934,7 +971,7 @@ verifBagage(){
     }
   }
   </script>
-
+<i18n src='@/assets/trad.json'></i18n>
 
   <style scoped>
 
@@ -946,88 +983,3 @@ verifBagage(){
   }
 
   </style>
-
-
-  <i18n>
-    {
-      "fr": {
-        "bagage_nom": "Nom du bagage",
-        "bagage_descr" : "Description",
-        "bagages_update" : "Mettre à jour mes bagages",
-        "bagages_ajout" : "Ajouter un ",
-        "bagage_cabine" : "bagage cabine",
-        "bagage_soute" : "bagage soute",
-        "bagage_autre" : "autre bagage",
-        "bagage_required" : "Il est requis de nommer votre bagage",
-        "error_404_sncf" : "Ce numéro de train ne correspond à aucun train circulant à cette date",
-        "error_401_sncf" : "Un problème d'autorisation d'accès est survenu",
-        "error_403_sncf" : "Requête correcte mais refusée par le serveur",
-        "error_500_sncf" : "Erreur interne liée au serveur",
-        "error_default_sncf" : "Le service n'est pas disponible actuellement",
-        "date_voyage_vide" : "Vous devez spécifier une date de voyage",
-        "header" : "Effectuer une demande",
-        "next" : "Suivant",
-        "prev" : "Précédent",
-        "payer" : "Payer",
-        "subt_1" : "Étape 1 : Prise en charge et livraison",
-        "subt_2" : "Étape 2 : Mes bagages",
-        "subt_3" : "Étape 3 : Récapitulatif",
-        "subt_4" : "Étape 4 : Paiement",
-        "info_1" : "Informations de prise en charge",
-        "info_2" : "Informations de livraison",
-        "livraison" : "Livraison dès que possible",
-        "label_date" : "Date",
-        "label_heure" : "Heure",
-        "label_address_depart" : "Adresse de départ",
-        "label_address_livraison" : "Adresse de livraison",
-        "date_format" : "24hr" ,
-        "select_gare" : "Choisir un arrêt",
-        "train_number" : "Numéro de train",
-        "flight_number" : "Numéro de vol",
-        "error_start_place" : "Le lieu souhaité pour la prise en charge",
-        "error_end_place" : "Le lieu souhaité pour la livraison",
-        "error_gare" : "L'arrêt souhaité",
-        "error_place" : " n'est pas encore desservi par nos services"
-
-      },
-      "en": {
-        "bagage_nom": "Bagage name",
-        "bagage_descr" : "Description",
-        "bagages_update" : "Update my bags",
-        "bagages_ajout" : "Add an",
-        "bagage_cabine" : "hand baggage",
-        "bagage_soute" : "hold baggage",
-        "bagage_autre" : "other bag",
-        "bagage_required" : "Name is required",
-        "error_404_sncf" : "Train number doesn't match any train at this date",
-        "error_401_sncf" : "Unauthorized access",
-        "error_403_sncf" : "Request denied from the server",
-        "error_500_sncf" : "Internal server error",
-        "error_default_sncf" : "The service is unviable",
-        "date_voyage_vide" : "Pleaser enter a travel date",
-        "header" : "Do a request",
-        "next" : "Next",
-        "prev" : "Previous",
-        "payer" : "Pay",
-        "subt_1" : "Step 1 : Takeover and delivery",
-        "subt_2" : "Step 2 : My bags",
-        "subt_3" : "Step 3 : Summary",
-        "subt_4" : "Step 4 : Payment",
-        "info_1" : "Takeover informations",
-        "info_2" : "Delivery informations",
-        "livraison" : "As soon as possible",
-        "label_date" : "Date",
-        "label_heure" : "Hour",
-        "label_address_depart" : "Takeover place",
-        "label_address_livraison" : "Delivery place",
-        "date_format" : "ampm" ,
-        "select_gare" : "Select a stop point",
-        "train_number" : "Train number",
-        "flight_number" : "Flight number",
-        "error_start_place" : "Place for the takeover",
-        "error_end_place" : "Place for the delivery",
-        "error_gare" : "This stop point",
-        "error_place" : " is not yet served by our service"
-      }
-    }
-  </i18n>

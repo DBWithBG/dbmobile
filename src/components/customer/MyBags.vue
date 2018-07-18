@@ -7,11 +7,12 @@
 
     <!-- Gestion des bagages -->
 
-    <back-header message="Mes bagages"> </back-header>
+    <back-header :message="$t('bagages')"> </back-header>
 
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
 
+<!-- Gestion des bagages CABINE -->
         <v-btn color="primary" @click.native="ajoutBagage('cabine')" >{{$t("bagages_ajout")}} {{$t("bagage_cabine")}}</v-btn>
         <div v-for="bag in bagagesCabine" :key="bag.id">
           <v-layout row>
@@ -19,17 +20,15 @@
               <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
                 <v-icon>delete</v-icon>
               </v-btn>
-              <v-btn icon flat color="teal" >
-                <v-icon>photo</v-icon>
-              </v-btn>
             </v-flex>
             <v-flex xs5>
               <v-text-field  required box v-bind:label="$t('bagage_nom')" v-model="bag.name"
               :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
               ></v-text-field>
             </v-flex>
+            <v-divider vertical></v-divider>
             <v-flex xs5>
-              <v-text-field  box label="Description" v-model="bag.descr"></v-text-field>
+              <v-text-field box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
             </v-flex>
           </v-layout>
           <v-divider>
@@ -38,7 +37,7 @@
       </v-flex>
     </v-layout>
 
-
+<!-- Gestion des bagages SOUTE -->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
         <v-btn color="primary" @click.native="ajoutBagage('soute')" >{{$t("bagages_ajout")}} {{$t("bagage_soute")}} </v-btn>
@@ -48,9 +47,6 @@
               <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
                 <v-icon>delete</v-icon>
               </v-btn>
-              <v-btn icon flat color="teal" >
-                <v-icon>photo</v-icon>
-              </v-btn>
             </v-flex>
             <v-flex xs5>
               <v-text-field  required box v-bind:label="$t('bagage_nom')" v-model="bag.name"
@@ -58,15 +54,15 @@
               ></v-text-field>
             </v-flex>
             <v-flex xs5>
-              <v-text-field  box label="Description" v-model="bag.descr"></v-text-field>
+              <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
             </v-flex>
           </v-layout>
-          <v-divider>
-          </v-divider>
+
         </div>
       </v-flex>
     </v-layout>
 
+<!-- Gestion des bagages AUTRE -->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
         <v-btn  color="primary" @click.native="ajoutBagage('autre')" >{{$t("bagages_ajout")}} {{$t("bagage_autre")}}</v-btn>
@@ -77,9 +73,6 @@
               <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
                 <v-icon>delete</v-icon>
               </v-btn>
-              <v-btn icon flat color="teal" >
-                <v-icon>photo</v-icon>
-              </v-btn>
             </v-flex>
             <v-flex xs5>
               <v-text-field  required box v-bind:label="$t('bagage_nom')" v-model="bag.name"
@@ -87,21 +80,25 @@
               ></v-text-field>
             </v-flex>
             <v-flex xs5>
-              <v-text-field  box label="Description" v-model="bag.descr"></v-text-field>
+              <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
             </v-flex>
           </v-layout>
-          <v-divider>
-          </v-divider>
         </div>
       </v-flex>
     </v-layout>
 
 
+    <!-- On active le bouton de validation si l'utilisateur
+    a correctement rempli les infos des bagages -->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <v-btn :disabled="!verifBagage()" color="blue accent-2" @click.native="updateBagages()" >Mettre à jour mes bagages</v-btn>
+        <v-btn dark :disabled="!verifBagage()" color="blue accent-2" @click.native="updateBagages(),snackbar=true" >Mettre à jour mes bagages</v-btn>
       </v-flex>
     </v-layout>
+
+    <v-snackbar v-model="snackbar" color="primary" bottom>
+      Bagages mis à jour !
+    </v-snackbar>
 
   </div>
 
@@ -119,18 +116,22 @@ export default {
       bagagesCabine : [],
       bagagesSoute : [],
       bagagesAutre : [],
-      connecting:false
+      // boolean utilisé pour éviter les conflits liés à l'update des bagages
+      connecting:false,
+      snackbar:false
     }
   },
 
 
   created(){
+    // on récupère les bagages de l'utilisateur
     this.getBagages();
   },
 
   methods:{
 
 
+    // on récupère les bagages d'un user grâce à son mobile token
     getBagages(){
 
     let self=this;
@@ -174,18 +175,19 @@ export default {
     });
   },
 
+  // Méthode d'ajout de bagage, en fonction du type de ce dernier
     ajoutBagage(type){
       switch(type){
-        case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'descr' : ''});
+        case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'details' : ''});
         break;
-        case 'soute' : this.bagagesSoute.push({'name' : '' + '' , 'descr' : ''});
+        case 'soute' : this.bagagesSoute.push({'name' : '' + '' , 'details' : ''});
         break;
-        case 'autre' : this.bagagesAutre.push({ 'name' : '' + '' , 'descr' : ''});
+        case 'autre' : this.bagagesAutre.push({ 'name' : '' + '' , 'details' : ''});
         break;
       }
     },
 
-
+    // on supprime le bagage correspondant
     supprBagage(array,obj){
       let index = array.indexOf(obj);
       if (index > -1) {
@@ -193,7 +195,8 @@ export default {
       }
     },
 
-
+    // méthode de mise à jour des bagages
+    // j'envoie les différents bagages en fonction de leur type et le mobile token du client
     updateBagages(){
 
       let data = {
@@ -206,14 +209,14 @@ export default {
         "_method" : "put"
       }
 
-      console.log(JSON.stringify(data));
       let self=this;
       $.ajax({
         url: 'http://dev-deliverbag.supconception.fr/mobile/bags/users',
         type : 'POST',
         data,
-        //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
+
         success: function(data){
+          // on récupère les bagages mis à jour
           self.getBagages();
         },
         error:function(e){
@@ -229,6 +232,8 @@ export default {
 
     },
 
+    // il est nécessaire de nommer le bagage que l'on ajoute
+    // cette méthode vérifie cette condition pour chaque bagage ajouté de chaque catégorie
     bagageOk(tab){
 
       let noms=[];
@@ -260,33 +265,8 @@ export default {
 
 
 </script>
-
+<i18n src='@/assets/trad.json'></i18n>
 <style>
 
 
 </style>
-
-<i18n>
-{
-  "fr": {
-    "bagage_nom": "Nom du bagage",
-    "bagage_descr" : "Description",
-    "bagages_update" : "Mettre à jour mes bagages",
-    "bagages_ajout" : "Ajouter un ",
-    "bagage_cabine" : "bagage cabine",
-    "bagage_soute" : "bagage soute",
-    "bagage_autre" : "autre bagage",
-    "bagage_required" : "Le nom est requis"
-  },
-  "en": {
-    "bagage_nom": "Bagage name",
-    "bagage_descr" : "Description",
-    "bagages_update" : "Update my bags",
-    "bagages_ajout" : "Add a",
-    "bagage_cabine" : "hand baggage",
-    "bagage_soute" : "hold baggage",
-    "bagage_autre" : "other bag",
-    "bagage_required" : "It is required to name your bag"
-  }
-}
-</i18n>

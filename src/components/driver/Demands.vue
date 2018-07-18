@@ -6,18 +6,9 @@
     </v-btn>
 
 
-    <v-flex xs6>
-      <v-select
-      :items="listDate"
-      v-model="activeDate"
-      label="Select"
-      single-line
-      auto
-      hide-details
-      @input="getDeliveries()"
-      ></v-select>
+    <v-flex xs6 offset-xs3>
+      <v-select :items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
     </v-flex>
-
 
 
     <div id="google-map" > </div>
@@ -33,8 +24,6 @@
             <v-subheader> {{active_demand.bags.length}} bagages</v-subheader>
             <v-layout column>
               <v-flex v-for="bag in active_demand.bags" :key="bag.id">
-
-
 
                 <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
                   <v-dialog v-model="detailBag" max-width="290">
@@ -65,9 +54,6 @@
                   {{bag.name}}
                   <v-icon right>work</v-icon>
                 </v-chip>
-
-
-
 
               </v-flex>
             </v-layout>
@@ -109,7 +95,10 @@ export default {
       listDate:[],
       activeDate:new Date().toLocaleString().slice(0,10),
       detailBag:false,
-      modelBag:''
+      modelBag:'',
+
+
+
     }
   },
 
@@ -342,6 +331,7 @@ export default {
 
 
           </script>
+          <i18n src='@/assets/trad.json'></i18n>
 
 
           <style scoped>

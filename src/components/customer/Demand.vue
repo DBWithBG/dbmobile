@@ -6,9 +6,12 @@
     right:swipeRight
     }">
 
-    <v-layout row>
+<!--
+  Pour accéder au formulaire de demande avec saisie d'adresses
+-->
+
       <v-flex xs12 sm6 offset-sm3>
-        <v-card elevation-5 :to="{name :'demande-form' , params: {type:'address'} }">
+        <v-card class="vh33" color="green lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'address'} }">
           <v-card-title primary-title>
             <div>
               <h3 class="headline mb-0 text-xs-center">
@@ -19,27 +22,30 @@
           </v-card-title>
         </v-card>
       </v-flex>
-    </v-layout>
 
-    <v-layout row>
+    <!--
+      Pour accéder au formulaire de demande avec saisie de numéro de train
+    -->
+
       <v-flex xs12 sm6 offset-sm3>
-        <v-card elevation-5 :to="{name :'demande-form' , params: {type:'train'} }">
+        <v-card class="vh33" color="light-green lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'train'} }">
           <v-card-title primary-title>
             <div>
               <h3 class="headline mb-0 text-xs-center">
                 <v-icon left>train</v-icon>
-                {{$t("train")}}</h3>
+                {{$t("train")}}
+              </h3>
               <div class="text-xs-center"> {{$t("train_subt")}} </div>
             </div>
           </v-card-title>
         </v-card>
       </v-flex>
-    </v-layout>
 
-
-    <v-layout row>
+    <!--
+      Pour accéder au formulaire de demande avec saisie de numéro de vol
+    -->
       <v-flex xs12 sm6 offset-sm3>
-        <v-card elevation-5 :to="{name :'demande-form' , params: {type:'flight'} }">
+        <v-card class="vh33" color="lime lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'flight'} }">
           <v-card-title primary-title>
             <div>
               <h3 class="headline mb-0 text-xs-center">
@@ -50,10 +56,6 @@
           </v-card-title>
         </v-card>
       </v-flex>
-    </v-layout>
-
-
-
 
     <db-menu> </db-menu>
   </div>
@@ -65,13 +67,11 @@
 <script>
 
 
-
 export default{
-
-
 
   data(){
     return {
+      value:''
     }
   },
 
@@ -88,7 +88,7 @@ export default{
 
 
 </script>
-
+<i18n src='@/assets/trad.json'></i18n>
 
 <style>
 
@@ -101,28 +101,9 @@ a {
   text-decoration:none;
 }
 
+.vh33{
+  height:30vh;
+}
+
 
 </style>
-
-
-
-<i18n>
-{
-  "fr": {
-    "address": "J'indique une adresse",
-    "address_subt" : "Définissez un lieu et une heure de prise en charge pour vos bagages",
-    "train": "J'arrive en train",
-    "train_subt" : "Vos bagages seront pris en charge à l'arrivée de votre train en gare",
-    "flight": "Je voyage en avion",
-    "flight_subt" : "Partez l'esprit serein en indiquant simplement votre numéro de vol"
-  },
-  "en": {
-    "address": "I select an address",
-    "address_subt" : "Set a pickup time and place for your luggage",
-    "train": "I'm coming in train",
-    "train_subt" : "Your luggage will be taken at the arrival of your train in station" ,
-    "flight": "I travel by air ",
-    "flight_subt" : "Make a request by simply indicating your flight number"
-  }
-}
-</i18n>
