@@ -61,9 +61,22 @@
         </li>
       </ul>
 
-      <v-btn flat color='primary' @click.native="prendreEnCharge(active_demand.id)">
+      <v-btn flat color='primary' @click.native="dialogTake=true">
         <span>M'engager sur cette demande</span>
       </v-btn>
+
+      <v-dialog v-model="dialogTake" max-width="290">
+        <v-card>
+          <v-card-title class="headline">Confirmation de la prise en charge </v-card-title>
+          <v-layout row>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="action" flat @click.native.stop="dialogTake=false">{{$t('cancel')}}</v-btn>
+              <v-btn color="primary" flat @click.native.stop="dialogTake=false,prendreEnCharge(active_demand.id)">Confirmer</v-btn>
+            </v-card-actions>
+          </v-layout>
+        </v-card>
+      </v-dialog>
 
     </div>
     <db-menu-driver> </db-menu-driver>
@@ -96,6 +109,7 @@ export default {
       activeDate:new Date().toLocaleString().slice(0,10),
       detailBag:false,
       modelBag:'',
+      dialogTake:false
 
 
 
@@ -119,6 +133,8 @@ export default {
         type : 'POST',
         data : req,
         success: function(data){
+          console.log(id);
+          localStorage.setItem('driver_course_to_open',id)
           self.$router.replace({path: '/courses-driver'});
         },
         error:function(e){

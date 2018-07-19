@@ -126,13 +126,16 @@
           <v-card-text class="text-xs-center">
             {{$t('tel_number')}} : {{$t('db_tel')}}
             <v-btn flat color="primary" @click.native="openTel()">
+              {{$t('call')}}
               <v-icon large>call</v-icon>
             </v-btn>
+
           </v-card-text>
 
           <v-card-text class="text-xs-center" >
             {{$t('email')}} : {{$t('db_email')}}
             <v-btn flat color="primary" @click.native="openMail()">
+              {{$t('mail')}}
               <v-icon large>mail</v-icon>
             </v-btn>
           </v-card-text>

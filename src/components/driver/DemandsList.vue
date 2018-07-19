@@ -214,7 +214,6 @@ export default {
       // model du bagage
       modelBag:'',
 
-      map:'',
       // FILTRE
 
       // liste des dates selectionnables
@@ -273,15 +272,15 @@ export default {
         //return items;
 
         return items.filter(row =>
-          //console.log(row["distance_from_driver"])
-          (row["distance_from_driver"] <= search[0].distance)   &&
+          (row["distance_from_driver"] <= search[0].distance)
+          &&
           (
             new Date(row["start_date"]).toLocaleString().slice(0,10) === search[0].date
             ||
             search[0].date == this.$i18n.t('any_date')
-          ) &&
+          )
+          &&
           (row["bags"].length <= search[0].bags)
-
         );
 
       },
@@ -295,8 +294,6 @@ export default {
           url: 'https://dev-deliverbag.supconception.fr/'+'deliveries?status=1',
           dataType: 'jsonp',
           success: function(json){
-            //  console.log(json);
-            // On a récupéré les données, on effectue le traitement ici
             // On a récupéré les données, on effectue le traitement ici
             var data=JSON.parse(json);
             self.deliveries_list=data;
@@ -375,10 +372,13 @@ export default {
         getUserPos(){
           var self=this;
           //let hard_gps = cordova.plugins.locationAccuracy;
-
+      //    console.log('get user pos');
+      console.log(navigator.geolocation);
           navigator.geolocation.getCurrentPosition(
 
             function(position){
+              console.log(self);
+              console.log(position);
               self.user_pos = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
@@ -387,7 +387,7 @@ export default {
               //self.user_marker.setMap(self.map);
             },
             function(error){
-              self.requestGps();
+              console.log(error);
               //self.requestGps();
             });
 
@@ -404,20 +404,7 @@ export default {
                 self.requestGps();
               },cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
             },
-            initMap(){
 
-              var self=this;
-              setTimeout(function(){
-
-                self.map = new google.maps.Map(document.getElementById('google-map'), {
-                  center: {lat: 44.836151, lng: -0.580816},
-                  zoom: 12,
-                  disableDefaultUI: true,
-                  gestureHandling: "greedy",
-                  styles:mapStyle
-                });
-              },2000);
-            }
 
 
 
@@ -442,7 +429,6 @@ export default {
           this.listDate = getDaysArray(now,end);
           this.listDate.unshift(this.$i18n.t('any_date'));
           let self=this;
-          //  self.requestGps();
           self.getUserPos();
 
 

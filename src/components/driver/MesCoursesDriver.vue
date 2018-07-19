@@ -32,13 +32,13 @@
                   <v-flex row xs12>
                     <v-layout align-center justify-space-around>
 
-                      <v-flex row xs5> {{ props.item.delivery.start_position.address }} </v-flex>
+                      <v-flex row xs5 offset-xs1> {{ props.item.delivery.start_position.address }} </v-flex>
 
-                      <v-flex row xs2>
+                      <v-flex row xs1>
                         <v-icon align-center>arrow_forward</v-icon>
                       </v-flex>
 
-                      <v-flex row xs5> {{ props.item.delivery.end_position.address }} </v-flex>
+                      <v-flex row xs5 offset-xs1> {{ props.item.delivery.end_position.address }} </v-flex>
 
                     </v-layout>
 
@@ -46,10 +46,6 @@
                       <v-subheader> {{props.item.delivery.bags.length}} {{$t('luggages')}} </v-subheader>
                       <v-layout column>
                         <v-flex v-for="bag in props.item.delivery.bags" :key="bag.id">
-                          <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-                            {{bag.name}}
-                            <v-icon right>work</v-icon>
-                          </v-chip>
                           <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
                             {{bag.name}}
                             <v-icon right>work</v-icon>
@@ -98,92 +94,94 @@
 
 
 
-      <v-dialog v-model="dialogDel" max-width="290">
-        <v-card>
-          <v-card-title class="headline">{{$t('cancel_takeover')}}</v-card-title>
+          <v-dialog v-model="dialogDel" max-width="290">
+            <v-card>
+              <v-card-title class="headline">{{$t('cancel_takeover')}}</v-card-title>
 
-          <v-card-text>
-            {{$t('cancel_takeover_confirm')}}
-          </v-card-text>
-          <v-card-text>
-            {{$t('cancel_takeover_info')}}
-          </v-card-text>
+              <v-card-text>
+                {{$t('cancel_takeover_confirm')}}
+              </v-card-text>
+              <v-card-text>
+                {{$t('cancel_takeover_info')}}
+              </v-card-text>
 
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="action" flat @click.native.stop="dialogDel=false">{{$t('cancel')}}</v-btn>
-            <v-btn color="error" flat @click.native.stop="dialogDel=false,cancelTakeover(active)">{{$t('delete')}}</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-
-
-      <v-dialog v-model="detailBag" max-width="290">
-        <v-card>
-          <v-card-title class="headline">{{$t('details_bag')}}</v-card-title>
-          <v-layout row>
-            <v-flex xs10 offset-xs1>
-              <div v-if="modelBag.details">
-                {{modelBag.details}}
-              </div>
-              <div v-else>
-                {{$t('descr_empty')}}
-              </div>
-            </v-flex>
-          </v-layout>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog v-model="dialogBag" max-width="290">
-        <v-card>
-          <v-layout column>
-            <v-flex v-for="bag in active.bags" :key="bag.id">
-              <div class="text-xs-center" v-if="bag.type_id===1" >
-              <v-chip xs6 color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-                {{bag.name}}
-                <v-icon right>work</v-icon>
-              </v-chip>
-              <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
-            </div>
-
-            <div class="text-xs-center" v-if="bag.type_id===2" >
-              <v-chip color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-                {{bag.name}}
-                  <v-icon right>work</v-icon>
-              </v-chip>
-              <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
-              </div>
-
-              <div class="text-xs-center" v-if="bag.type_id===3" >
-              <v-chip color="teal darken-4" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-                {{bag.name}}
-                <v-icon right>work</v-icon>
-              </v-chip>
-              <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
-              </div>
-
-              </v-flex>
-              <v-btn :disabled="!edlOk()" class="text-xs-center" color="primary" @click.native.stop="edlBags(active.bags)">Valider </v-btn>
-          </v-layout>
-        </v-card>
-      </v-dialog>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="action" flat @click.native.stop="dialogDel=false">{{$t('cancel')}}</v-btn>
+                <v-btn color="error" flat @click.native.stop="dialogDel=false,cancelTakeover(active)">{{$t('delete')}}</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
 
 
-    <v-snackbar v-model="snackbar" color="primary" bottom>
-      {{snackbarText}}
-    </v-snackbar>
+
+          <v-dialog v-model="detailBag" max-width="290">
+            <v-card>
+              <v-card-title class="headline">{{$t('details_bag')}}</v-card-title>
+              <v-layout row>
+                <v-flex xs10 offset-xs1>
+                  <div v-if="modelBag.details">
+                    {{modelBag.details}}
+                  </div>
+                  <div v-else>
+                    {{$t('descr_empty')}}
+                  </div>
+                </v-flex>
+              </v-layout>
+            </v-card>
+          </v-dialog>
+
+          <v-dialog v-model="dialogBag" max-width="290">
+            <v-card>
+              <v-layout column>
+                <v-flex v-for="bag in active.bags" :key="bag.id">
 
 
-    </v-tab-item>
-  </v-tabs-items>
+                  <div class="text-xs-center" v-if="bag.type_id===1" >
+                    <v-chip xs6 color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+                      {{bag.name}}
+                      <v-icon right>work</v-icon>
+                    </v-chip>
+                    <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
+                  </div>
 
-</v-tabs>
+                  <div class="text-xs-center" v-if="bag.type_id===2" >
+                    <v-chip color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+                      {{bag.name}}
+                      <v-icon right>work</v-icon>
+                    </v-chip>
+                    <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
+                  </div>
 
-</div>
+                  <div class="text-xs-center" v-if="bag.type_id===3" >
+                    <v-chip color="teal darken-4" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
+                      {{bag.name}}
+                      <v-icon right>work</v-icon>
+                    </v-chip>
+                    <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
+                  </div>
+
+                </v-flex>
+                <v-btn :disabled="!edlOk()" class="text-xs-center" color="primary" @click.native.stop="edlBags(active.bags)">Valider </v-btn>
+              </v-layout>
+            </v-card>
+          </v-dialog>
 
 
-<db-menu-driver> </db-menu-driver>
+          <v-snackbar v-model="snackbar" color="primary" bottom>
+            {{snackbarText}}
+          </v-snackbar>
+
+
+        </v-tab-item>
+      </v-tabs-items>
+
+    </v-tabs>
+
+  </div>
+
+
+  <db-menu-driver> </db-menu-driver>
 </div>
 
 </template>
@@ -225,8 +223,15 @@ export default {
 
 
     mounted(){
+      if (localStorage.getItem('driver_course_to_open') != null){
+        this.open=localStorage.getItem('driver_course_to_open');
+      }
       this.getCourses();
 
+    },
+
+    destroyed(){
+      localStorage.setItem('driver_course_to_open',null)
     },
 
     methods:{
@@ -235,7 +240,12 @@ export default {
         let ok=true;
         if (this.active != ''){
           this.active.bags.forEach(function(elem){
-            if (elem.edl.length<0){
+            if (elem.edl != undefined){
+              if (elem.edl.length<0){
+                ok=false;
+              }
+            }
+            else{
               ok=false;
             }
           });
@@ -309,7 +319,7 @@ export default {
             ];
             self.getCourses();
             self.snackbar=true;
-            self.snackbarText=self.$i18n.t("snackBar_cancel")
+            self.snackbarText=self.$i18n.t("snackbar_cancel")
           },
           error:function(e){
             console.log(e);
@@ -341,7 +351,7 @@ export default {
           data : {
             "delivery_id" : self.active.id,
             "details" : details,
-            "mobile_token" : '41bccd72a3d20fe5',
+            "mobile_token" : localStorage.getItem('deviceId'),
             "_method":"put"
           },
           success:function(data){
@@ -372,9 +382,10 @@ export default {
               [],[],[]
             ];
             self.getCourses();
+            // pour savoir quelle course ouvrir
             self.open=self.active.id;
             self.snackbar=true;
-            self.snackbarText=self.$i18n.t("snackBar_bags");
+            self.snackbarText=self.$i18n.t("snackbar_bags");
 
 
             //self.$forceUpdate();
@@ -404,7 +415,7 @@ export default {
             self.getCourses();
             self.open=delivery.id;
             self.snackbar=true;
-            self.snackbarText=self.$i18n.t("snackBar_dest")
+            self.snackbarText=self.$i18n.t("snackbar_dest")
           },
           error:function(e){
             console.log(e);
@@ -444,7 +455,6 @@ export default {
       },
       detailsCourse(id){
         var ref = window.open('http://dev-deliverbag.supconception.fr/mobile/deliveries/'+id+'?mobile_token='+localStorage.getItem('deviceId'), '_blank', 'location=no,zoom=no',);
-
       }
     }
   }

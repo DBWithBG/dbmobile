@@ -29,7 +29,7 @@
     "demande": "Faire une demande",
     "demandes": "Demandes",
     "descr_empty": "Aucune description indiquée par le client",
-    "details_course": "Détails de la course",
+    "details_course": "Suivi de la course",
     "distance": "Distance",
     "en": "Anglais",
     "error_401_sncf": "Un problème d'autorisation d'accès est survenu",
@@ -76,7 +76,7 @@
     "subt_2": "Étape 2 : Mes bagages",
     "subt_3": "Étape 3 : Récapitulatif",
     "subt_4": "Étape 4 : Paiement",
-    "suivi_course": "Détails de la course",
+    "suivi_course": "Suivi de la course",
     "tab_en_attente": "En attente",
     "tab_en_cours": "En cours",
     "tab_passees": "Passées",
@@ -103,7 +103,7 @@
 	"confirm_demand" : "M'engager sur cette demande",
 	"any_date" : "Toutes les dates",
 	"luggages" : "bagages",
-	"map_display" : "Voir sur la carte",
+	"map_display" : "Voir l'itinéraire",
 	"error_heure" : "L'heure d'arrivée à cet arrêt est passée",
 	"declarer_litige" : "Déclarer un litige",
 	"declaration_litige" : "Déclaration d'un litige",
@@ -116,7 +116,9 @@
   "contact_db" : "Contacter Deliverbag",
   "tel_number" : "Numéro de téléphone" ,
   "email" : "Adresse email",
-  "snackbar_bags_update" : "Bagages mis à jours !"
+  "snackbar_bags_update" : "Bagages mis à jours !",
+  "call":"Appeler" ,
+  "mail":"Envoyer un email"
 
 
 },
@@ -130,7 +132,7 @@
     "bagage_required": "Bag's name is required",
     "bagage_soute": "hold luggage",
     "bagages": "My bags",
-    "bagages_ajout": "Add a",
+    "bagages_ajout": "Add an",
     "bagages_subt": "Manage my bags",
     "bagages_update": "Update my bags",
     "cancel": "Cancel",
@@ -238,7 +240,10 @@
     "db_email" : "bordeaux@deliverbag.com",
     "contact_db" : "Contact Deliverbag",
     "tel_number" : "Phone number",
-    "email" : "Email address"
+    "email" : "Email address",
+    "snackbar_bags_update" : "Bags updated !",
+    "call":"Call" ,
+    "mail":"Send an email"
 },
     "es": {
       "address": "Doy una dirección",

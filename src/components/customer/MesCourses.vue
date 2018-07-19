@@ -40,88 +40,87 @@
 
             </div>
 
+            <!-- Contenu du panel lorsqu'il est étendu -->
+
+          <!-- slider de suivi de la course -->
+          <div v-if="props.item.status === 2 || props.item.status === 3 || props.item.status === 4">
+            <v-layout row xs12>
+              <v-flex xs4>
+                <v-subheader>Bagages en attente</v-subheader>
+              </v-flex>
+              <v-flex xs5>
+                <v-subheader>Pris en charge</v-subheader>
+              </v-flex>
+              <v-flex xs3>
+                <v-subheader>Livrés</v-subheader>
+              </v-flex>
+            </v-layout>
+
+            <v-flex xs10 offset-xs1>
+              <v-slider
+              v-model="props.item.status-1" :max="3.0" :min="1.0" :step="0.1" readonly>
+            </v-slider>
+          </v-flex>
+
+        </div>
 
 
 
-
-        <!--
-        Contenu du panel lorsqu'il est étendu
-      -->
-
-      <!-- slider de suivi de la course -->
-      <div v-if="props.item.status === 2 || props.item.status === 3 || props.item.status === 4">
         <v-layout row xs12>
-          <v-flex xs4>
-            <v-subheader>Bagages en attente</v-subheader>
+          <v-flex class="text-xs-center" xs4>
+            {{ props.item.start_position.address }}
+            <v-divider> </v-divider>
+            {{moment(props.item.start_date).format('LLL')}}
           </v-flex>
-          <v-flex xs5>
-            <v-subheader>Pris en charge</v-subheader>
+          <v-flex xs2 offset-xs1>
+            <v-icon align-center>arrow_forward</v-icon>
           </v-flex>
-          <v-flex xs3>
-            <v-subheader>Livrés</v-subheader>
+          <v-flex class="text-xs-center" xs4>
+            {{ props.item.end_position.address }}
+            <v-divider> </v-divider>
+            <div v-if="props.item.end_date">
+              {{moment(props.item.end_date).format('LLL')}}
+            </div>
+            <div v-else>
+              Livraison dès que possible
+            </div>
           </v-flex>
         </v-layout>
 
-        <v-flex xs10 offset-xs1>
-          <v-slider
-          v-model="props.item.status-1"
-          :max="3.0"
-          :min="1.0"
-          :step="0.1"
-          readonly
-          ></v-slider>
-        </v-flex>
-
-      </div>
-
-
-
-      <v-layout row xs12>
-        <v-flex class="text-xs-center" xs4>
-          {{ props.item.start_position.address }}
-        </v-flex>
-        <v-flex xs2 offset-xs1>
-          <v-icon align-center>arrow_forward</v-icon>
-        </v-flex>
-        <v-flex class="text-xs-center" xs4>
-          {{ props.item.end_position.address }}
+        <br>
+        <!--
+        Notation de la course SI elle a déjà été effectuée
+      -->
+      <div v-if="props.item.status === 5 && !ratingSent[props.item.id]">
+        <v-layout row>
+          <v-flex xs10 offset-xs2>
+            <star-rating
+            :star-size="40"
+            v-model="props.item.rating" :show-rating="false"
+            @click.native.stop="active=props.item,dialogRating = true,sendRating(props.item.id,props.item.rating)" >
+          </star-rating>
         </v-flex>
       </v-layout>
+    </div>
 
-      <br>
-      <!--
-      Notation de la course SI elle a déjà été effectuée
-    -->
-    <div v-if="props.item.status === 5 && !ratingSent[props.item.id]">
-      <v-layout row>
-        <v-flex xs10 offset-xs2>
-        <star-rating
-        :star-size="40"
-        v-model="props.item.rating" :show-rating="false"
-        @click.native.stop="active=props.item,dialogRating = true,sendRating(props.item.id,props.item.rating)" >
-      </star-rating>
+
+    <v-flex row xs12>
+      <v-btn flat color='primary' @click.native="detailsCourse(props.item.id)">
+        <span> {{$t("suivi_course")}}</span>
+      </v-btn>
     </v-flex>
-    </v-layout>
-  </div>
-
-
-      <v-flex row xs12>
-        <v-btn flat color='primary' @click.native="detailsCourse(props.item.id)">
-          <span> {{$t("suivi_course")}}</span>
-        </v-btn>
-      </v-flex>
-        <v-flex row xs12 v-if="props.item.status === 1">
-          <v-btn flat color='error' @click.native.stop="active=props.item,dialogDel = true">
-            <span> {{$t("cancel_course")}}</span>
-          </v-btn>
-        </v-flex>
-        <v-flex row xs12 v-if="props.item.status === 5 && !litigeSent[props.item.id]">
-          <v-btn flat color='error' @click.native.stop="active=props.item,dialogLitige = true">
-            <span> {{$t('declarer_litige')}}</span>
-          </v-btn>
-        </v-flex>
-    </v-expansion-panel-content>
-  </v-expansion-panel>
+    <v-flex row xs12 v-if="props.item.status === 1">
+      <v-btn flat color='error' @click.native.stop="active=props.item,dialogDel = true">
+        <span> {{$t("cancel_course")}}</span>
+      </v-btn>
+    </v-flex>
+    <v-flex row xs12 v-if="props.item.status === 5 && !litigeSent[props.item.id]">
+      <v-btn flat color='error' @click.native.stop="active=props.item,dialogLitige = true">
+        <span> {{$t('declarer_litige')}}</span>
+      </v-btn>
+    </v-flex>
+  </v-expansion-panel-content>
+</v-expansion-panel>
 </template>
 
 <!--
@@ -177,7 +176,7 @@ Dialog popup concernant la notation d'une course
     <v-card-title class="headline">{{$t("rating")}}</v-card-title>
     <v-layout row>
       <v-flex xs10 offset-xs1>
-      <v-textarea clearable rows="1" auto-grow v-bind:label="$t('rating_label')" v-model="active.details"> </v-textarea>
+        <v-textarea clearable rows="1" auto-grow v-bind:label="$t('rating_label')" v-model="active.details"> </v-textarea>
       </v-flex>
     </v-layout>
     <v-btn  flat color="primary" @click.native="sendRating(active.id,active.rating,active.details),dialogRating = false">
@@ -285,6 +284,9 @@ export default {
   methods:{
 
     getDeliveries(){
+
+      //TODO:  GET LE PHONE NUMBER DU CHAUFFEUR POUR QUE LE CLIENT PUISSE LE Contacter
+      // pareil pour côté chauffeur du coup !
       let self=this;
       $.ajax({
         url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/customers?mobile_token='+localStorage.getItem('deviceId'),

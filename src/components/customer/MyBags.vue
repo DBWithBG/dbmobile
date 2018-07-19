@@ -31,18 +31,18 @@
         <div v-for="bag in bagagesCabine" :key="bag.id">
           <v-layout row>
             <v-flex xs2>
-              <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
+              <v-btn icon flat color="error" @click.native="supprBagage(bagagesCabine, bag)">
                 <v-icon>delete</v-icon>
               </v-btn>
             </v-flex>
             <v-flex xs5>
-              <v-text-field  required box v-bind:label="$t('bagage_nom')" v-model="bag.name"
+              <v-text-field required v-bind:label="$t('bagage_nom')" v-model="bag.name"
               :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
               ></v-text-field>
             </v-flex>
             <v-divider vertical></v-divider>
             <v-flex xs5>
-              <v-text-field box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+              <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
             </v-flex>
           </v-layout>
         </div>
@@ -56,18 +56,18 @@
         <div v-for="bag in bagagesSoute" :key="bag.id">
           <v-layout row>
             <v-flex xs2>
-              <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
+              <v-btn icon flat color="error" @click.native="supprBagage(bagagesSoute, bag)">
                 <v-icon>delete</v-icon>
               </v-btn>
             </v-flex>
             <v-flex xs5>
-              <v-text-field  required box v-bind:label="$t('bagage_nom')" v-model="bag.name"
+              <v-text-field required v-bind:label="$t('bagage_nom')" v-model="bag.name"
               :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
               ></v-text-field>
             </v-flex>
             <v-divider vertical></v-divider>
             <v-flex xs5>
-              <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+              <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
             </v-flex>
           </v-layout>
 
@@ -83,18 +83,18 @@
 
           <v-layout row>
             <v-flex xs2>
-              <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
+              <v-btn icon flat color="error" @click.native="supprBagage(bagagesAutre, bag)">
                 <v-icon>delete</v-icon>
               </v-btn>
             </v-flex>
             <v-flex xs5>
-              <v-text-field  required box v-bind:label="$t('bagage_nom')" v-model="bag.name"
+              <v-text-field  required v-bind:label="$t('bagage_nom')" v-model="bag.name"
               :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
               ></v-text-field>
             </v-flex>
             <v-divider vertical></v-divider>
             <v-flex xs5>
-              <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+              <v-text-field  v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
             </v-flex>
           </v-layout>
         </div>
@@ -106,7 +106,7 @@
     a correctement rempli les infos des bagages -->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <v-btn dark :disabled="!verifBagage()" color="blue accent-2" @click.native="updateBagages(),snackbar=true" >Mettre à jour mes bagages</v-btn>
+        <v-btn dark :disabled="!verifBagage()" color="action" @click.native="updateBagages(),snackbar=true" >Mettre à jour mes bagages</v-btn>
       </v-flex>
     </v-layout>
 

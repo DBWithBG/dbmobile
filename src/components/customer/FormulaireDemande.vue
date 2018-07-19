@@ -44,7 +44,6 @@
                 slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
               </v-text-field>
               <v-date-picker v-model="date" :min="minDate" @input="$refs.menudate.save(date),resetData()" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
-
               </v-date-picker>
             </v-menu>
           </v-flex>
@@ -193,7 +192,7 @@
           </v-flex>
           <v-divider vertical> </v-divider>
           <v-flex xs5>
-            <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
+            <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
           </v-flex>
         </v-layout>
       </div>
@@ -215,7 +214,7 @@
           </v-flex>
           <v-divider vertical> </v-divider>
           <v-flex xs5>
-            <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
+            <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
           </v-flex>
         </v-layout>
 
@@ -238,13 +237,13 @@
           </v-flex>
           <v-divider vertical> </v-divider>
           <v-flex xs5>
-            <v-text-field box v-bind:label="$t('bagage_descr')" v-model="bag.descr"></v-text-field>
+            <v-text-field box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
           </v-flex>
         </v-layout>
       </div>
     </v-flex>
 
-    {{compteurBagages()}}
+    {{compteurBagages}}
 
   <v-layout row>
     <v-flex xs4>
@@ -377,6 +376,11 @@ export default {
     // Id du vol
     flightId(){
       return this.numVol.substring(2,6);
+    },
+
+    //compteur du nombre de bagages indiqués par le client
+    compteurBagages(){
+      return (this.bagagesCabine.length + this.bagagesSoute.length + this.bagagesAutre.length);
     },
 
     // Date minimale pour la prise en charge
@@ -600,6 +604,7 @@ export default {
 
   // Méthode qui est appelée lorsque le client sélectionne une gare
     verifGare(){
+      //console.log(JSON.stringify(this.selectedGare));
       // On récupère les informatons de localisation ainsi que l'heure d'arrivée en gare
       var lat = parseFloat(this.selectedGare.stop_point.coord.lat);
       var lng =  parseFloat(this.selectedGare.stop_point.coord.lon);
@@ -634,6 +639,7 @@ export default {
           if (status == google.maps.GeocoderStatus.OK) {
             self.startPlace=results[1];
             // Si le géocodage se passe correctement, on vérifie alors que le lieu souhaité est inclus dans les départements authorisés
+            // le second paramètre sert pour différencier les erreurs
             self.verifyDepartment(self.startPlace,'gare');
 
           }
@@ -734,11 +740,11 @@ export default {
         // Méthode pour ajouter un bagage en fonction du type
         ajoutBagage(type){
           switch(type){
-            case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'descr' : ''});
+            case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'details' : ''});
             break;
-            case 'soute' : this.bagagesSoute.push({'name' : '' + '' , 'descr' : ''});
+            case 'soute' : this.bagagesSoute.push({'name' : '' + '' , 'details' : ''});
             break;
-            case 'autre' : this.bagagesAutre.push({ 'name' : '' + '' , 'descr' : ''});
+            case 'autre' : this.bagagesAutre.push({ 'name' : '' + '' , 'details' : ''});
             break;
           }
         },
@@ -786,10 +792,7 @@ export default {
             return ok;
           },
 
-          //méthode qui compte le nombre de bagages indiqués par le client
-          compteurBagages(){
-            return (this.bagagesCabine.length + this.bagagesSoute.length + this.bagagesAutre.length);
-          },
+
 
 
     reponse(){
@@ -815,7 +818,7 @@ export default {
           ,
           "delivery" :
           {
-            "comment" : "Un commentaire... sur une demande de prise en charge...",
+            "comment" : "Commentaire",
             "start_date" : this.dateStartToJson,
             "end_date" : this.dateEndToJson,
             "livraisonDirecte":this.livraisonDirecte
@@ -985,7 +988,7 @@ export default {
   input {
     width: 500px;
     height:40px;
-    border-bottom: 1px solid #59A34E;
+    border-bottom: 2px solid #59A34E;
     box-sizing: border-box;
   }
 
