@@ -118,7 +118,11 @@
   "email" : "Adresse email",
   "snackbar_bags_update" : "Bagages mis à jours !",
   "call":"Appeler" ,
-  "mail":"Envoyer un email"
+  "mail":"Envoyer un email",
+  "label_edl" : "Indiquez l'état des bagages que vous prenez en charge",
+  "etat_bag" : "État du bagage",
+  "confirmer" : "Confirmer",
+  "confirmer_course" : "Confirmer votre engagement sur cette course?"
 
 
 },

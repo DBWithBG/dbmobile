@@ -2,6 +2,7 @@
 
   <div>
 
+    <!-- Ecran de chargement lorsque l'on attend le chargement des données -->
     <v-layout v-if="loading" row justify-center>
       <v-container fill-height>
         <v-layout row justify-center align-center>
@@ -13,13 +14,13 @@
     <div v-if="!loading" v-touch="{
       left:swipeLeft
       }">
+
+      <!-- Onglets -->
       <v-tabs fixed-tabs>
         <v-tab v-for="tab in tabs" :key="tab.id" >
           {{ tab }}
         </v-tab>
         <v-tabs-items :v-model="tabs">
-
-
           <v-tab-item
           v-for="tab in demandes" :key="tab.id" >
           <v-data-table :headers="headers" :items="tab" hide-actions class="elevation-1" hide-headers>
@@ -63,27 +64,34 @@
                     </v-list>
                   </v-flex>
 
+
+                  <!-- Annuler la prise en charge, uniquement si les bagages n'ont pas été pris en charge -->
                   <div v-if="props.item.delivery.status === 2">
                     <v-btn small flat color="error" @click.native.stop="dialogDel=true, active=props.item.delivery">
                       {{$t('cancel_course')}}
                     </v-btn>
 
+                    <!-- Prendre en charges les bags, uniquement si les bagages n'ont pas été pris en charge -->
                     <v-btn  small flat color="action" @click.native.stop="dialogBag=true, active=props.item.delivery">
                       {{$t('take_bags')}}
                     </v-btn>
-
                   </div>
+
+                  <!-- Livrer les bags, uniquement si les bagages ont été pris en charge -->
 
                   <div v-if="props.item.delivery.status === 3">
                     <v-btn small flat color="action" @click.native.stop="endCourse(props.item.delivery)">
                       {{$t('deliver_bags')}}
                     </v-btn>
                   </div>
+
                 </v-expansion-panel-content>
               </v-expansion-panel>
 
 
             </template>
+
+            <!-- Si jamais il n y a pas de données -->
 
             <template slot="no-data">
               {{$t('courses_empty')}}
@@ -134,15 +142,17 @@
           <v-dialog v-model="dialogBag" max-width="290">
             <v-card>
               <v-layout column>
+                <v-flex pt-2 pb-4 class="text-xs-center" >
+                  {{$t('label_edl')}}
+                </v-flex>
                 <v-flex v-for="bag in active.bags" :key="bag.id">
-
 
                   <div class="text-xs-center" v-if="bag.type_id===1" >
                     <v-chip xs6 color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
                       {{bag.name}}
                       <v-icon right>work</v-icon>
                     </v-chip>
-                    <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
+                    <v-text-field  box v-bind:label="$t('etat_bag')" v-model="bag.edl"></v-text-field>
                   </div>
 
                   <div class="text-xs-center" v-if="bag.type_id===2" >
@@ -150,7 +160,7 @@
                       {{bag.name}}
                       <v-icon right>work</v-icon>
                     </v-chip>
-                    <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
+                    <v-text-field  box v-bind:label="$t('etat_bag')" v-model="bag.edl"></v-text-field>
                   </div>
 
                   <div class="text-xs-center" v-if="bag.type_id===3" >
@@ -158,11 +168,11 @@
                       {{bag.name}}
                       <v-icon right>work</v-icon>
                     </v-chip>
-                    <v-text-field  box label="État du bagage" v-model="bag.edl"></v-text-field>
+                    <v-text-field  box v-bind:label="$t('etat_bag')" v-model="bag.edl"></v-text-field>
                   </div>
 
                 </v-flex>
-                <v-btn :disabled="!edlOk()" class="text-xs-center" color="primary" @click.native.stop="edlBags(active.bags)">Valider </v-btn>
+                <v-btn :disabled="!edlOk" class="text-xs-center" color="primary" @click.native.stop="edlBags(active.bags)">Valider </v-btn>
               </v-layout>
             </v-card>
           </v-dialog>
@@ -221,6 +231,28 @@ export default {
       }
     },
 
+    computed:{
+      edlOk(){
+        let ok=true;
+        if (this.active != ''){
+          this.active.bags.forEach(function(elem){
+            if (elem.edl != undefined){
+              if (elem.edl.length<=0){
+                ok=false;
+              }
+            }
+            else{
+              ok=false;
+            }
+          });
+        }
+        else{
+          ok=false;
+        }
+        return ok;
+      }
+    },
+
 
     mounted(){
       if (localStorage.getItem('driver_course_to_open') != null){
@@ -236,25 +268,7 @@ export default {
 
     methods:{
 
-      edlOk(){
-        let ok=true;
-        if (this.active != ''){
-          this.active.bags.forEach(function(elem){
-            if (elem.edl != undefined){
-              if (elem.edl.length<0){
-                ok=false;
-              }
-            }
-            else{
-              ok=false;
-            }
-          });
-        }
-        else{
-          ok=false;
-        }
-        return ok;
-      },
+
 
       getCourses(){
 

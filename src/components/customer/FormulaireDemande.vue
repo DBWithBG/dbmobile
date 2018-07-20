@@ -802,26 +802,25 @@ export default {
         {
           "start_position":
           {
-            "name": this.startPlace.name,
-            "address":this.startPlace.formatted_address,
-            "lat" :this.startPlace.geometry.location.lat(),
-            "lng":this.startPlace.geometry.location.lng()
-          }
-          ,
+            'name': this.startPlace.name,
+            'address':this.startPlace.formatted_address,
+            'lat' :this.startPlace.geometry.location.lat(),
+            'lng':this.startPlace.geometry.location.lng()
+          },
           "end_position":
           {
-            "name": this.endPlace.name,
-            "address":this.endPlace.formatted_address,
-            "lat" :this.endPlace.geometry.location.lat(),
-            "lng":this.endPlace.geometry.location.lng()
-          }
-          ,
+            'name': this.endPlace.name,
+            'address':this.endPlace.formatted_address,
+            'lat' :this.endPlace.geometry.location.lat(),
+            'lng':this.endPlace.geometry.location.lng()
+          },
           "delivery" :
           {
-            "comment" : "Commentaire",
-            "start_date" : this.dateStartToJson,
-            "end_date" : this.dateEndToJson,
-            "livraisonDirecte":this.livraisonDirecte
+            'comment' : "Commentaire",
+            'start_date' : this.dateStartToJson,
+            'end_date' : this.dateEndToJson,
+            'livraisonDirecte': this.livraisonDirecte,
+            'no_train': this.numTrain
           },
           "bagages" : {
             '1' : this.bagagesCabine,

@@ -2,8 +2,9 @@
   <div>
     <back-header message="Liste des demandes"> </back-header>
 
+    {{deliveries}}
 
-    <!-- vue 2.5 use slot-scope -->
+    <!-- Ecran de chargement en attendant le chargement des données -->
 
     <v-layout v-if="loading" row justify-center>
       <v-container fill-height>
@@ -19,163 +20,147 @@
 
       <v-expansion-panel popout>
         <v-expansion-panel-content>
+          <!-- Panel filtrage -->
           <div slot="header">{{$t('filter_demands')}}</div>
           <v-flex xs10 offset-xs1>
+              <!-- Filtre 1 : distance du client, sous forme d'un slider -->
             <v-subheader>{{$t('distance_client')}}</v-subheader>
-            <v-slider
-            v-model="search[0].distance"
-            thumb-label="always"
-            :max="999"
-            thumb-size="45"
-            >
-            <template slot="thumb-label" slot-scope="props">
-              <span>
-                {{props.value}} km
-              </span>
-            </template>
+            <v-slider v-model="search[0].distance" thumb-label="always":max="999" thumb-size="45">
+              <template slot="thumb-label" slot-scope="props">
+                <span>
+                  {{props.value}} km
+                </span>
+              </template>
+            </v-slider>
+          </v-flex>
+
+          <!-- Filtre 2 : Nombre max de bagages, sous forme d'un slider -->
+          <v-flex xs10 offset-xs1>
+            <v-subheader>{{$t('max_bags')}}</v-subheader>
+            <v-slider v-model="search[0].bags" thumb-label="always":max="10">
           </v-slider>
         </v-flex>
 
-        <v-flex xs10 offset-xs1>
-          <v-subheader>{{$t('max_bags')}}</v-subheader>
-          <v-slider
-          v-model="search[0].bags"
-          thumb-label="always"
-          :max="10"
-          >
-        </v-slider>
-      </v-flex>
-
-      <v-layout row>
-        <v-flex xs4 offset-xs1>
-        <v-switch label="Livraisons"color="primary" v-model="search[0].livraisons"> </v-switch>
-      </v-flex>
-      <v-flex xs4 offset-xs1>
-        <v-switch label="Consignes"color="primary" v-model="search[0].consignes"> </v-switch>
+        <!-- Filtre 3 : type de demandes, par défaut consignes et livraisons sont activées -->
+        <!-- filtres sous forme de switchs, activés par défaut -->
+        <v-layout row>
+          <v-flex xs4 offset-xs1>
+            <v-switch label="Livraisons"color="primary" v-model="search[0].livraisons"> </v-switch>
           </v-flex>
-      </v-layout>
-
-      <v-layout class="pt-4" row>
-        <v-flex xs10 offset-xs1>
-          <v-subheader >{{$t('course_date')}}</v-subheader>
-          <v-select class="mb-5":items="listDate" v-model="search[0].date" single-line auto hide-details></v-select>
-        </v-flex>
-
-      </v-layout>
-    </v-expansion-panel-content>
-  </v-expansion-panel>
-
-
-
-
-
-
-
-
-  <v-data-table :headers="headers" :items="deliveries_list" :search="search" :custom-filter="customFilter" hide-actions item-key="id">
-
-
-    <template slot="items" slot-scope="props">
-
-      <tr @click="props.expanded = !props.expanded">
-
-        <td> {{moment(props.item.date_moment).fromNow()}} </td>
-        <td class="text-xs-center"> à {{props.item.distance_from_driver}} km </td>
-        <td class="text-xs-center"> {{props.item.estimated_time}} {{$t('minutes')}}</td>
-
-      </tr>
-
-
-
-    </template>
-
-    <template slot="no-data">
-      {{$t('courses_empty')}}
-    </template>
-
-    <template slot="no-results">
-      {{$t('courses_no_results')}}
-    </template>
-
-
-
-    <template slot="expand" slot-scope="props">
-
-      <v-card flat>
-        <v-card-text> {{$t('takeover_label')}} : {{props.item.start_position.address}} le {{props.item.date_formatted}}</v-card-text>
-        <v-card-text> {{$t('livraison_label')}} : {{props.item.end_position.address}} </v-card-text>
-      </v-card>
-
-
-
-
-      <v-list subheader>
-        <v-subheader> {{props.item.bags.length}} {{$t('luggages')}} </v-subheader>
-        <v-layout column>
-
-          <v-flex v-for="bag in props.item.bags" :key="bag.id">
-            <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
-              {{bag.name}}
-              <v-icon right>work</v-icon>
-            </v-chip>
-
-            <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
-              {{bag.name}}
-              <v-icon right>work</v-icon>
-            </v-chip>
-
-            <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
-              {{bag.name}}
-              <v-icon right>work</v-icon>
-            </v-chip>
-
+          <v-flex xs4 offset-xs1>
+            <v-switch label="Consignes"color="primary" v-model="search[0].consignes"> </v-switch>
           </v-flex>
         </v-layout>
-      </v-list>
-      <v-btn flat color='primary' @click.native="route(props.item.start_position.lat,props.item.start_position.lng)">
-        <span>{{$t('map_display')}}</span>
-      </v-btn>
 
-      <v-btn flat color='primary' @click.native="active=props.item.id,dialogTake=true ">
-        <span>{{$t('confirm_demand')}}</span>
-      </v-btn>
+        <!-- Filtre 4 : Date de la demande, par défaut toutes les dates sont affichées -->
+        <v-layout class="pt-4" row>
+          <v-flex xs10 offset-xs1>
+            <v-subheader >{{$t('course_date')}}</v-subheader>
+            <v-select class="mb-5":items="listDate" v-model="search[0].date" single-line auto hide-details></v-select>
+          </v-flex>
 
-    </template>
-  </v-data-table>
+        </v-layout>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
 
-  <v-dialog v-model="dialogBag" max-width="290">
-    <v-card>
-      <v-card-title class="headline">{{$t('bagage_descr')}}</v-card-title>
-      <v-layout row>
-        <v-flex xs10 offset-xs1>
-          <div v-if="modelBag.details">
-            {{modelBag.details}}
-          </div>
-          <div v-else>
-            {{$t('descr_empty')}}
-          </div>
-        </v-flex>
-      </v-layout>
-    </v-card>
-  </v-dialog>
+    <v-data-table :headers="headers" :items="deliveries_list" :search="search" :custom-filter="customFilter" hide-actions item-key="id">
 
 
-  <v-dialog v-model="dialogTake" max-width="290">
-    <v-card>
-      <v-card-title class="headline">Confirmation de la prise en charge </v-card-title>
-      <v-layout row>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="action" flat @click.native.stop="dialogTake=false">{{$t('cancel')}}</v-btn>
-          <v-btn color="primary" flat @click.native.stop="dialogTake  =false,prendreEnCharge(active)">Confirmer</v-btn>
-        </v-card-actions>
-      </v-layout>
-    </v-card>
-  </v-dialog>
+      <template slot="items" slot-scope="props">
+
+        <tr @click="props.expanded = !props.expanded">
+
+          <td> {{moment(props.item.date_moment).fromNow()}} </td>
+          <td class="text-xs-center"> à {{props.item.distance_from_driver}} km </td>
+          <td class="text-xs-center"> {{props.item.estimated_time}} {{$t('minutes')}}</td>
+
+        </tr>
+
+      </template>
+
+      <!-- Si jamais il n y a rien pas de données récupérées côté serveur -->
+      <template slot="no-data">
+        {{$t('courses_empty')}}
+      </template>
+
+      <!-- Si jamais les critères sont trop restrictifs et ne correspondent à aucune demande -->
+      <template slot="no-results">
+        {{$t('courses_no_results')}}
+      </template>
+
+      <template slot="expand" slot-scope="props">
+
+        <v-card flat>
+          <v-card-text> {{$t('takeover_label')}} : {{props.item.start_position.address}} le {{props.item.date_formatted}}</v-card-text>
+          <v-card-text> {{$t('livraison_label')}} : {{props.item.end_position.address}} </v-card-text>
+        </v-card>
+        <v-list subheader>
+          <v-subheader> {{props.item.bags.length}} {{$t('luggages')}} </v-subheader>
+          <v-layout column>
+
+            <v-flex v-for="bag in props.item.bags" :key="bag.id">
+              <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
+                {{bag.name}}
+                <v-icon right>work</v-icon>
+              </v-chip>
+
+              <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
+                {{bag.name}}
+                <v-icon right>work</v-icon>
+              </v-chip>
+
+              <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
+                {{bag.name}}
+                <v-icon right>work</v-icon>
+              </v-chip>
+
+            </v-flex>
+          </v-layout>
+        </v-list>
+        <v-btn flat color='primary' @click.native="route(props.item.start_position.lat,props.item.start_position.lng)">
+          <span>{{$t('map_display')}}</span>
+        </v-btn>
+
+        <v-btn flat color='primary' @click.native="active=props.item.id,dialogTake=true ">
+          <span>{{$t('confirm_demand')}}</span>
+        </v-btn>
+
+      </template>
+    </v-data-table>
+
+    <v-dialog v-model="dialogBag" max-width="290">
+      <v-card>
+        <v-card-title class="headline">{{$t('bagage_descr')}}</v-card-title>
+        <v-layout row>
+          <v-flex xs10 offset-xs1>
+            <div v-if="modelBag.details">
+              {{modelBag.details}}
+            </div>
+            <div v-else>
+              {{$t('descr_empty')}}
+            </div>
+          </v-flex>
+        </v-layout>
+      </v-card>
+    </v-dialog>
+
+
+    <v-dialog v-model="dialogTake" max-width="290">
+      <v-card>
+        <v-card-title class="headline">{{$t('confirmer_course')}}</v-card-title>
+        <v-layout row>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="action" flat @click.native.stop="dialogTake=false">{{$t('cancel')}}</v-btn>
+            <v-btn color="primary" flat @click.native.stop="dialogTake  =false,prendreEnCharge(active)">Confirmer</v-btn>
+          </v-card-actions>
+        </v-layout>
+      </v-card>
+    </v-dialog>
 
 
 
-</div>
+  </div>
 </div>
 </template>
 
@@ -256,7 +241,7 @@ export default {
 
         if (device.platform == 'Android'){
           window.open("google.navigation:q="+lat+","+lng+"&mode=d" , '_system')
-        //  window.open("geo:"+addressLongLat);
+          //  window.open("geo:"+addressLongLat);
         }
         if (device.platform == 'iOS'){
           window.open("http://maps.apple.com/?q="+addressLongLat, '_system');
@@ -281,9 +266,11 @@ export default {
           )
           &&
           (row["bags"].length <= search[0].bags)
+
         );
 
       },
+
 
       getDeliveries(){
         // J'utilise un alias de this pour avoir un accès aux données présentes dans 'data'
@@ -372,8 +359,8 @@ export default {
         getUserPos(){
           var self=this;
           //let hard_gps = cordova.plugins.locationAccuracy;
-      //    console.log('get user pos');
-      console.log(navigator.geolocation);
+          //    console.log('get user pos');
+          console.log(navigator.geolocation);
           navigator.geolocation.getCurrentPosition(
 
             function(position){

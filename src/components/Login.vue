@@ -26,8 +26,8 @@ export default {
   created(){
 
     var self=this;
-  //  localStorage.setItem('deviceId',"41bccd72a3d20fe5");
-  //  self.$router.replace({path: '/demands'});
+    localStorage.setItem('deviceId',"41bccd72a3d20fe5");
+    self.$router.replace({path: '/demands'});
     document.addEventListener('deviceReady', () => {
 
       self.deviceId=device.uuid;

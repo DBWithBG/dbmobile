@@ -1,84 +1,86 @@
 <template>
   <div>
 
-    <v-btn flat color="primary" :to="{name :'demands-list' , params: {data:deliveries} }">
+    <v-btn flat color="primary" :to="{name :'demands-list'}">
       <span>Accéder à la liste des demandes</span>
     </v-btn>
-
 
     <v-flex xs6 offset-xs3>
       <v-select :items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
     </v-flex>
 
-
     <div id="google-map" > </div>
-    <div id="demand-description" v-if="active_demand !== null">
-      <p> Descriptif de cette demande </p>
-      <ul>
-        <li>
-          <p> Commentaire : {{ active_demand.comment}} </p>
-          <p> Prix : {{ active_demand.price}} </p>
-          <p> Adresse de prise en charge : {{ active_demand.start_position.address}} </p>
-          <p> Adresse de livraison : {{ active_demand.end_position.address}} </p>
-          <v-list subheader>
-            <v-subheader> {{active_demand.bags.length}} bagages</v-subheader>
-            <v-layout column>
-              <v-flex v-for="bag in active_demand.bags" :key="bag.id">
-
-                <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-                  <v-dialog v-model="detailBag" max-width="290">
-                    <v-card>
-                      <v-card-title class="headline">Détail de ce bagage</v-card-title>
-                      <v-layout row>
-                        <v-flex xs10 offset-xs1>
-                          <div v-if="modelBag.details">
-                            {{modelBag.details}}
-                          </div>
-                          <div v-else>
-                            Aucune description n'a été indiquée par le client
-                          </div>
-                        </v-flex>
-                      </v-layout>
-                    </v-card>
-                  </v-dialog>
-                  {{bag.name}}
-                  <v-icon right>work</v-icon>
-                </v-chip>
-
-                <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-                  {{bag.name}}
-                  <v-icon right>work</v-icon>
-                </v-chip>
-
-                <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="detailBag=true,modelBag=bag">
-                  {{bag.name}}
-                  <v-icon right>work</v-icon>
-                </v-chip>
-
-              </v-flex>
-            </v-layout>
-          </v-list>
-        </li>
-      </ul>
-
-      <v-btn flat color='primary' @click.native="dialogTake=true">
-        <span>M'engager sur cette demande</span>
-      </v-btn>
+    <v-btn :disabled="retour" color="primary" @click.native="reset()"> RETOUR </v-btn>
 
       <v-dialog v-model="dialogTake" max-width="290">
         <v-card>
-          <v-card-title class="headline">Confirmation de la prise en charge </v-card-title>
+          <v-card-title class="headline">{{$t('confirmer_course')}} </v-card-title>
           <v-layout row>
             <v-card-actions>
-              <v-spacer></v-spacer>
               <v-btn color="action" flat @click.native.stop="dialogTake=false">{{$t('cancel')}}</v-btn>
-              <v-btn color="primary" flat @click.native.stop="dialogTake=false,prendreEnCharge(active_demand.id)">Confirmer</v-btn>
+              <v-btn color="primary" flat @click.native.stop="dialogTake=false,prendreEnCharge(demandId)">{{$t('confirmer')}}</v-btn>
             </v-card-actions>
           </v-layout>
         </v-card>
       </v-dialog>
 
-    </div>
+      <v-dialog v-model="dialogMap">
+        <div v-for="demand in active_demands">
+        <v-card flat>
+          <v-card-text> {{$t('takeover_label')}} : {{demand.start_position.address}} le {{demand.start_date}}</v-card-text>
+          <v-card-text> {{$t('livraison_label')}} : {{demand.end_position.address}} </v-card-text>
+        </v-card>
+
+        <v-list subheader>
+          <v-subheader> {{demand.bags.length}} {{$t('luggages')}} </v-subheader>
+          <v-layout column>
+            <div v-for="bag in demand.bags" >
+              <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
+                {{bag.name}}
+                <v-icon right>work</v-icon>
+              </v-chip>
+
+              <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
+                {{bag.name}}
+                <v-icon right>work</v-icon>
+              </v-chip>
+
+              <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
+                {{bag.name}}
+                <v-icon right>work</v-icon>
+              </v-chip>
+
+            </div>
+            <v-btn color='primary' @click.native="dialogTake=true,demandId=demand.id">
+              <span>{{$t('confirm_demand')}}</span>
+            </v-btn>
+            <v-btn color='primary' @click.native="seeOnMap(demand.start_position.lat,demand.start_position.lng,demand.end_position.lat,demand.end_position.lng)">
+              <span> voir sur la carte</span>
+            </v-btn>
+          </v-layout>
+        </v-list>
+        <v-divider>
+        </v-divider>
+
+      </div>
+      </v-dialog>
+
+      <v-dialog v-model="dialogBag" max-width="290">
+        <v-card>
+          <v-card-title class="headline">{{$t('bagage_descr')}}</v-card-title>
+          <v-layout row>
+            <v-flex xs10 offset-xs1>
+              <div v-if="modelBag.details">
+                {{modelBag.details}}
+              </div>
+              <div v-else>
+                {{$t('descr_empty')}}
+              </div>
+            </v-flex>
+          </v-layout>
+        </v-card>
+      </v-dialog>
+
     <db-menu-driver> </db-menu-driver>
 
   </div>
@@ -96,20 +98,54 @@ export default {
 
   data(){
     return {
+
+      // google map (google api)
       map:null,
+
+      // marker cluster (google api)
+      markerCluster:null,
+
+      // position du chauffeur
       user_pos:null,
+
+      // marker du chauffeur
       user_marker:null,
-      active_demand:null,
-      active_end_marker:null,
-      active_start_marker:null,
+
+      // les demandes correspondant au(x) marqueur(x)
+      // tableau car possibilité d'avoir plusieurs demandes au même endroit
+      active_demands:[],
+
+      // toutes les demandes récupérées côté serveur
       deliveries:null,
-      deliveries_markers:[],
+
+      // tous les marqueurs correspondant aux demandes
       markers:[],
+
+      // liste des dates selectionnables
       listDate:[],
+      // date du jour
       activeDate:new Date().toLocaleString().slice(0,10),
-      detailBag:false,
+
+      // modèle correspondant au bagage sélectionné
       modelBag:'',
-      dialogTake:false
+
+      // dialog pour confirmer la prise en charge
+      dialogTake:false,
+
+      // dialog pour avoir plus d'infos lors du clic sur un marker
+      dialogMap:false,
+
+      // dialog pour le détail d'un bagage
+      dialogBag:false,
+
+      // marker pour la prise en charge
+      m_start:null,
+
+      // marker pour la livraison
+      m_end:null,
+
+      // bouton retour désactivé?
+      retour:true
 
 
 
@@ -119,7 +155,8 @@ export default {
 
   methods:{
 
-
+    // pour prendre en charge une demande
+    // on passe l'id de la delivery et on change son statut
     prendreEnCharge(id){
       let self=this;
       var req = {
@@ -133,7 +170,7 @@ export default {
         type : 'POST',
         data : req,
         success: function(data){
-          console.log(id);
+          // on stocke l'id de la delivery pour redirigé directement le chauffeur sur la course correspondante
           localStorage.setItem('driver_course_to_open',id)
           self.$router.replace({path: '/courses-driver'});
         },
@@ -143,7 +180,7 @@ export default {
       });
     },
 
-
+    // on vérifie que le gps du chauffeur est en marche
     checkGps(){
 
       cordova.plugins.locationAccuracy.request(function(){
@@ -155,9 +192,9 @@ export default {
         cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
       },
 
-
+      // on initialise la google map
+      // elle est centrée sur bordeaux
       initMap(){
-
         this.map = new google.maps.Map(document.getElementById('google-map'), {
           center: {lat: 44.836151, lng: -0.580816},
           zoom: 12,
@@ -167,11 +204,9 @@ export default {
         });
       },
 
+      // on initialise le marker correspondant à la position du chauffeur
       initUserMarker(){
 
-
-        // J'utilise un alias de this pour avoir un accès aux données présentes dans 'data'
-        // Autrement cet objet est overridden par les autres fonctions
         var self=this;
 
         self.user_marker = new google.maps.Marker(
@@ -180,29 +215,13 @@ export default {
           });
 
           self.user_marker.setMap(self.map);
-          self.user_marker.setVisible(false);
-
-          self.user_marker.addListener('click', function() {
-
-            //console.log(vm.map);
-            //console.log(self.map);
-            self.map.setZoom(15);
-            self.map.setCenter(self.user_marker.getPosition());
-            var lat = self.user_marker.getPosition().lat();
-            var lng = self.user_marker.getPosition().lng();
-            self.methode();
-            //self.route(lat,lng);
-          });
         },
 
+        // on initiliase la position du chauffeur et on la relie au marqueur correspondant
         initUserPos(){
 
-
-          // J'utilise un alias de this pour avoir un accès aux données présentes dans 'data'
-          // Autrement cet objet est overridden par les autres fonctions
           var self=this;
           window.timer = setInterval(function() {
-            //console.log(self);
             navigator.geolocation.getCurrentPosition(
               function(position){
                 self.user_pos = {
@@ -211,29 +230,46 @@ export default {
                 },
                 self.user_marker.setPosition(self.user_pos);
                 if (!self.user_marker.getVisible()) self.user_marker.setVisible(true);
-                //self.user_marker.setMap(self.map);
               },function(){
-
               })
             },3000);
           },
 
+          // pour clear le timer qui récupère la position de l'utilisateur
           clearTimer(){
             clearInterval(window.timer);
           },
 
-          getDeliveries(){
-            // J'utilise un alias de this pour avoir un accès aux données présentes dans 'data'
-            // Autrement cet objet est overridden par les autres fonctions
-            var self=this;
-            self.active_start_marker=null;
-            if (self.active_end_marker != null){
-              self.active_end_marker.setMap(null);
-            }
-            self.markers.forEach(function(marker){
-              marker.setMap(null);
-            });
+          // pour clear les markers, on clear le cluster qui englobe ces derniers
+          clearMarkers(){
+            this.markerCluster.clearMarkers();
 
+          },
+
+          // pour ajouter les markers à la map, on les relie au cluster
+          addMarkersToMap(){
+            this.markerCluster.addMarkers(this.markers);
+          },
+
+          // on remet à zéro les marqueurs
+          reset(){
+            this.retour=true;
+            this.clearMarkers();
+            this.m_start.setMap(null);
+            this.m_end.setMap(null);
+            this.addMarkersToMap();
+            this.map.setCenter({lat: 44.836151, lng: -0.580816});
+            this.map.setZoom(12);
+          },
+
+
+          // pour récupérer les deliveries côté serveur
+          getDeliveries(){
+            var self=this;
+
+            if (this.markerCluster != null){
+              this.clearMarkers();
+            }
 
             $.ajax({
               url: 'https://dev-deliverbag.supconception.fr/'+'deliveries?status=1',
@@ -242,15 +278,13 @@ export default {
                 // On a récupéré les données, on effectue le traitement ici
                 var data=JSON.parse(json);
                 self.deliveries=data;
-                //console.log(JSON.stringify(data));
-
+                // on itère sur les donnée qu'on récupère
                 for (var i=0; i<data.length; i++){
-
+                  // on récupère la date correspondant à la delivery
                   var data_date = new Date(data[i].start_date).toLocaleString().slice(0,10);
-
+                  // on vérifie si elle correspond à la date du filtre
                   if (data_date === self.activeDate){
-
-                    console.log(data[i].start_position.address);
+                    // on crée un noveau marker à l'endroit de la prise en charge
                     var marker_start = new google.maps.Marker(
                       {
                         icon: 'http://maps.google.com/mapfiles/ms/icons/red.png' ,
@@ -258,160 +292,105 @@ export default {
                           lat: data[i].start_position.lat,
                           lng: data[i].start_position.lng
                         },
-                        infos : data[i]
+                        infos:data[i]
                       });
 
-                      console.log(self.deliveries_markers.includes(marker_start.position));
+                  // on décrit les évènements qui se passent lorsque l'on clique sur le marker correspondant à la prise en charge
 
-
-
-                      if (self.deliveries_markers.filter(e => e == marker_start.position).length > 0) {
-                        var a = 360.0 / data.length;
-                        var newLat =marker_start.position.lat() + -.00004 * Math.cos((+a*i) / 180 * Math.PI);
-                        var newLng = marker_start.position.lng() + -.00004 * Math.sin((+a*i) / 180 * Math.PI);  //Y
-                        var latLng = new google.maps.LatLng(newLat,newLng);
-                        marker_start.setPosition(latLng);
-                      }
-
-                      self.deliveries_markers.push(marker_start.position);
-
-                      self.markers.push(marker_start);
-                      marker_start.setMap(self.map);
-                      var marker_end;
-
-                      marker_start.addListener('click', function() {
-
-                        if (self.active_start_marker != null){
-                          self.active_start_marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red.png');
-                        }
-
-                        this.setIcon('http://maps.google.com/mapfiles/ms/icons/blue.png');
-                        self.active_start_marker=this;
-
-                        if (self.active_end_marker != null){
-                          self.active_end_marker.setMap(null)
-                        }
-
-
-                        marker_end = new google.maps.Marker(
-                          {
-                            icon: 'http://maps.google.com/mapfiles/ms/icons/blue.png' ,
-                            position : {
-                              lat: this.infos.end_position.lat ,
-                              lng: this.infos.end_position.lng
-                            }
-
-                          });
-
-                          self.active_end_marker = marker_end;
-
-                          marker_end.setMap(self.map);
-                          self.active_demand = this.infos;
-
-                        });
-
-                      }
-                    }
-                    // pas une solution pour l'affichage des 2 markers de début et de fin
-                    //var markerCluster = new MarkerClusterer(self.map,self.markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-
-
-                  },
-                  error:function(e){
-                    console.log(e);
+                  marker_start.addListener('click', function() {
+                    // on reset les demandes actives
+                    self.active_demands=[];
+                    // on récupère les informations de la delivery
+                    self.active_demands.push(this.infos);
+                    // on ouvre le dialog pour avoir les détail de la course (ou des courses)
+                    self.dialogMap=true;
+                    });
+                    // on ajoute le marker à la liste des markers
+                    self.markers.push(marker_start);
                   }
-                });
+
+                }
+              // on crée le cluster qui englobe tous les marqueurs
+              self.markerCluster = new MarkerClusterer(self.map,self.markers, {zoomOnClick: false ,imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+              // lorsque l'on click dessus, on reset les demandes actives
+              // on ajoute ensuite aux demandes actives les marqueurs présents dans le cluster
+              self.markerCluster.addListener('clusterclick',function(cluster){
+                self.active_demands=[];
+                cluster.getMarkers().forEach(function(marker){
+                  self.active_demands.push(marker.infos);
+               })
+               // on ouvre le dialog pour avoir le détail de la demande (ou des demandes)
+               self.dialogMap=true;
+              });
+              },
+              error:function(e){
+                console.log(e);
               }
-            },
-            // Une fois que Vue.js a initalisé et compilé les éléments
-            mounted(){
+            });
+          },
 
-              let now = new Date();
-              let end = new Date();
-              end.setDate(end.getDate()+15);
+          // pour visualiser uniquement les 2 markers correspondant à une demande
+          // on passe les 4 positions nécessaires à la création de 2 markers
+          seeOnMap(start_lat,start_lng,end_lat,end_lng){
 
-              var getDaysArray = function(s,e) {for(var a=[],d=s;d<=e;d.setDate(d.getDate()+1)){ a.push(new Date(d).toLocaleString().slice(0,10));}return a;};
-              this.listDate = getDaysArray(now,end);
-
-
-              this.initMap();
-              this.initUserMarker();
-              this.initUserPos();
-              this.getDeliveries();
-            },
-
-            destroyed(){
-              this.clearTimer();
-            },
+            // on efface tous les autres marqueurs présents sur la carte
+            this.clearMarkers();
+            // on ferme le détail de la course
+            this.dialogMap=false;
+            // on crée des nouveaux objets correspondant aux positions indiquées dans la delivry
+            var latLng_start = new google.maps.LatLng(start_lat,start_lng);
+            var latLng_end = new google.maps.LatLng(end_lat,end_lng);
+            // on crée des bornes
+            let bounds = new google.maps.LatLngBounds();
+            // on crée un marker de début et de fin
+            this.m_start = new google.maps.Marker({position : latLng_start});
+            this.m_end = new google.maps.Marker({position : latLng_end});
+            // on les ajoute à la carte
+            this.m_start.setMap(this.map);
+            this.m_end.setMap(this.map);
+            // on étend les bornes aux marqueurs que l'on vient de créer
+            bounds.extend(latLng_start);
+            bounds.extend(latLng_end);
+            // on ajuste la map aux bornes
+            this.map.fitBounds(bounds);
+            // on active le bouton de retour
+            this.retour=false;
           }
+        },
+        // Une fois que Vue.js a initalisé et compilé les éléments
+        mounted(){
+
+          let now = new Date();
+          let end = new Date();
+          end.setDate(end.getDate()+15);
+          var getDaysArray = function(s,e) {for(var a=[],d=s;d<=e;d.setDate(d.getDate()+1)){ a.push(new Date(d).toLocaleString().slice(0,10));}return a;};
+          this.listDate = getDaysArray(now,end);
+          this.initMap();
+          this.initUserMarker();
+          this.initUserPos();
+          this.getDeliveries();
+        },
+
+        destroyed(){
+          this.clearTimer();
+        },
+      }
 
 
-          </script>
-          <i18n src='@/assets/trad.json'></i18n>
+      </script>
+      <i18n src='@/assets/trad.json'></i18n>
 
 
-          <style scoped>
+      <style scoped>
 
-          p {
-            font-size:1em;
-            text-align:center;
-          }
+      p {
+        font-size:1em;
+        text-align:center;
+      }
 
+      #google-map {
+        height:70vh;
+        width: 100%;
+      }
 
-          #google-map {
-            height:300px;
-            width: 100%;
-          }
-
-
-          #iw-container {
-            margin-bottom: 10px;
-          }
-          #iw-container .iw-title {
-            font-family: 'Open Sans Condensed', sans-serif;
-            font-size: 22px;
-            font-weight: 400;
-            padding: 10px;
-            background-color: #48b5e9;
-            color: white;
-            margin: 0;
-            border-radius: 2px 2px 0 0;
-          }
-          #iw-container .iw-content {
-            font-size: 13px;
-            line-height: 18px;
-            font-weight: 400;
-            margin-right: 1px;
-            padding: 15px 5px 20px 15px;
-            max-height: 140px;
-            overflow-y: auto;
-            overflow-x: hidden;
-          }
-          .iw-content img {
-            float: right;
-            margin: 0 5px 5px 10px;
-          }
-          .iw-subTitle {
-            font-size: 16px;
-            font-weight: 700;
-            padding: 5px 0;
-          }
-          .iw-bottom-gradient {
-            position: absolute;
-            width: 326px;
-            height: 25px;
-            bottom: 10px;
-            right: 18px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
-            background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
-            background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
-            background: -ms-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
-          }
-
-
-          /*
-          InfoWindow customization
-          */
-
-
-          </style>
+      </style>
