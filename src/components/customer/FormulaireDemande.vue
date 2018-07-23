@@ -514,13 +514,20 @@ export default {
       console.log(end);
       let duration = end.diff(start,'minutes');
       console.log(duration);
+      // si la durée est inférieure à 2 heures
       if (duration < 120){
         this.errors['date_livraison']=this.$i18n.t('error_consigne_trop_tot');
       }
+      // si la durée est supérieure à 24 heures
       else if (duration > 1440 ){
         this.errors['date_livraison']=this.$i18n.t('error_consigne_trop_tard');
       }
       else {
+        this.errors['date_livraison']="";
+      }
+
+      // si le client souhaite une livraison directe, on passe la verification de la date
+      if (this.livraisonDirecte){
         this.errors['date_livraison']="";
       }
 
