@@ -417,9 +417,23 @@ export default {
             window.getDriverPos = setInterval(function() {
               navigator.geolocation.getCurrentPosition(
                 function(position){
-                  console.log(position);
+                  console.log(position.coords.longitude);
+                  $.ajax({
+                    url: 'http://dev-deliverbag.supconception.fr/mobile/drivers/setPosition',
+                    type : 'POST',
+                    data : {
+                      "current_lat" : position.coords.latitude,
+                      "current_lng" : position.coords.longitude,
+                      "mobile_token" : localStorage.getItem('deviceId')
+                    },
+                    success: function(data){
+                    },
+                    error:function(e){
+                      console.log(e);
+                    }
+                  });
                 })
-              },30000);
+              },3000);
 
 
             //self.$forceUpdate();

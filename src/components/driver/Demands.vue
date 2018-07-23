@@ -6,31 +6,31 @@
     </v-btn>
 
     <v-layout row>
-    <v-btn :disabled="retour" color="primary" @click.native="reset()">
-      <v-icon>navigate_before</v-icon>
-      {{$t('retour')}}
-    </v-btn>
-    <v-flex xs6 offset-xs2>
-      <v-select :items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
-    </v-flex>
-  </v-layout>
+      <v-btn :disabled="retour" color="primary" @click.native="reset()">
+        <v-icon>navigate_before</v-icon>
+        {{$t('retour')}}
+      </v-btn>
+      <v-flex xs6 offset-xs2>
+        <v-select :items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
+      </v-flex>
+    </v-layout>
     <div id="google-map" > </div>
 
 
-      <v-dialog v-model="dialogTake" max-width="290">
-        <v-card>
-          <v-card-title class="headline">{{$t('confirmer_course')}} </v-card-title>
-          <v-layout row>
-            <v-card-actions>
-              <v-btn color="action" flat @click.native.stop="dialogTake=false">{{$t('cancel')}}</v-btn>
-              <v-btn color="primary" flat @click.native.stop="dialogTake=false,prendreEnCharge(demandId)">{{$t('confirmer')}}</v-btn>
-            </v-card-actions>
-          </v-layout>
-        </v-card>
-      </v-dialog>
+    <v-dialog v-model="dialogTake" max-width="290">
+      <v-card>
+        <v-card-title class="headline">{{$t('confirmer_course')}} </v-card-title>
+        <v-layout row>
+          <v-card-actions>
+            <v-btn color="action" flat @click.native.stop="dialogTake=false">{{$t('cancel')}}</v-btn>
+            <v-btn color="primary" flat @click.native.stop="dialogTake=false,prendreEnCharge(demandId)">{{$t('confirmer')}}</v-btn>
+          </v-card-actions>
+        </v-layout>
+      </v-card>
+    </v-dialog>
 
-      <v-dialog v-model="dialogMap">
-        <div v-for="demand in active_demands">
+    <v-dialog v-model="dialogMap">
+      <div v-for="demand in active_demands">
         <v-card flat>
           {{demand.time_consigne}}
           <v-card-text> {{$t('takeover_label')}} : {{demand.start_position.address}} </v-card-text>
@@ -73,23 +73,23 @@
         </v-divider>
 
       </div>
-      </v-dialog>
+    </v-dialog>
 
-      <v-dialog v-model="dialogBag" max-width="290">
-        <v-card>
-          <v-card-title class="headline">{{$t('bagage_descr')}}</v-card-title>
-          <v-layout row>
-            <v-flex xs10 offset-xs1>
-              <div v-if="modelBag.details">
-                {{modelBag.details}}
-              </div>
-              <div v-else>
-                {{$t('descr_empty')}}
-              </div>
-            </v-flex>
-          </v-layout>
-        </v-card>
-      </v-dialog>
+    <v-dialog v-model="dialogBag" max-width="290">
+      <v-card>
+        <v-card-title class="headline">{{$t('bagage_descr')}}</v-card-title>
+        <v-layout row>
+          <v-flex xs10 offset-xs1>
+            <div v-if="modelBag.details">
+              {{modelBag.details}}
+            </div>
+            <div v-else>
+              {{$t('descr_empty')}}
+            </div>
+          </v-flex>
+        </v-layout>
+      </v-card>
+    </v-dialog>
 
     <db-menu-driver> </db-menu-driver>
 
@@ -134,7 +134,7 @@ export default {
       // liste des dates selectionnables
       listDate:[],
       // date du jour
-      activeDate:new Date().toLocaleString().slice(0,10),
+      activeDate:this.moment().format('L'),
 
       // modèle correspondant au bagage sélectionné
       modelBag:'',
@@ -292,7 +292,8 @@ export default {
                 // on itère sur les donnée qu'on récupère
                 for (var i=0; i<data.length; i++){
                   // on récupère la date correspondant à la delivery
-                  var data_date = new Date(data[i].start_date).toLocaleString().slice(0,10);
+                  var data_date = self.moment(data[i].startDate).format('L');
+                  //  var data_date = new Date(data[i].start_date).toLocaleString().slice(0,10);
                   // on vérifie si elle correspond à la date du filtre
                   if (data_date === self.activeDate){
                     // on crée un noveau marker à l'endroit de la prise en charge
@@ -306,102 +307,102 @@ export default {
                         infos:data[i]
                       });
 
-                  // on décrit les évènements qui se passent lorsque l'on clique sur le marker correspondant à la prise en charge
+                      // on décrit les évènements qui se passent lorsque l'on clique sur le marker correspondant à la prise en charge
 
-                  marker_start.addListener('click', function() {
-                    // on reset les demandes actives
-                    self.active_demands=[];
-                    // on récupère les informations de la delivery
-                    self.active_demands.push(this.infos);
-                    // on ouvre le dialog pour avoir les détail de la course (ou des courses)
-                    self.dialogMap=true;
-                    });
-                    // on ajoute le marker à la liste des markers
-                    self.markers.push(marker_start);
+                      marker_start.addListener('click', function() {
+                        // on reset les demandes actives
+                        self.active_demands=[];
+                        // on récupère les informations de la delivery
+                        self.active_demands.push(this.infos);
+                        // on ouvre le dialog pour avoir les détail de la course (ou des courses)
+                        self.dialogMap=true;
+                      });
+                      // on ajoute le marker à la liste des markers
+                      self.markers.push(marker_start);
+                    }
+
                   }
-
+                  // on crée le cluster qui englobe tous les marqueurs
+                  self.markerCluster = new MarkerClusterer(self.map,self.markers, {zoomOnClick: false ,imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+                  // lorsque l'on click dessus, on reset les demandes actives
+                  // on ajoute ensuite aux demandes actives les marqueurs présents dans le cluster
+                  self.markerCluster.addListener('clusterclick',function(cluster){
+                    self.active_demands=[];
+                    cluster.getMarkers().forEach(function(marker){
+                      self.active_demands.push(marker.infos);
+                    })
+                    // on ouvre le dialog pour avoir le détail de la demande (ou des demandes)
+                    self.dialogMap=true;
+                  });
+                },
+                error:function(e){
+                  console.log(e);
                 }
-              // on crée le cluster qui englobe tous les marqueurs
-              self.markerCluster = new MarkerClusterer(self.map,self.markers, {zoomOnClick: false ,imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-              // lorsque l'on click dessus, on reset les demandes actives
-              // on ajoute ensuite aux demandes actives les marqueurs présents dans le cluster
-              self.markerCluster.addListener('clusterclick',function(cluster){
-                self.active_demands=[];
-                cluster.getMarkers().forEach(function(marker){
-                  self.active_demands.push(marker.infos);
-               })
-               // on ouvre le dialog pour avoir le détail de la demande (ou des demandes)
-               self.dialogMap=true;
               });
-              },
-              error:function(e){
-                console.log(e);
-              }
-            });
+            },
+
+            // pour visualiser uniquement les 2 markers correspondant à une demande
+            // on passe les 4 positions nécessaires à la création de 2 markers
+            seeOnMap(start_lat,start_lng,end_lat,end_lng){
+
+              // on efface tous les autres marqueurs présents sur la carte
+              this.clearMarkers();
+              // on ferme le détail de la course
+              this.dialogMap=false;
+              // on crée des nouveaux objets correspondant aux positions indiquées dans la delivry
+              var latLng_start = new google.maps.LatLng(start_lat,start_lng);
+              var latLng_end = new google.maps.LatLng(end_lat,end_lng);
+              // on crée des bornes
+              let bounds = new google.maps.LatLngBounds();
+              // on crée un marker de début et de fin
+              this.m_start = new google.maps.Marker({position : latLng_start});
+              this.m_end = new google.maps.Marker({position : latLng_end});
+              // on les ajoute à la carte
+              this.m_start.setMap(this.map);
+              this.m_end.setMap(this.map);
+              // on étend les bornes aux marqueurs que l'on vient de créer
+              bounds.extend(latLng_start);
+              bounds.extend(latLng_end);
+              // on ajuste la map aux bornes
+              this.map.fitBounds(bounds);
+              // on active le bouton de retour
+              this.retour=false;
+            }
+          },
+          // Une fois que Vue.js a initalisé et compilé les éléments
+          mounted(){
+
+            let self = this;
+            let now = this.moment();
+            let end = this.moment().add(15,'days');
+            var getDaysArray = function(s,e) {for(var a=[],d=s;d<=e;d.add(1,'days')){ a.push(self.moment(d).format('L'));}return a;};
+            this.listDate = getDaysArray(now,end);
+            this.initMap();
+            this.initUserMarker();
+            this.initUserPos();
+            this.getDeliveries();
           },
 
-          // pour visualiser uniquement les 2 markers correspondant à une demande
-          // on passe les 4 positions nécessaires à la création de 2 markers
-          seeOnMap(start_lat,start_lng,end_lat,end_lng){
-
-            // on efface tous les autres marqueurs présents sur la carte
-            this.clearMarkers();
-            // on ferme le détail de la course
-            this.dialogMap=false;
-            // on crée des nouveaux objets correspondant aux positions indiquées dans la delivry
-            var latLng_start = new google.maps.LatLng(start_lat,start_lng);
-            var latLng_end = new google.maps.LatLng(end_lat,end_lng);
-            // on crée des bornes
-            let bounds = new google.maps.LatLngBounds();
-            // on crée un marker de début et de fin
-            this.m_start = new google.maps.Marker({position : latLng_start});
-            this.m_end = new google.maps.Marker({position : latLng_end});
-            // on les ajoute à la carte
-            this.m_start.setMap(this.map);
-            this.m_end.setMap(this.map);
-            // on étend les bornes aux marqueurs que l'on vient de créer
-            bounds.extend(latLng_start);
-            bounds.extend(latLng_end);
-            // on ajuste la map aux bornes
-            this.map.fitBounds(bounds);
-            // on active le bouton de retour
-            this.retour=false;
-          }
-        },
-        // Une fois que Vue.js a initalisé et compilé les éléments
-        mounted(){
-
-          let now = new Date();
-          let end = new Date();
-          end.setDate(end.getDate()+15);
-          var getDaysArray = function(s,e) {for(var a=[],d=s;d<=e;d.setDate(d.getDate()+1)){ a.push(new Date(d).toLocaleString().slice(0,10));}return a;};
-          this.listDate = getDaysArray(now,end);
-          this.initMap();
-          this.initUserMarker();
-          this.initUserPos();
-          this.getDeliveries();
-        },
-
-        destroyed(){
-          this.clearTimer();
-        },
-      }
+          destroyed(){
+            this.clearTimer();
+          },
+        }
 
 
-      </script>
-      <i18n src='@/assets/trad.json'></i18n>
+        </script>
+        <i18n src='@/assets/trad.json'></i18n>
 
 
-      <style scoped>
+        <style scoped>
 
-      p {
-        font-size:1em;
-        text-align:center;
-      }
+        p {
+          font-size:1em;
+          text-align:center;
+        }
 
-      #google-map {
-        height:70vh;
-        width: 100%;
-      }
+        #google-map {
+          height:70vh;
+          width: 100%;
+        }
 
-      </style>
+        </style>
