@@ -246,7 +246,7 @@ export default {
       },
 
       customFilter(items, search, filter) {
-
+        let self=this;
         //
         //console.log(search[0].id);
         //  console.log(JSON.stringify(items));
@@ -256,7 +256,8 @@ export default {
           (row["distance_from_driver"] <= search[0].distance)
           &&
           (
-            new Date(row["start_date"]).toLocaleString().slice(0,10) === search[0].date
+            self.moment(row["start_date"]).format('L') === search[0].date
+          //  new Date(row["start_date"]).toLocaleString().slice(0,10) === search[0].date
             ||
             search[0].date == this.$i18n.t('any_date')
           )
@@ -311,17 +312,9 @@ export default {
         var self=this;
         var origin = new google.maps.LatLng(parseFloat(self.user_pos.lat),parseFloat(self.user_pos.lng));
         var service = new google.maps.DistanceMatrixService();
-        var b = new Date().valueOf();
-        var msMinute = 60*1000;
-        var msDay = 60*60*24*1000;
-        //  self.data[i]['distance_from_driver']=self.getDistance();
-        //    console.log(self.data[i]['distance_from_driver']);
-
 
         self.deliveries_list.forEach(function(elem,index,array){
 
-
-          let a = new Date(elem.start_date).valueOf();
           elem.start_date_moment=self.moment(elem.start_date);
           elem.end_date_moment=self.moment(elem.end_date);
       //  elem.date_formatted=new Date(elem.start_date).toLocaleString().slice(0,18);
@@ -337,7 +330,6 @@ export default {
               var dist = (rep.rows[0].elements[0].distance.text.replace('km',''));
               elem.distance_from_driver=dist;
               if (index === array.length -1){
-
                 setTimeout(function(){ self.$forceUpdate(); self.loading=false;}, 1000);
 
               }
@@ -394,13 +386,12 @@ export default {
           cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
 
           */
-          let now = new Date();
-          let end = new Date();
-          end.setDate(end.getDate()+15);
-          var getDaysArray = function(s,e) {for(var a=[],d=s;d<=e;d.setDate(d.getDate()+1)){ a.push(new Date(d).toLocaleString().slice(0,10));}return a;};
+          let self = this;
+          let now = this.moment();
+          let end = this.moment().add(15,'days');
+          var getDaysArray = function(s,e) {for(var a=[],d=s;d<=e;d.add(1,'days')){ a.push(self.moment(d).format('L'));}return a;};
           this.listDate = getDaysArray(now,end);
           this.listDate.unshift(this.$i18n.t('any_date'));
-          let self=this;
           self.getUserPos();
 
 

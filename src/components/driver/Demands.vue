@@ -6,11 +6,13 @@
     </v-btn>
 
     <v-layout row>
+      <v-flex xs2>
       <v-btn :disabled="retour" color="primary" @click.native="reset()">
         <v-icon>navigate_before</v-icon>
         {{$t('retour')}}
       </v-btn>
-      <v-flex xs6 offset-xs2>
+    </v-flex>
+      <v-flex xs6 offset-xs3>
         <v-select :items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
       </v-flex>
     </v-layout>
@@ -275,6 +277,11 @@ export default {
 
           // pour récupérer les deliveries côté serveur
           getDeliveries(){
+
+            if (this.m_start != null)
+              this.m_start.setMap(null);
+            if (this.m_end != null)
+              this.m_end.setMap(null);
             var self=this;
             self.markers=[]
 

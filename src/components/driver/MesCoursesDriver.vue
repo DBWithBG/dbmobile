@@ -16,7 +16,7 @@
       }">
 
       <!-- Onglets -->
-      <v-tabs fixed-tabs>
+      <v-tabs fixed-tabs slider-color="primary">
         <v-tab v-for="tab in tabs" :key="tab.id" >
           {{ tab }}
         </v-tab>

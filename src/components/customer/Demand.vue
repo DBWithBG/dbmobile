@@ -10,7 +10,7 @@
   Pour accéder au formulaire de demande avec saisie d'adresses
 -->
 
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12>
         <v-card class="vh33" color="green lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'address'} }">
           <v-card-title primary-title>
             <div>

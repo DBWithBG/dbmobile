@@ -23,134 +23,112 @@
             <span class="subheading" >{{$t('info_1')}}</span>
           </v-flex>
           <!-- MESSAGES D'ERREURS -->
-          <v-flex xs12>
-            <div v-if="error.length">
-              <alert :message="error"> </alert>
-            </div>
+          <v-flex xs12 v-if="error.length">
+            <alert :message="error"> </alert>
           </v-flex>
 
-          <v-flex xs12>
-            <div v-for="error in errors">
-              <alert v-if="error !='' " :message="error"> </alert>
-            </div>
+          <v-flex xs12 v-for="error in errors" :key="error.id">
+            <alert v-if="error !='' " :message="error"> </alert>
           </v-flex>
 
           <v-layout row>
             <v-flex xs10>
               <!-- DATE PICKER START -->
               <v-menu ref="menudate" :close-on-content-click="false" :nudge-right="40" :return-value.sync="date" transition="scale-transition" offset-y full-width min-width="290px">
-                <v-text-field
-                slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
-              </v-text-field>
-              <v-date-picker v-model="date" :min="minDate" @input="$refs.menudate.save(date),resetData()" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
-              </v-date-picker>
-            </v-menu>
-          </v-flex>
-          <v-flex xs2>
-          </v-flex>
-          <!-- TIME PICKER POUR ADRESSE -->
-          <div v-if="type == 'address'">
-            <v-flex xs10>
+                <v-text-field slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly> </v-text-field>
+                <v-date-picker v-model="date" :min="minDate" @input="$refs.menudate.save(date),resetData()" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" > </v-date-picker>
+              </v-menu>
+            </v-flex>
+            <v-flex xs2>
+            </v-flex>
+            <!-- TIME PICKER POUR ADRESSE -->
+            <v-flex xs10 v-if="type == 'address'">
               <!-- DATE PICKER -->
               <v-menu ref="menutime" :close-on-content-click="false" :nudge-right="40" :return-value.sync="time" transition="scale-transition" offset-y lazy full-width min-width="290px">
-                <v-text-field
-                slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" append-icon="access_time" readonly>
-              </v-text-field>
-              <v-time-picker v-model="time" :min="minTime" :format="$t('date_format')" @change="$refs.menutime.save(time)" color="primary" :locale="this.$root.$i18n.locale" > </v-time-picker>
-            </v-menu>
+                <v-text-field slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" append-icon="access_time" readonly> </v-text-field>
+                <v-time-picker v-model="time" :min="minTime" :format="$t('date_format')" @change="$refs.menutime.save(time)" color="primary" :locale="this.$root.$i18n.locale" > </v-time-picker>
+              </v-menu>
+            </v-flex>
+          </v-layout>
+
+
+          <v-flex v-if="type == 'train'" row xs6 offset-xs3>
+            <!-- NUMERO DE TRAIN si arrivée par train -->
+            <v-text-field v-model="numTrain" v-on:input="traitementTrain" v-on:click="resetData" pattern="\d*" type="number" :placeholder="$t('train_number')"></v-text-field>
           </v-flex>
-        </div>
-      </v-layout>
 
+          <!-- SELECTION DE L'ARRET EN GARE POUR TRAIN -->
+          <v-flex v-if="gares.length" xs12>
 
-      <v-flex v-if="type == 'train'" row xs6 offset-xs3>
-        <!-- NUMERO DE TRAIN si arrivée par train -->
-        <v-text-field v-model="numTrain" v-on:input="traitementTrain" v-on:click="resetData" pattern="\d*" type="number" :placeholder="$t('train_number')">
-        </v-text-field>
+            <!--
+            Le texte du select correspond au NOM de la gare + HEURE d'arrivée
+            L'objet que l'on traite est un OBJET gare contentant plus d'infos
+            Lorsque l'on choisit une gare, on apelle verifGare() qui vérifie :
+            - le lieu
+            - les horaires
+          -->
+          <v-select
+          :items="gares" v-model="selectedGare"
+          item-text="select_display" item-value="gare"
+          v-bind:label="$t('select_gare')" single-line v-on:input="verifGare">
+        </v-select>
       </v-flex>
 
-      <!-- SELECTION DE L'ARRET EN GARE POUR TRAIN -->
-      <v-flex v-if="gares.length" xs12>
 
-        <!--
-        Le texte du select correspond au NOM de la gare
-        L'objet que l'on traite est un OBJET gare contentant plus d'infos
-        Lorsque l'on choisit une gare, on apelle verifGare() qui vérifie :
-        - le lieu
-        - les horaires
-      -->
-      <v-select
-      :items="gares"
-      v-model="selectedGare"
-      item-text="select_display"
-      item-value="gare"
-      v-bind:label="$t('select_gare')"
-      single-line
-      v-on:input="verifGare"
-      ></v-select>
+      <!-- NUMERO DE VOL POUR VOL -->
+      <v-flex xs12 v-if="type == 'flight'">
+        <v-text-field v-model="numVol" v-on:input="traitementVol" v-on:click="resetData" type="text"  maxlength="6" :placeholder="$t('flight_number')"> </v-text-field>
+      </v-flex>
+
+      <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
+      <v-flex xs12 v-if="type == 'address'">
+        <input class="autocomplete" ref="autocomplete_start" v-bind:placeholder="$t('label_address_depart')"/>
+      </v-flex>
+
+      <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
+      <v-flex mt-4 mb-3 xs12 >
+        <span class="subheading" >{{$t('info_2')}}</span>
+      </v-flex>
+
+      <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
+      <v-flex xs12>
+        <input class="autocomplete" ref="autocomplete_end" v-bind:placeholder="$t('label_address_livraison')" />
+      </v-flex>
+
+      <!-- SWITCH correspondant au type de prestation : livraison ou consigne
+      par défaut consigne
+    -->
+    <v-flex mt-3 mb-2 xs12>
+      <v-switch v-bind:label="$t('livraison_asap')" v-model="livraisonDirecte" color="primary"> </v-switch>
     </v-flex>
 
 
-    <!-- NUMERO DE VOL POUR VOL -->
-    <v-flex xs12 v-if="type == 'flight'">
-      <input v-model="numVol" v-on:input="traitementVol" v-on:click="resetData" type="text"  maxlength="6" :placeholder="$t('flight_number')">
+    <v-layout v-if="!livraisonDirecte" row>
+      <v-flex xs10 >
+        <!-- DATE PICKER SI CONSIGNE -->
+        <v-menu ref="menudateend" :close-on-content-click="false" :nudge-right="40" :return-value.sync="dateEnd" transition="scale-transition" offset-y full-width min-width="290px">
+          <v-text-field
+          slot="activator" v-model="displayDateEnd" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
+        </v-text-field>
+
+        <v-date-picker v-model="dateEnd" :min="minDateEnd" @input="$refs.menudateend.save(dateEnd)" color="primary" scrollable no-title :locale="this.$root.$i18n.locale"> </v-date-picker>
+      </v-menu>
     </v-flex>
-
-    <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
-    <v-flex xs12 v-if="type == 'address'">
-      <input class="autocomplete" ref="autocomplete_start" v-bind:placeholder="$t('label_address_depart')"/>
+    <v-flex xs2>
     </v-flex>
-
-
-    <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
-    <v-flex mt-4 mb-3 xs12 >
-      <span class="subheading" >{{$t('info_2')}}</span>
+    <!-- TIME PICKER SI CONSIGNE -->
+    <v-flex xs10>
+      <!-- DATE PICKER -->
+      <v-menu ref="menutimeend" :close-on-content-click="false" :nudge-right="40" :return-value.sync="timeEnd" transition="scale-transition" offset-y lazy full-width min-width="290px">
+        <v-text-field slot="activator" v-model="displayTimeEnd" v-bind:label="$t('label_heure')" append-icon="access_time" readonly> </v-text-field>
+        <v-time-picker v-model="timeEnd":format="$t('date_format')" @change="$refs.menutimeend.save(timeEnd)" color="primary" :locale="this.$root.$i18n.locale" ></v-time-picker>
+      </v-menu>
     </v-flex>
+  </v-layout>
 
 
-    <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
-    <v-flex xs12>
-      <input class="autocomplete" ref="autocomplete_end" v-bind:placeholder="$t('label_address_livraison')" />
-    </v-flex>
-
-    <!-- SWITCH correspondant au type de prestation : livraison ou consigne
-    par défaut consigne
-  -->
-  <v-flex mt-3 mb-2 xs12>
-    <v-switch v-bind:label="$t('livraison_asap')" v-model="livraisonDirecte" color="primary"> </v-switch>
-  </v-flex>
-
-
-  <v-layout v-if="!livraisonDirecte" row>
-    <v-flex xs10 >
-      <!-- DATE PICKER SI CONSIGNE -->
-      <v-menu ref="menudateend" :close-on-content-click="false" :nudge-right="40" :return-value.sync="dateEnd" transition="scale-transition" offset-y full-width min-width="290px">
-        <v-text-field
-        slot="activator" v-model="displayDateEnd" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
-      </v-text-field>
-
-      <v-date-picker v-model="dateEnd" :min="minDateEnd" @input="$refs.menudateend.save(dateEnd)" color="primary" scrollable no-title :locale="this.$root.$i18n.locale"> </v-date-picker>
-    </v-menu>
-  </v-flex>
-  <v-flex xs2>
-  </v-flex>
-  <!-- TIME PICKER SI CONSIGNE -->
-  <v-flex xs10>
-    <!-- DATE PICKER -->
-    <v-menu ref="menutimeend" :close-on-content-click="false" :nudge-right="40" :return-value.sync="timeEnd" transition="scale-transition" offset-y lazy full-width min-width="290px">
-      <v-text-field
-      slot="activator" v-model="displayTimeEnd" v-bind:label="$t('label_heure')" append-icon="access_time"  readonly>
-    </v-text-field>
-    <v-time-picker v-model="timeEnd":format="$t('date_format')" @change="$refs.menutimeend.save(timeEnd)" color="primary" :locale="this.$root.$i18n.locale" >
-    </v-time-picker>
-  </v-menu>
-</v-flex>
-</v-layout>
-
-
-
-<!-- Bouton pour continuer la saisie des Informations
-Désactivé si le form n'est pas valide
+  <!-- Bouton pour continuer la saisie des Informations
+  Désactivé si le form n'est pas valide
 -->
 <v-flex xs12 >
   <v-btn :disabled="!isFormOk()" color="primary" @click.native="step=2"dark >
@@ -172,30 +150,26 @@ Désactivé si le form n'est pas valide
 
   <v-flex xs12>
     <v-btn color="primary" @click.native="ajoutBagage('cabine')" dark > {{$t('bagages_ajout')}} {{$t('bagage_cabine')}}</v-btn>
-    <div v-for="bag in bagagesCabine" :key="bag.id">
-      <v-layout row>
+      <v-layout row v-for="bag in bagagesCabine" :key="bag.id">
         <v-flex xs2>
           <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
             <v-icon>delete</v-icon>
           </v-btn>
         </v-flex>
         <v-flex xs5>
-          <v-text-field  box v-bind:label="$t('bagage_nom')" v-model="bag.name"
-          ></v-text-field>
+          <v-text-field  box v-bind:label="$t('bagage_nom')" v-model="bag.name"></v-text-field>
         </v-flex>
         <v-divider vertical> </v-divider>
         <v-flex xs5>
           <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
         </v-flex>
       </v-layout>
-    </div>
   </v-flex>
 
 
   <v-flex xs12 >
     <v-btn  color="primary" @click.native="ajoutBagage('soute')" dark >{{$t('bagages_ajout')}} {{$t('bagage_soute')}} </v-btn>
-    <div v-for="bag in bagagesSoute" :key="bag.id">
-      <v-layout row>
+      <v-layout row v-for="bag in bagagesSoute" :key="bag.id">
         <v-flex xs2>
           <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
             <v-icon>delete</v-icon>
@@ -210,30 +184,24 @@ Désactivé si le form n'est pas valide
           <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
         </v-flex>
       </v-layout>
-
-    </div>
   </v-flex>
 
   <v-flex xs12>
     <v-btn  color="primary" @click.native="ajoutBagage('autre')" dark >{{$t('bagages_ajout')}} {{$t('bagage_autre')}}</v-btn>
-    <div v-for="bag in bagagesAutre" :key="bag.id">
-      <v-layout row>
+      <v-layout row v-for="bag in bagagesAutre" :key="bag.id">
         <v-flex xs2>
           <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
             <v-icon>delete</v-icon>
           </v-btn>
         </v-flex>
         <v-flex xs5>
-          <v-text-field  required box v-bind:label="$t('bagage_nom')" v-model="bag.name"
-          :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
-          ></v-text-field>
+          <v-text-field  required box v-bind:label="$t('bagage_nom')" v-model="bag.name":rules="[() => bag.name.length > 0 || $t('bagage_required')]"></v-text-field>
         </v-flex>
         <v-divider vertical> </v-divider>
         <v-flex xs5>
           <v-text-field box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
         </v-flex>
       </v-layout>
-    </div>
   </v-flex>
 
 
@@ -265,8 +233,8 @@ Désactivé si le form n'est pas valide
     {{reponse()}}
   </v-card>
 
-  <v-btn  color="orange lighten-1" @click.native="step=2" dark >{{$t('prev')}}</v-btn>
-  <v-btn  color="primary" @click.native="payer()" dark >{{$t('payer')}} </v-btn>
+  <v-btn color="orange lighten-1" @click.native="step=2" dark >{{$t('prev')}}</v-btn>
+  <v-btn color="primary" @click.native="payer()" dark >{{$t('payer')}} </v-btn>
 </v-stepper-content>
 </v-stepper-items>
 
