@@ -2,8 +2,6 @@
   <div>
     <back-header message="Liste des demandes"> </back-header>
 
-    {{deliveries}}
-
     <!-- Ecran de chargement en attendant le chargement des données -->
 
     <v-layout v-if="loading" row justify-center>
@@ -70,7 +68,7 @@
 
         <tr @click="props.expanded = !props.expanded">
 
-          <td> {{moment(props.item.date_moment).fromNow()}} </td>
+          <td> {{props.item.start_date_moment.fromNow()}} </td>
           <td class="text-xs-center"> à {{props.item.distance_from_driver}} km </td>
           <td class="text-xs-center"> {{props.item.estimated_time}} {{$t('minutes')}}</td>
 
@@ -89,31 +87,29 @@
       </template>
 
       <template slot="expand" slot-scope="props">
-
         <v-card flat>
-          <v-card-text> {{$t('takeover_label')}} : {{props.item.start_position.address}} le {{props.item.date_formatted}}</v-card-text>
+          <v-card-text> {{$t('takeover_label')}} : {{props.item.start_position.address}} </v-card-text>
+          <v-card-text> Le  {{props.item.start_date_moment.format('LL')}} à {{props.item.start_date_moment.format('LT')}} </v-card-text>
           <v-card-text> {{$t('livraison_label')}} : {{props.item.end_position.address}} </v-card-text>
+          <v-card-text v-if="!props.item.livraisonDirecte"> Le  {{props.item.end_date_moment.format('LL')}} à {{props.item.end_date_moment.format('LT')}} </v-card-text>
+          <v-card-text v-else> {{$t('livraison_asap')}}</v-card-text>
         </v-card>
         <v-list subheader>
           <v-subheader> {{props.item.bags.length}} {{$t('luggages')}} </v-subheader>
           <v-layout column>
-
             <v-flex v-for="bag in props.item.bags" :key="bag.id">
               <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
                 {{bag.name}}
                 <v-icon right>work</v-icon>
               </v-chip>
-
               <v-chip v-if="bag.type_id===2" color="teal darken-1" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
                 {{bag.name}}
                 <v-icon right>work</v-icon>
               </v-chip>
-
               <v-chip v-if="bag.type_id===3" color="teal darken-4" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
                 {{bag.name}}
                 <v-icon right>work</v-icon>
               </v-chip>
-
             </v-flex>
           </v-layout>
         </v-list>
@@ -326,15 +322,9 @@ export default {
 
 
           let a = new Date(elem.start_date).valueOf();
-          elem.date_moment=new Date(elem.start_date)
-          elem.date_formatted=new Date(elem.start_date).toLocaleString().slice(0,18);
-          let mins = Math.floor(((a - b) % msDay) / msMinute);
-          let h = Math.floor(mins / 60);
-          let m = mins % 60;
-          h = h < 10 ? '0' + h : h;
-          m = m < 10 ? '0' + m : m;
-          elem.time=(h+':'+m);
-
+          elem.start_date_moment=self.moment(elem.start_date);
+          elem.end_date_moment=self.moment(elem.end_date);
+      //  elem.date_formatted=new Date(elem.start_date).toLocaleString().slice(0,18);
 
           var dest = elem.start_position.address;
 
@@ -360,12 +350,9 @@ export default {
           var self=this;
           //let hard_gps = cordova.plugins.locationAccuracy;
           //    console.log('get user pos');
-          console.log(navigator.geolocation);
           navigator.geolocation.getCurrentPosition(
 
             function(position){
-              console.log(self);
-              console.log(position);
               self.user_pos = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
@@ -407,8 +394,6 @@ export default {
           cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
 
           */
-
-
           let now = new Date();
           let end = new Date();
           end.setDate(end.getDate()+15);
@@ -437,8 +422,4 @@ export default {
         height:100px;
       }
 
-      #google-map {
-        height:200px;
-        width: 100vw;
-      }
       </style>

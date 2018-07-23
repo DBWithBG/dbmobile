@@ -5,12 +5,17 @@
       <span>Accéder à la liste des demandes</span>
     </v-btn>
 
-    <v-flex xs6 offset-xs3>
+    <v-layout row>
+    <v-btn :disabled="retour" color="primary" @click.native="reset()">
+      <v-icon>navigate_before</v-icon>
+      {{$t('retour')}}
+    </v-btn>
+    <v-flex xs6 offset-xs2>
       <v-select :items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
     </v-flex>
-
+  </v-layout>
     <div id="google-map" > </div>
-    <v-btn :disabled="retour" color="primary" @click.native="reset()"> RETOUR </v-btn>
+
 
       <v-dialog v-model="dialogTake" max-width="290">
         <v-card>
@@ -27,8 +32,13 @@
       <v-dialog v-model="dialogMap">
         <div v-for="demand in active_demands">
         <v-card flat>
-          <v-card-text> {{$t('takeover_label')}} : {{demand.start_position.address}} le {{demand.start_date}}</v-card-text>
+          {{demand.time_consigne}}
+          <v-card-text> {{$t('takeover_label')}} : {{demand.start_position.address}} </v-card-text>
+          <v-card-text> Le {{moment(demand.start_date).format('LL')}} à {{moment(demand.start_date).format('LT')}} </v-card-text>
+          <v-divider> </v-divider>
           <v-card-text> {{$t('livraison_label')}} : {{demand.end_position.address}} </v-card-text>
+          <v-card-text v-if="demand.time_consigne!=null"> le {{moment(demand.end_date).format('LL')}} à {{moment(demand.end_date).format('LT')}} </v-card-text>
+          <v-card-text v-else> {{$t('livraison_asap')}} </v-card-text>
         </v-card>
 
         <v-list subheader>
@@ -55,7 +65,7 @@
               <span>{{$t('confirm_demand')}}</span>
             </v-btn>
             <v-btn color='primary' @click.native="seeOnMap(demand.start_position.lat,demand.start_position.lng,demand.end_position.lat,demand.end_position.lng)">
-              <span> voir sur la carte</span>
+              <span> Voir sur la carte</span>
             </v-btn>
           </v-layout>
         </v-list>
@@ -266,6 +276,7 @@ export default {
           // pour récupérer les deliveries côté serveur
           getDeliveries(){
             var self=this;
+            self.markers=[]
 
             if (this.markerCluster != null){
               this.clearMarkers();

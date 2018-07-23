@@ -29,7 +29,6 @@
     "demande": "Faire une demande",
     "demandes": "Demandes",
     "descr_empty": "Aucune description indiquée par le client",
-    "details_course": "Suivi de la course",
     "distance": "Distance",
     "en": "Anglais",
     "error_401_sncf": "Un problème d'autorisation d'accès est survenu",
@@ -55,7 +54,7 @@
     "label_heure": "Heure",
     "langue": "Langue",
     "langue_sbt": "Modifier la langue de l'application",
-    "livraison": "Livraison dès que possible",
+    "livraison_asap": "Livraison dès que possible",
     "next": "Suivant",
     "paiement": "Paiement",
     "paiement_sbt": "Consulter et modifier mes informations de paiement",
@@ -76,7 +75,7 @@
     "subt_2": "Étape 2 : Mes bagages",
     "subt_3": "Étape 3 : Récapitulatif",
     "subt_4": "Étape 4 : Paiement",
-    "suivi_course": "Suivi de la course",
+    "suivi_course": "Détails de la course",
     "tab_en_attente": "En attente",
     "tab_en_cours": "En cours",
     "tab_passees": "Passées",
@@ -122,7 +121,8 @@
   "label_edl" : "Indiquez l'état des bagages que vous prenez en charge",
   "etat_bag" : "État du bagage",
   "confirmer" : "Confirmer",
-  "confirmer_course" : "Confirmer votre engagement sur cette course?"
+  "confirmer_course" : "Confirmer votre engagement sur cette course?",
+  "retour" : "Retour"
 
 
 },
@@ -182,7 +182,7 @@
     "label_heure": "Hour",
     "langue": "Language",
     "langue_sbt": "Change the language of the app",
-    "livraison": "As soon as possible",
+    "livraison_asap": "As soon as possible",
     "next": "Next",
     "paiement": "Payment ",
     "paiement_sbt": "Change my paiement method",

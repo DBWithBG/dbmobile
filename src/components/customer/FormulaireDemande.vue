@@ -172,7 +172,7 @@
 <!-- Deuxième étape : saisie des bagages -->
 
 <v-stepper-content step="2">
-  {{$t('luggages')}}
+
 
 
   <!-- Gestion des bagages -->
@@ -243,8 +243,10 @@
       </div>
     </v-flex>
 
-    {{compteurBagages}}
 
+    <v-flex xs12>
+      <v-subheader> Total : {{compteurBagages}} {{$t('luggages')}} </v-subheader>
+    </v-flex>
   <v-layout row>
     <v-flex xs4>
       <v-btn color="orange lighten-1" @click.native="step=1" dark >
@@ -410,7 +412,7 @@ export default {
 
     // Heure min pour la consigne
     minTimeEnd(){
-
+      this.timeEnd = this.time;
     },
 
     // Heure max pour la consigne
@@ -641,7 +643,6 @@ export default {
             // Si le géocodage se passe correctement, on vérifie alors que le lieu souhaité est inclus dans les départements authorisés
             // le second paramètre sert pour différencier les erreurs
             self.verifyDepartment(self.startPlace,'gare');
-
           }
         });
 
@@ -673,7 +674,6 @@ export default {
         else{
           // on met une alerte pour lui dire que le lieu n'est pas encore desservi
           let text=this.$i18n.t('error_start_place');
-
           if (lieu=='end'){
             text=this.$i18n.t('error_end_place');
           }
@@ -763,14 +763,11 @@ export default {
         // TODO: définir une limite max de bagages que le client peut ajouter
         verifBagage(){
           return (
-            (this.bagagesCabine.length || this.bagagesSoute.length || this.bagagesAutre.length)
-            && this.bagageOk(this.bagagesAutre) ) ;
-
+            (this.bagagesCabine.length || this.bagagesSoute.length || this.bagagesAutre.length) && this.bagageOk(this.bagagesAutre) ) ;
           },
 
           //on vérifie également que les bagages autres soient nommés
           bagageOk(tab){
-
             var noms=[];
             var ok=true;
             if (tab.length){
@@ -791,9 +788,6 @@ export default {
             }
             return ok;
           },
-
-
-
 
     reponse(){
 
@@ -839,7 +833,6 @@ export default {
           success: function(data){
             console.log(data.id);
             self.activeDeliveryId=data.id;
-            console.log(data);
           },
           error:function(e){
             console.log(e);
@@ -944,6 +937,7 @@ export default {
   },
 
   mounted(){
+
 
     // On récupère les bagages du client et les départements authorisés
     this.getBagages();

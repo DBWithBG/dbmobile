@@ -32,9 +32,7 @@
           <v-expansion-panel>
             <v-expansion-panel-content>
 
-              <!--
-              SLOT CONCERNANT LE HEADER DU PANEL
-            -->
+              <!--  Partie CONCERNANT LE HEADER DU PANEL (ce qui est toujours visible)-->
             <div slot="header">
               {{$t("suivi_course")}} {{props.item.id}}
 
@@ -44,6 +42,8 @@
 
           <!-- slider de suivi de la course -->
           <div v-if="props.item.status === 2 || props.item.status === 3 || props.item.status === 4">
+              <!-- pour récupérer le tracking du chauffeur, 2 champs dans l'objet : temps estimé et % d'avancement -->
+              {{props.item.tracking}}
             <v-layout row xs12>
               <v-flex xs4>
                 <v-subheader>Bagages en attente</v-subheader>
@@ -55,20 +55,16 @@
                 <v-subheader>Livrés</v-subheader>
               </v-flex>
             </v-layout>
-
             <v-flex xs10 offset-xs1>
               <v-slider
               v-model="props.item.status-1" :max="3.0" :min="1.0" :step="0.1" readonly>
             </v-slider>
           </v-flex>
-
         </div>
-
-
 
         <v-layout row xs12>
           <v-flex class="text-xs-center" xs4>
-            {{ props.item.start_position.address }}
+            {{ props.item.start_position.address}}
             <v-divider> </v-divider>
             {{moment(props.item.start_date).format('LLL')}}
           </v-flex>
@@ -76,13 +72,13 @@
             <v-icon align-center>arrow_forward</v-icon>
           </v-flex>
           <v-flex class="text-xs-center" xs4>
-            {{ props.item.end_position.address }}
+            {{props.item.end_position.address}}
             <v-divider> </v-divider>
-            <div v-if="props.item.end_date">
+            <div v-if="props.item.time_consigne">
               {{moment(props.item.end_date).format('LLL')}}
             </div>
             <div v-else>
-              Livraison dès que possible
+              {{$t('livraison_asap')}}
             </div>
           </v-flex>
         </v-layout>
@@ -91,17 +87,30 @@
         <!--
         Notation de la course SI elle a déjà été effectuée
       -->
-      <div v-if="props.item.status === 5 && !ratingSent[props.item.id]">
+
+      <div v-if="props.item.status === 5 && props.item.rating != null && props.item.rating.details=='' ">
         <v-layout row>
           <v-flex xs10 offset-xs2>
             <star-rating
             :star-size="40"
-            v-model="props.item.rating" :show-rating="false"
-            @click.native.stop="active=props.item,dialogRating = true,sendRating(props.item.id,props.item.rating)" >
+            v-model="props.item.rating.rating" :show-rating="false"
+            @click.native.stop="active=props.item,dialogRating = true,sendRating(props.item.id,props.item.rating.rating)" >
           </star-rating>
         </v-flex>
       </v-layout>
     </div>
+
+    <div v-if="props.item.status === 5 && props.item.rating == null">
+      <v-layout row>
+        <v-flex xs10 offset-xs2>
+          <star-rating
+          :star-size="40"
+          v-model="props.item.rating2" :show-rating="false"
+          @click.native.stop="active=props.item,dialogRating = true,sendRating(props.item.id,props.item.rating2)" >
+        </star-rating>
+      </v-flex>
+    </v-layout>
+  </div>
 
 
     <v-flex row xs12>
@@ -114,7 +123,8 @@
         <span> {{$t("cancel_course")}}</span>
       </v-btn>
     </v-flex>
-    <v-flex row xs12 v-if="props.item.status === 5 && !litigeSent[props.item.id]">
+
+    <v-flex row xs12 v-if="props.item.status === 5 && props.item.take_over_delivery.disputes.length <= 0">
       <v-btn flat color='error' @click.native.stop="active=props.item,dialogLitige = true">
         <span> {{$t('declarer_litige')}}</span>
       </v-btn>
@@ -175,13 +185,20 @@ Dialog popup concernant la notation d'une course
   <v-card>
     <v-card-title class="headline">{{$t("rating")}}</v-card-title>
     <v-layout row>
-      <v-flex xs10 offset-xs1>
+      <v-flex v-if="active.rating" xs10 offset-xs1>
+        <v-textarea clearable rows="1" auto-grow v-bind:label="$t('rating_label')" v-model="active.rating.details"> </v-textarea>
+        <v-btn  flat color="primary" @click.native="sendRating(active.id,active.rating.rating,active.rating.details),dialogRating = false">
+          <span>{{$t("rating_button")}}</span>
+        </v-btn>
+      </v-flex>
+      <v-flex v-else xs10 offset-xs1>
         <v-textarea clearable rows="1" auto-grow v-bind:label="$t('rating_label')" v-model="active.details"> </v-textarea>
+        <v-btn  flat color="primary" @click.native="sendRating(active.id,active.rating2,active.details),dialogRating = false">
+          <span>{{$t("rating_button")}}</span>
+        </v-btn>
       </v-flex>
     </v-layout>
-    <v-btn  flat color="primary" @click.native="sendRating(active.id,active.rating,active.details),dialogRating = false">
-      <span>{{$t("rating_button")}}</span>
-    </v-btn>
+
   </v-card>
 </v-dialog>
 
@@ -230,12 +247,6 @@ export default {
     return {
       // pour savoir si les données sont chargées
       loading:true,
-
-      // pour savoir si une notation de course avec commentaire a été envoyée
-      ratingSent:{},
-
-      // pour savoir si une notation de course avec commentaire a été envoyée
-      litigeSent:{},
 
       // correspond à la course sélectionnée
       active:'',
@@ -288,6 +299,7 @@ export default {
       //TODO:  GET LE PHONE NUMBER DU CHAUFFEUR POUR QUE LE CLIENT PUISSE LE Contacter
       // pareil pour côté chauffeur du coup !
       let self=this;
+      this.demandes = [[],[],[]]
       $.ajax({
         url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/customers?mobile_token='+localStorage.getItem('deviceId'),
         type : 'GET',
@@ -350,12 +362,8 @@ export default {
     // params : id de la delivery, mobile token du client, note attribuée et commentaire FACULTATIF
     sendRating(id,rating,com){
       let self=this;
-      console.log(com);
 
       // si il y'a un commentaire, alors l'utilisateur ne peut pas à nouveau envoyer la notation
-      if (com != undefined){
-        this.ratingSent[id]=true;
-      }
 
       $.ajax({
         url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/ratings',
@@ -368,7 +376,9 @@ export default {
         },
         success: function(data){
           self.snackbarRating=true;
-          console.log(data);
+          if (com != undefined){
+            self.getDeliveries();
+          }
         },
         error:function(e){
           console.log(e);
@@ -382,7 +392,6 @@ export default {
 
       console.log(com);
       let self=this;
-      this.litigeSent[id]=true;
 
       $.ajax({
         url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/disputes',
@@ -395,13 +404,14 @@ export default {
         success: function(data){
           self.snackbarLitige=true;
           self.litigeText=''
-          console.log(data);
+          self.getDeliveries();
         },
         error:function(e){
           console.log(e);
         }
       });
     },
+
 
     // définition de l'action du swipe
     swipeLeft(){

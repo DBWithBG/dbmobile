@@ -33,13 +33,26 @@
                   <v-flex row xs12>
                     <v-layout align-center justify-space-around>
 
-                      <v-flex row xs5 offset-xs1> {{ props.item.delivery.start_position.address }} </v-flex>
+                      <v-flex xs4 class="text-xs-center">
+                        {{ props.item.delivery.start_position.address }}
+                        <v-divider> </v-divider>
+                        {{moment(props.item.delivery.start_date).format('LLL')}}
+                      </v-flex>
 
                       <v-flex row xs1>
                         <v-icon align-center>arrow_forward</v-icon>
                       </v-flex>
 
-                      <v-flex row xs5 offset-xs1> {{ props.item.delivery.end_position.address }} </v-flex>
+                      <v-flex xs4 class="text-xs-center">
+                        {{ props.item.delivery.end_position.address }}
+                        <v-divider> </v-divider>
+                        <div v-if="props.item.delivery.time_consigne!=null">
+                          {{moment(props.item.delivery.end_date).format('LLL')}}
+                        </div>
+                        <div v-else>
+                          {{$t('livraison_asap')}}
+                        </div>
+                      </v-flex>
 
                     </v-layout>
 
@@ -273,7 +286,7 @@ export default {
       getCourses(){
 
         let self=this;
-
+        this.demandes= [[],[]]
 
         $.ajax({
           url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/drivers?mobile_token='+localStorage.getItem('deviceId'),
@@ -400,6 +413,13 @@ export default {
             self.open=self.active.id;
             self.snackbar=true;
             self.snackbarText=self.$i18n.t("snackbar_bags");
+            // on initialise un timer pour tracker le chauffeur
+            window.getDriverPos = setInterval(function() {
+              navigator.geolocation.getCurrentPosition(
+                function(position){
+                  console.log(position);
+                })
+              },30000);
 
 
             //self.$forceUpdate();

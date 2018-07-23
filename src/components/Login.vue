@@ -16,8 +16,7 @@ export default {
   data(){
     return{
       deviceId :'',
-      email:'',
-      pwd:'',
+      email:'',    pwd:'',
       isDriver:false
 
     }

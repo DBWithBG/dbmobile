@@ -124,7 +124,9 @@ export default{
       dialLangue:false,
       langues:[
       {code : 'fr' ,text: this.$i18n.t("fr")},
-      {code : 'en' ,text: this.$i18n.t("en")}],
+      {code : 'en' ,text: this.$i18n.t("en")},
+      {code : 'es' ,text: this.$i18n.t("es")}
+      ],
     }
   },
   methods:{
