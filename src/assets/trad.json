@@ -122,7 +122,9 @@
   "etat_bag" : "État du bagage",
   "confirmer" : "Confirmer",
   "confirmer_course" : "Confirmer votre engagement sur cette course?",
-  "retour" : "Retour"
+  "retour" : "Retour",
+  "error_consigne_trop_tot": "Il faut au moins 2 heures entre la prise en charge et la livraison",
+  "error_consigne_trop_tard" : "La durée de la consigne ne peut pas excéder 24 heures"
 
 
 },
