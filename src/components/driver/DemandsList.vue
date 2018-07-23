@@ -97,7 +97,7 @@
         <v-list subheader>
           <v-subheader> {{props.item.bags.length}} {{$t('luggages')}} </v-subheader>
           <v-layout column>
-            <v-flex v-for="bag in props.item.bags" :key="bag.id">
+            <v-flex v-for="bag in props.item.bags" :key="bag.index">
               <v-chip xs6 v-if="bag.type_id===1" color="teal lighten-2" text-color="white" @click.native.stop="dialogBag=true,modelBag=bag">
                 {{bag.name}}
                 <v-icon right>work</v-icon>

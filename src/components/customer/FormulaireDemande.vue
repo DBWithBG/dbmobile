@@ -22,7 +22,6 @@
           <v-flex mt-4 mb-3 xs12 >
             <span class="subheading" >{{$t('info_1')}}</span>
           </v-flex>
-
           <!-- MESSAGES D'ERREURS -->
           <v-flex xs12>
             <div v-if="error.length">
@@ -130,8 +129,7 @@
         slot="activator" v-model="displayDateEnd" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
       </v-text-field>
 
-      <v-date-picker v-model="dateEnd" :min="minDateEnd" :max="maxDateEnd" @input="$refs.menudateend.save(dateEnd)" color="primary" scrollable no-title :locale="this.$root.$i18n.locale" >
-      </v-date-picker>
+      <v-date-picker v-model="dateEnd" :min="minDateEnd" @input="$refs.menudateend.save(dateEnd)" color="primary" scrollable no-title :locale="this.$root.$i18n.locale"> </v-date-picker>
     </v-menu>
   </v-flex>
   <v-flex xs2>
@@ -143,13 +141,9 @@
       <v-text-field
       slot="activator" v-model="displayTimeEnd" v-bind:label="$t('label_heure')" append-icon="access_time"  readonly>
     </v-text-field>
-    <v-time-picker v-model="timeEnd" :min="minTimeEnd" :max="maxTimeEnd"
-    :format="$t('date_format')"
-    @change="$refs.menutimeend.save(timeEnd)"
-    color="primary"
-    :locale="this.$root.$i18n.locale" >
-  </v-time-picker>
-</v-menu>
+    <v-time-picker v-model="timeEnd":format="$t('date_format')" @change="$refs.menutimeend.save(timeEnd)" color="primary" :locale="this.$root.$i18n.locale" >
+    </v-time-picker>
+  </v-menu>
 </v-flex>
 </v-layout>
 
@@ -304,19 +298,19 @@ export default {
       livraisonDirecte:false,
 
       // date minimum pour le picker, correspond à la date actuelle fromatée pour le picker
-      minDate:new Date().toISOString().substring(0,10),
+      minDate:this.moment().format().substring(0,10),
 
       // correspond à la date de prise en charge
-      date:new Date().toJSON(),
+      date:this.moment().format().substring(0,10),
 
       // correspond à l'heure de prise en charge
-      time:new Date(),
+      time:this.moment().format('LT'),
 
       // correspond à la date de livraison
-      dateEnd:new Date().toJSON(),
+      dateEnd:this.moment().format().substring(0,10),
 
       // correspond à l'heure de livraison
-      timeEnd:new Date(),
+      timeEnd:this.moment().format('LT'),
 
       // lieu de prise en charge
       startPlace:'',
@@ -370,7 +364,6 @@ export default {
 
   computed:{
 
-
     // Id de la compagnie aérienne
     compagnyId(){
       return this.numVol.substring(0,2);
@@ -389,64 +382,51 @@ export default {
     // si la date est aujourd'hui, restriction (pas avant l'heure courante)
     minTime(){
       let time;
-      if (this.dateTime.toLocaleString().substring(0,10) != new Date().toLocaleString().substring(0,10)) {
-        time = '';
+      // si c'est aujourd'hui alors on modifie l'heure et le minimum
+      if (this.moment(this.dateTime).isSame(this.moment(),'day')){
+        let now = this.moment().format('LT');
+        // si jamais l'heure sélectionnée est antérieure à l'heure actuelle alors on la remet à l'heure courante
+        if (this.time<this.moment().format('LT')){
+          this.time=now;
+        }
+        // dans tous les cas, on met le minimum à l'heure actuelle
+        time = now;
       }
+      // sinon, aucune restriction
       else{
-        time = new Date().toLocaleString().substring(12,18);
+        time = '';
       }
       return time;
     },
 
     // Date minimale pour la consigne en fonction à la date de prise en charge indiquée
     minDateEnd(){
-      this.dateEnd = new Date(this.date).toISOString().substring(0,10)
-      return new Date(this.date).toISOString().substring(0,10);
-    },
 
-    // Date max pour la consigne
-    // TODO: plage horaire continue ou non, restrictions à définir
-    maxDateEnd(){
-      //return new Date(this.date).toISOString().substring(0,10);
-    },
-
-    // Heure min pour la consigne
-    minTimeEnd(){
-      //this.timeEnd = this.time;
-    },
-
-    // Heure max pour la consigne
-    maxTimeEnd(){
+      console.log(this.date);
+      let end = this.moment(this.date).format().substring(0,10);
+      console.log(end);
+      this.dateEnd=end.substring(0,10);
+      return end;
     },
 
     // assemblage et formatage de la date et de l'heure de départ
     dateTime(){
-      //console.log(this.time);
-      let date = new Date(this.date);
-      if (typeof this.time === 'string'){
-        date.setHours(this.time.match(/^(\d+)/)[1]);
-        date.setMinutes(this.time.match(/:(\d+)/)[1]);
-      }
-      else{
-        date.setHours(this.time.getHours());
-        date.setMinutes(this.time.getMinutes());
-      }
+
+      let date = this.moment(this.date);
+      let time = this.moment(this.time,"hhmm");
+      date.set('hours',time.hours());
+      date.set('minutes',time.minutes());
+      this.date=date.format().substring(0,10);
       return date;
     },
 
     // assemblage et formatage de la date et de l'heure de livraison
     dateTimeEnd(){
-      //console.log(this.time);
-      let date = new Date(this.dateEnd);
-      if (typeof this.timeEnd === 'string'){
-        date.setHours(this.timeEnd.match(/^(\d+)/)[1]);
-        date.setMinutes(this.timeEnd.match(/:(\d+)/)[1]);
-      }
-      else{
-        date.setHours(this.timeEnd.getHours());
-        date.setMinutes(this.timeEnd.getMinutes());
-      }
-      console.log(date);
+      let date = this.moment(this.dateEnd);
+      let time = this.moment(this.timeEnd,"hhmm");
+      date.set('hours',time.hours());
+      date.set('minutes',time.minutes());
+      this.dateEnd=date.format().substring(0,10);
       return date;
     },
 
@@ -454,7 +434,6 @@ export default {
     // assemblage et formatage de la date et de l'heure de prise en charge
     // utilisée pour l'envoi des données au serveur
     dateStartToJson(){
-      console.log(this.time);
       var date = new Date(this.date);
       if (typeof this.time === 'string'){
         date.setHours(this.time.match(/^(\d+)/)[1]);
@@ -483,37 +462,35 @@ export default {
       return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(),  date.getHours(), date.getMinutes(), date.getSeconds())).toJSON().split('.')[0].replace('T',' ');
     },
 
-    // Affichage du label du datepicker PRISE EN CHARGE de manière plus "humaine" pour l'utilisateur
+    // Affichage du label du datepicker PRISE EN CHARGE de manière plus humaine pour le client
     displayDate(){
-      return this.dateTime.toLocaleString().substring(0,10);
+      //return this.dateTime.toLocaleString().substring(0,10);
+      return this.moment(this.dateTime).format('L');
     },
 
     // Affichage du label du timepicker PRISE EN CHARGE de manière plus "humaine" pour l'utilisateur
     displayTime(){
-      return this.dateTime.toLocaleString().substring(12,18);
+      return this.moment(this.dateTime).format('LT');
     },
 
     // Affichage du label du datepicker LIVRAISON de manière plus "humaine" pour l'utilisateur
     displayDateEnd(){
-      return this.dateTimeEnd.toLocaleString().substring(0,10);
+      return this.moment(this.dateTimeEnd).format('L');
     },
 
     // Affichage du label du timepicker LIVRAISON de manière plus "humaine" pour l'utilisateur
     displayTimeEnd(){
-      return this.dateTimeEnd.toLocaleString().substring(12,18);
+      return this.moment(this.dateTimeEnd).format('LT');
     },
 
-    // Méthode qui permet
+    // Méthode qui permet de vérifier les dates indiquées par le client
     // on calcule la différence entre les date de prise en charge et de la livraison
     // si cette durée est inférieure à 2 heures, alors on met un message d'erreur
     verifDate(){
       this.errors['date_livraison']="";
       let start = this.moment(this.dateTime);
       let end = this.moment(this.dateTimeEnd);
-      console.log(start);
-      console.log(end);
       let duration = end.diff(start,'minutes');
-      console.log(duration);
       // si la durée est inférieure à 2 heures
       if (duration < 120){
         this.errors['date_livraison']=this.$i18n.t('error_consigne_trop_tot');
@@ -530,13 +507,8 @@ export default {
       if (this.livraisonDirecte){
         this.errors['date_livraison']="";
       }
-
       // on force la mise à jour pour mettre à jour le message d'erreur selon le changement de date
       this.$forceUpdate();
-
-
-      //return(end.diff(start,'minutes'));
-
     }
 
   },
@@ -557,7 +529,7 @@ export default {
           }
         },
         error : function(error){
-          console.log('error ');
+          console.log('error');
           console.log(error);
         }
       });
@@ -573,7 +545,6 @@ export default {
         datatype : 'jsonp' ,
         success: function(data){
           data = JSON.parse(data);
-          console.log(JSON.stringify(data));
           self.bagagesCabine=[];
           self.bagagesSoute=[];
           self.bagagesAutre=[];
@@ -618,7 +589,6 @@ export default {
               'gare' : stops[i],
               'select_display' : stops[i].stop_point.name + " à  " + time
             });
-            console.log(typeof (self.gares[i-1].select_display));
           }
         })
         .fail(function(error) {
@@ -655,7 +625,6 @@ export default {
       this.time = this.moment(trainTime.substring(0,4), "hmm").format("HH:mm");
 
       // Si l'heure d'arrivée en gare est antérieure à l'heure actuelle, alors on déclenche une erreur
-
       if ( this.time<this.moment().format('LT') ){
         this.errors['error_date'] = this.$i18n.t('error_heure');
       }
@@ -724,11 +693,6 @@ export default {
         }
       },
 
-
-
-
-
-
       // Geocode est utilisé pour transformer un objet pos en objet PLACE
 
       geocode(pos){
@@ -748,7 +712,6 @@ export default {
           });
         },
 
-
         // Méthode qui remet à zéro les messages d'erreurs et les informations de train ou de vol
         // On l'apelle par exemple lorsque le client change la date
         resetData(){
@@ -756,8 +719,6 @@ export default {
           this.numTrain='';
           this.gares=[];
           this.error='';
-          this.errors={}
-
         },
 
         // On vérifie que les données saisies par le client sont correctes
