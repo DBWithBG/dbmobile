@@ -57,7 +57,7 @@
                 <v-text-field
                 slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" append-icon="access_time" readonly>
               </v-text-field>
-              <v-time-picker v-model="time" :min="minTime" :format="$t('date_format')" @change="$refs.menutime.save(time)" color="primary" no-title :locale="this.$root.$i18n.locale" > </v-time-picker>
+              <v-time-picker v-model="time" :min="minTime" :format="$t('date_format')" @change="$refs.menutime.save(time)" color="primary" :locale="this.$root.$i18n.locale" > </v-time-picker>
           </v-menu>
         </v-flex>
       </div>
@@ -83,7 +83,7 @@
         <v-select
         :items="gares"
         v-model="selectedGare"
-        item-text="gare.stop_point.name"
+        item-text="select_display"
         item-value="gare"
         v-bind:label="$t('select_gare')"
         single-line
@@ -118,7 +118,7 @@
        par défaut consigne
      -->
       <v-flex mt-3 mb-2 xs12>
-        <v-switch v-bind:label="$t('livraison')" v-model="livraisonDirecte" color="primary"> </v-switch>
+        <v-switch v-bind:label="$t('livraison_asap')" v-model="livraisonDirecte" color="primary"> </v-switch>
       </v-flex>
 
 
@@ -130,7 +130,7 @@
           slot="activator" v-model="displayDateEnd" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
         </v-text-field>
 
-        <v-date-picker v-model="dateEnd" :min="minDateEnd" :max="maxDateEnd" @input="$refs.menudateend.save(dateEnd)" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" >
+        <v-date-picker v-model="dateEnd" :min="minDateEnd" :max="maxDateEnd" @input="$refs.menudateend.save(dateEnd)" color="primary" scrollable no-title :locale="this.$root.$i18n.locale" >
         </v-date-picker>
       </v-menu>
     </v-flex>
@@ -147,7 +147,6 @@
         :format="$t('date_format')"
         @change="$refs.menutimeend.save(timeEnd)"
         color="primary"
-        no-title
         :locale="this.$root.$i18n.locale" >
       </v-time-picker>
     </v-menu>
@@ -389,7 +388,7 @@ export default {
     // si la date est aujourd'hui, restriction (pas avant l'heure courante)
     minTime(){
       let time;
-      if (this.dateTime.substring(0,10) != new Date().toLocaleString().substring(0,10)) {
+      if (this.dateTime.toLocaleString().substring(0,10) != new Date().toLocaleString().substring(0,10)) {
         time = '';
       }
       else{
@@ -412,7 +411,7 @@ export default {
 
     // Heure min pour la consigne
     minTimeEnd(){
-      this.timeEnd = this.time;
+      //this.timeEnd = this.time;
     },
 
     // Heure max pour la consigne
@@ -431,7 +430,7 @@ export default {
         date.setHours(this.time.getHours());
         date.setMinutes(this.time.getMinutes());
       }
-      return date.toLocaleString();
+      return date;
     },
 
     // assemblage et formatage de la date et de l'heure de livraison
@@ -446,7 +445,7 @@ export default {
         date.setHours(this.timeEnd.getHours());
         date.setMinutes(this.timeEnd.getMinutes());
       }
-      return date.toLocaleString();
+      return date;
     },
 
 
@@ -484,23 +483,25 @@ export default {
 
     // Affichage du label du datepicker PRISE EN CHARGE de manière plus "humaine" pour l'utilisateur
     displayDate(){
-      return this.dateTime.substring(0,10);
+      return this.dateTime.toLocaleString().substring(0,10);
     },
 
     // Affichage du label du timepicker PRISE EN CHARGE de manière plus "humaine" pour l'utilisateur
     displayTime(){
-      return this.dateTime.substring(12,18);
+      return this.dateTime.toLocaleString().substring(12,18);
     },
 
     // Affichage du label du datepicker LIVRAISON de manière plus "humaine" pour l'utilisateur
     displayDateEnd(){
-      return this.dateTimeEnd.substring(0,10);
+      return this.dateTimeEnd.toLocaleString().substring(0,10);
     },
 
     // Affichage du label du timepicker LIVRAISON de manière plus "humaine" pour l'utilisateur
     displayTimeEnd(){
-      return this.dateTimeEnd.substring(12,18);
-    }
+      return this.dateTimeEnd.toLocaleString().substring(12,18);
+    },
+
+
 
   },
 
@@ -576,9 +577,12 @@ export default {
         {
           let stops = data.vehicle_journeys[0].stop_times;
           for (let i=1 ;i<stops.length; i++){
+              let time = self.moment(stops[i].arrival_time.substring(0,4), "hmm").format("LT");
               self.gares.push({
-              'gare' : stops[i]
+              'gare' : stops[i],
+              'select_display' : stops[i].stop_point.name + " à  " + time
             });
+            console.log(typeof (self.gares[i-1].select_display));
           }
         })
         .fail(function(error) {
@@ -684,6 +688,25 @@ export default {
         }
       },
 
+      // Méthode qui permet
+      // on calcule la différence entre les date de prise en charge et de la livraison
+      // si cette durée est inférieure à 2 heures, alors on met un message d'erreur
+          verifDate(){
+            let start = this.moment(this.dateTime);
+            let end = this.moment(this.dateTimeEnd);
+            console.log(start);
+            console.log(end);
+            let duration = end.diff(start,'minutes');
+            if (duration < 120){
+              this.errors['date_livraison']="Il faut au moins 2 heures entre la prise en charge et la livraison";
+            }
+            else{
+              this.errors['date_livraison']="";
+            }
+            //return(end.diff(start,'minutes'));
+
+          },
+
 
 
 
@@ -720,6 +743,7 @@ export default {
 
         // On vérifie que les données saisies par le client sont correctes
         isFormOk(){
+          this.verifDate();
           if (this.error=='' && this.startPlace !='' && this.endPlace != '' && this.date !='' && this.checkErrors() ){
             return true;
           }
