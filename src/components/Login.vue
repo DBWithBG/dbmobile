@@ -122,8 +122,9 @@ export default {
       var ref = cordova.InAppBrowser.open('http://dev-deliverbag.supconception.fr/connexion', '_blank', 'location=no,zoom=no',);
       var tok = this.deviceId;
       ref.addEventListener('loadstop', function(){
+        alert('loadstop');
         navigator.splashscreen.hide();
-        var t= '$("#js-form-login").append("<input type=\'hidden\' id=\'deviceId\' value=\''+tok+'\'>")';
+        var t= '$("form").append("<input type=\'hidden\' id=\'deviceId\' value=\''+tok+'\'>")';
         ref.executeScript( {code : t});
         var i = window.setInterval(function(){
           ref.executeScript(
@@ -163,6 +164,7 @@ export default {
 [class*="--disabled "] * {
     color: #757575 !important;
 }
+
 
 
 </style>

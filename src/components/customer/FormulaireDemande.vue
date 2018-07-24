@@ -18,10 +18,8 @@
       <v-stepper-items>
         <!-- PRISE EN CHARGE -->
         <v-stepper-content step="1">
-          <v-subheader > {{$t('subt_1')}}</v-subheader>
-          <v-flex mt-4 mb-3 xs12 >
-            <span class="subheading" >{{$t('info_1')}}</span>
-          </v-flex>
+          <v-subheader class="text-xs-center"> {{$t('subt_1')}}</v-subheader>
+          <v-flex mt-4 mb-3 xs12 class="text-xs-center" >{{$t('info_1')}}</v-flex>
           <!-- MESSAGES D'ERREURS -->
           <v-flex xs12 v-if="error.length">
             <alert :message="error"> </alert>
@@ -86,9 +84,7 @@
       </v-flex>
 
       <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
-      <v-flex mt-4 mb-3 xs12 >
-        <span class="subheading" >{{$t('info_2')}}</span>
-      </v-flex>
+      <v-flex mt-4 mb-3  class="text-xs-center" >{{$t('info_2')}}</v-flex>
 
       <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
       <v-flex xs12>

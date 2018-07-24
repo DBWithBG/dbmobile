@@ -80,20 +80,29 @@
 
                   <!-- Annuler la prise en charge, uniquement si les bagages n'ont pas été pris en charge -->
                   <div v-if="props.item.delivery.status === 2">
-                    <v-btn small flat color="error" @click.native.stop="dialogDel=true, active=props.item.delivery">
+                    <v-flex row>
+                    <v-btn  color='primary' @click.native="route(props.item.delivery.start_position.lat,props.item.delivery.start_position.lng)">
+                      <span>{{$t('map_display')}}</span>
+                    </v-btn>
+                    <v-btn  dark color="secondary" @click.native.stop="dialogBag=true, active=props.item.delivery">
+                      {{$t('take_bags')}}
+                    </v-btn>
+                    </v-flex>
+                    <v-btn color="error" @click.native.stop="dialogDel=true, active=props.item.delivery">
                       {{$t('cancel_course')}}
                     </v-btn>
 
                     <!-- Prendre en charges les bags, uniquement si les bagages n'ont pas été pris en charge -->
-                    <v-btn  small flat color="action" @click.native.stop="dialogBag=true, active=props.item.delivery">
-                      {{$t('take_bags')}}
-                    </v-btn>
+
                   </div>
 
                   <!-- Livrer les bags, uniquement si les bagages ont été pris en charge -->
 
                   <div v-if="props.item.delivery.status === 3">
-                    <v-btn small flat color="action" @click.native.stop="endCourse(props.item.delivery)">
+                    <v-btn  color='primary' @click.native="route(props.item.delivery.end_position.lat,props.item.delivery.end_position.lng)">
+                      <span>{{$t('map_display')}}</span>
+                    </v-btn>
+                    <v-btn dark color="secondary" @click.native.stop="endCourse(props.item.delivery)">
                       {{$t('deliver_bags')}}
                     </v-btn>
                   </div>
@@ -128,7 +137,7 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="action" flat @click.native.stop="dialogDel=false">{{$t('cancel')}}</v-btn>
+                <v-btn color="secondary" flat @click.native.stop="dialogDel=false">{{$t('cancel')}}</v-btn>
                 <v-btn color="error" flat @click.native.stop="dialogDel=false,cancelTakeover(active)">{{$t('delete')}}</v-btn>
               </v-card-actions>
             </v-card>
@@ -354,6 +363,24 @@ export default {
         });
       },
 
+      // works on ANDROID
+      // Ouvre l'appli native et affiche l'itinéraire :
+      //  - origine = position actuelle
+      // - destination = coordonnées passées
+      route(lat,lng){
+        //window.open("google.navigation:q="+lat+","+lng+"&mode=d" , '_system');
+        let addressLongLat = {lat,lng};
+
+        if (device.platform == 'Android'){
+          window.open("google.navigation:q="+lat+","+lng+"&mode=d" , '_system')
+          //  window.open("geo:"+addressLongLat);
+        }
+        if (device.platform == 'iOS'){
+          window.open("http://maps.apple.com/?q="+addressLongLat, '_system');
+        }
+
+      },
+
       rateBag(bag){
 
       },
@@ -422,6 +449,7 @@ export default {
                     url: 'http://dev-deliverbag.supconception.fr/mobile/drivers/setPosition',
                     type : 'POST',
                     data : {
+                      "_method" : "put" ,
                       "current_lat" : position.coords.latitude,
                       "current_lng" : position.coords.longitude,
                       "mobile_token" : localStorage.getItem('deviceId')

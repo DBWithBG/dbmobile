@@ -27,7 +27,7 @@
       Pour accéder au formulaire de demande avec saisie de numéro de train
     -->
 
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12>
         <v-card class="vh33" color="light-green lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'train'} }">
           <v-card-title primary-title>
             <div>
@@ -44,7 +44,7 @@
     <!--
       Pour accéder au formulaire de demande avec saisie de numéro de vol
     -->
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12>
         <v-card class="vh33" color="lime lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'flight'} }">
           <v-card-title primary-title>
             <div>
