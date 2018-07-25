@@ -124,8 +124,13 @@
   "confirmer_course" : "Confirmer votre engagement sur cette course?",
   "retour" : "Retour",
   "error_consigne_trop_tot": "Il faut au moins 2 heures entre la prise en charge et la livraison",
-  "error_consigne_trop_tard" : "La durée de la consigne ne peut pas excéder 24 heures"
+  "error_consigne_trop_tard" : "La durée de la consigne ne peut pas excéder 24 heures",
+  "at" : "à",
 
+  "bagages_autre": "autres bagages",
+  "bagages_cabine": "bagages cabine",
+  "bagages_soute": "bagages soute",
+  "error_precision":" manque de précision"
 
 },
     "en": {
@@ -249,7 +254,16 @@
     "email" : "Email address",
     "snackbar_bags_update" : "Bags updated !",
     "call":"Call" ,
-    "mail":"Send an email"
+    "mail":"Send an email",
+
+    "label_edl" : "Point out the condition of the luggages",
+    "etat_bag" : "Luggage condition",
+    "confirmer" : "Confirm",
+    "confirmer_course" : "Confirm my commit on this course?",
+    "retour" : "Back",
+    "error_consigne_trop_tot": " 2 hours are required between the takeover and the delivery",
+    "error_consigne_trop_tard" : "An order can't exceed 24 hours",
+    "at" : "at"
 },
     "es": {
       "address": "Doy una dirección",

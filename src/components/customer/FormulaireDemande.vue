@@ -84,7 +84,7 @@
       </v-flex>
 
       <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
-      <v-flex mt-4 mb-3  class="text-xs-center" >{{$t('info_2')}}</v-flex>
+      <v-flex mt-4 mb-3 xs12 class="text-xs-center" >{{$t('info_2')}}</v-flex>
 
       <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
       <v-flex xs12>
@@ -141,11 +141,11 @@
 <v-stepper-content step="2">
 
 
-
+<v-subheader class="text-xs-center"> {{$t('subt_2')}}</v-subheader>
   <!-- Gestion des bagages -->
 
   <v-flex xs12>
-    <v-btn color="primary" @click.native="ajoutBagage('cabine')" dark > {{$t('bagages_ajout')}} {{$t('bagage_cabine')}}</v-btn>
+    <v-btn round color="primary" @click.native="ajoutBagage('cabine')" dark > {{$t('bagages_ajout')}} {{$t('bagage_cabine')}}</v-btn>
       <v-layout row v-for="bag in bagagesCabine" :key="bag.id">
         <v-flex xs2>
           <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
@@ -153,18 +153,18 @@
           </v-btn>
         </v-flex>
         <v-flex xs5>
-          <v-text-field  box v-bind:label="$t('bagage_nom')" v-model="bag.name"></v-text-field>
+          <v-text-field  v-bind:label="$t('bagage_nom')" v-model="bag.name"></v-text-field>
         </v-flex>
         <v-divider vertical> </v-divider>
         <v-flex xs5>
-          <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+          <v-text-field  v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
         </v-flex>
       </v-layout>
   </v-flex>
 
 
   <v-flex xs12 >
-    <v-btn  color="primary" @click.native="ajoutBagage('soute')" dark >{{$t('bagages_ajout')}} {{$t('bagage_soute')}} </v-btn>
+    <v-btn round color="primary" @click.native="ajoutBagage('soute')" dark >{{$t('bagages_ajout')}} {{$t('bagage_soute')}} </v-btn>
       <v-layout row v-for="bag in bagagesSoute" :key="bag.id">
         <v-flex xs2>
           <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
@@ -172,18 +172,18 @@
           </v-btn>
         </v-flex>
         <v-flex xs5>
-          <v-text-field  box v-bind:label="$t('bagage_nom')" v-model="bag.name"
+          <v-text-field  v-bind:label="$t('bagage_nom')" v-model="bag.name"
           ></v-text-field>
         </v-flex>
         <v-divider vertical> </v-divider>
         <v-flex xs5>
-          <v-text-field  box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+          <v-text-field  v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
         </v-flex>
       </v-layout>
   </v-flex>
 
   <v-flex xs12>
-    <v-btn  color="primary" @click.native="ajoutBagage('autre')" dark >{{$t('bagages_ajout')}} {{$t('bagage_autre')}}</v-btn>
+    <v-btn round color="primary" @click.native="ajoutBagage('autre')" dark >{{$t('bagages_ajout')}} {{$t('bagage_autre')}}</v-btn>
       <v-layout row v-for="bag in bagagesAutre" :key="bag.id">
         <v-flex xs2>
           <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
@@ -191,11 +191,11 @@
           </v-btn>
         </v-flex>
         <v-flex xs5>
-          <v-text-field  required box v-bind:label="$t('bagage_nom')" v-model="bag.name":rules="[() => bag.name.length > 0 || $t('bagage_required')]"></v-text-field>
+          <v-text-field  required v-bind:label="$t('bagage_nom')" v-model="bag.name":rules="[() => bag.name.length > 0 || $t('bagage_required')]"></v-text-field>
         </v-flex>
         <v-divider vertical> </v-divider>
         <v-flex xs5>
-          <v-text-field box v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+          <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
         </v-flex>
       </v-layout>
   </v-flex>
@@ -224,13 +224,63 @@
 </v-stepper-content>
 
 <v-stepper-content step="3">
+
   <!-- Récapitulatif -->
-  <v-card>
-    {{reponse()}}
+  <v-subheader class="text-xs-center"> {{$t('subt_3')}}</v-subheader>
+  <v-card v-if="reponse != null">
+
+      <v-flex pt-3 pb-4 class="text-xs-center subheading font-weight-bold"> {{$t('takeover_label')}}</v-flex>
+        <v-flex xs12 class="text-xs-center" v-if="type=='address'">
+          {{reponse.start_position.address}}
+        </v-flex>
+        <v-flex xs12 class="text-xs-center" v-else>
+          {{reponse.start_position.name}}
+        </v-flex>
+      <v-flex pt-1 xs12 class="text-xs-center">
+        Le {{moment(reponse.delivery.start_date).format('LL')}} {{$t('at')}} {{moment(reponse.delivery.start_date).format('LT')}}
+      </v-flex>
+
+    <v-flex pt-4 pb-4 class="text-xs-center subheading font-weight-bold"> {{$t('livraison_label')}}</v-flex>
+      <v-flex xs12 class="text-xs-center">
+        {{reponse.end_position.address}}
+      </v-flex>
+    <v-flex pt-1 xs12 class="text-xs-center" v-if="!reponse.delivery.livraisonDirecte">
+      Le {{moment(reponse.delivery.end_date).format('LL')}} {{$t('at')}} {{moment(reponse.delivery.end_date).format('LT')}}
+    </v-flex>
+    <v-flex pt-1 xs12 class="text-xs-center" v-else>
+      {{$t('livraison_asap')}}
+    </v-flex>
+
+  <v-flex pt-4 pb-4 class="text-xs-center subheading font-weight-bold"> {{$t('bagages')}}</v-flex>
+
+<v-flex xs12 class="text-xs-center" v-if="compteurBagagesCabine>0 && compteurBagagesCabine<=1" >
+  {{compteurBagagesCabine}} {{$t('bagage_cabine')}}
+</v-flex>
+<v-flex xs12 class="text-xs-center" v-if="compteurBagagesCabine>1" >
+  {{compteurBagagesCabine}} {{$t('bagages_cabine')}}
+</v-flex>
+
+<v-flex xs12 class="text-xs-center" v-if="compteurBagagesSoute>0 && compteurBagagesSoute<=1" >
+  {{compteurBagagesSoute}} {{$t('bagage_soute')}}
+</v-flex>
+<v-flex xs12 class="text-xs-center" v-if="compteurBagagesSoute>1" >
+  {{compteurBagagesSoute}} {{$t('bagages_soute')}}
+</v-flex>
+
+<v-flex xs12 class="text-xs-center" v-if="compteurBagagesAutre>0 && compteurBagagesAutre<=1" >
+  {{compteurBagagesAutre}} {{$t('bagage_autre')}}
+</v-flex>
+<v-flex xs12 class="text-xs-center" v-if="compteurBagagesAutre>1" >
+  {{compteurBagagesAutre}} {{$t('bagages_autre')}}
+</v-flex>
+
   </v-card>
 
-  <v-btn color="orange lighten-1" @click.native="step=2" dark >{{$t('prev')}}</v-btn>
-  <v-btn color="primary" @click.native="payer()" dark >{{$t('payer')}} </v-btn>
+  <v-btn color="orange lighten-1" @click.native="step=2" dark >
+    <v-icon>navigate_before</v-icon>
+    {{$t('prev')}}
+  </v-btn>
+  <v-btn color="primary" @click.native="createDelivery()" dark >{{$t('payer')}} </v-btn>
 </v-stepper-content>
 </v-stepper-items>
 
@@ -274,7 +324,7 @@ export default {
       dateEnd:this.moment().format().substring(0,10),
 
       // correspond à l'heure de livraison
-      timeEnd:this.moment().format('LT'),
+      timeEnd:this.moment().add(2,'hours').format('LT'),
 
       // lieu de prise en charge
       startPlace:'',
@@ -342,6 +392,18 @@ export default {
       return (this.bagagesCabine.length + this.bagagesSoute.length + this.bagagesAutre.length);
     },
 
+    compteurBagagesCabine(){
+      return (this.bagagesCabine.length);
+    },
+
+    compteurBagagesSoute(){
+      return (this.bagagesSoute.length);
+    },
+
+    compteurBagagesAutre(){
+      return (this.bagagesAutre.length);
+    },
+
     // Date minimale pour la prise en charge
     // si la date est aujourd'hui, restriction (pas avant l'heure courante)
     minTime(){
@@ -398,7 +460,7 @@ export default {
     // assemblage et formatage de la date et de l'heure de prise en charge
     // utilisée pour l'envoi des données au serveur
     dateStartToJson(){
-      var date = new Date(this.date);
+      let date = new Date(this.date);
       if (typeof this.time === 'string'){
         date.setHours(this.time.match(/^(\d+)/)[1]);
         date.setMinutes(this.time.match(/:(\d+)/)[1]);
@@ -414,7 +476,7 @@ export default {
     // utilisée pour l'envoi des données au serveur
     dateEndToJson(){
       console.log(this.timeEnd);
-      var date = new Date(this.dateEnd);
+      let date = new Date(this.dateEnd);
       if (typeof this.timeEnd === 'string'){
         date.setHours(this.timeEnd.match(/^(\d+)/)[1]);
         date.setMinutes(this.timeEnd.match(/:(\d+)/)[1]);
@@ -460,7 +522,7 @@ export default {
         this.errors['date_livraison']=this.$i18n.t('error_consigne_trop_tot');
       }
       // si la durée est supérieure à 24 heures
-      else if (duration > 1440 ){
+      else if (duration > 1440){
         this.errors['date_livraison']=this.$i18n.t('error_consigne_trop_tard');
       }
       else {
@@ -473,6 +535,47 @@ export default {
       }
       // on force la mise à jour pour mettre à jour le message d'erreur selon le changement de date
       this.$forceUpdate();
+    },
+
+    reponse(){
+      var req;
+      if (this.step==3) {
+         req =
+        {
+          "start_position":
+          {
+            'name': this.startPlace.name,
+            'address':this.startPlace.formatted_address,
+            'lat' :this.startPlace.geometry.location.lat(),
+            'lng':this.startPlace.geometry.location.lng()
+          },
+          "end_position":
+          {
+            'name': this.endPlace.name,
+            'address':this.endPlace.formatted_address,
+            'lat' :this.endPlace.geometry.location.lat(),
+            'lng':this.endPlace.geometry.location.lng()
+          },
+          "delivery" :
+          {
+            'comment' : "Commentaire",
+            'start_date' : this.dateStartToJson,
+            'end_date' : this.dateEndToJson,
+            'livraisonDirecte': this.livraisonDirecte,
+            'no_train': this.numTrain
+          },
+          "bagages" : {
+            '1' : this.bagagesCabine,
+            '2' : this.bagagesSoute,
+            '3' : this.bagagesAutre
+          },
+          "mobile_token":localStorage.getItem('deviceId'),
+
+        }
+
+      }
+      //this.createDelivery();
+      return req;
     }
 
   },
@@ -482,18 +585,17 @@ export default {
 
     // Méthode qui permet de récupérer les départements authorisés par l'application
     getDepartments(){
-      var self=this;
+      let self=this;
       $.ajax({
         url: 'https://dev-deliverbag.supconception.fr/'+'departments/authorized',
         dataType: 'jsonp',
         success: function(json){
-          for (var i=0; i<JSON.parse(json).length; i++){
+          for (let i=0; i<JSON.parse(json).length; i++){
             self.authorized.push(JSON.parse(json)[i].number.toString());
             self.authorized.push(JSON.parse(json)[i].name);
           }
         },
         error : function(error){
-          console.log('error');
           console.log(error);
         }
       });
@@ -502,7 +604,7 @@ export default {
 
     // Méthode qui permet de récupérer les bagages du client
     getBagages(){
-      var self=this;
+      let self=this;
       $.ajax({
         url: 'http://dev-deliverbag.supconception.fr/mobile/bags/users/'+localStorage.getItem('deviceId'),
         type : 'GET',
@@ -539,11 +641,11 @@ export default {
     // C'est la méthode qui est appelé lors de la saisie du numéro de train
     // si le numéro est correct, alors un récupère les différents arrêts du voyage
     traitementTrain(){
-      var self=this;
+      let self=this;
       // Les numéros de trains sont composés d'au moins 4 caractères
       if (this.numTrain.length>=4){
         // On formatte la date de voyage pour correspondre au format attendu par l' API SNCF
-        var dateTrain =( (this.date.split('T'))[0] + "T000000" );
+        let dateTrain =( (this.date.split('T'))[0] + "T000000" );
         $.get(`https://api.sncf.com/v1/coverage/sncf/vehicle_journeys/?headsign=${this.numTrain}&since=${dateTrain}&key=${this.sncf_key} `, function(data)
         {
           let stops = data.vehicle_journeys[0].stop_times;
@@ -551,7 +653,7 @@ export default {
             let time = self.moment(stops[i].arrival_time.substring(0,4), "hmm").format("LT");
             self.gares.push({
               'gare' : stops[i],
-              'select_display' : stops[i].stop_point.name + " à  " + time
+              'select_display' : stops[i].stop_point.name + ' ' + self.$i18n.t('at')+ ' ' + time
             });
           }
         })
@@ -582,9 +684,9 @@ export default {
     verifGare(){
       //console.log(JSON.stringify(this.selectedGare));
       // On récupère les informatons de localisation ainsi que l'heure d'arrivée en gare
-      var lat = parseFloat(this.selectedGare.stop_point.coord.lat);
-      var lng =  parseFloat(this.selectedGare.stop_point.coord.lon);
-      var trainTime = this.selectedGare.arrival_time;
+      let lat = parseFloat(this.selectedGare.stop_point.coord.lat);
+      let lng =  parseFloat(this.selectedGare.stop_point.coord.lon);
+      let trainTime = this.selectedGare.arrival_time;
 
       this.time = this.moment(trainTime.substring(0,4), "hmm").format("HH:mm");
 
@@ -597,13 +699,13 @@ export default {
       }
       //  this.time.setMinutes(parseInt(trainTime.substring(2,4)));
 
-      var pos = {lat : lat, lng : lng};
-      var self=this;
+      let pos = {lat : lat, lng : lng};
+      let self=this;
 
       // On géocode à partir de la position (lat,lng)
       // afin d'obtenir une adresse formatée sous forme d'objet PLACE
 
-      var geocoder = new google.maps.Geocoder();
+      let geocoder = new google.maps.Geocoder();
       geocoder.geocode({
         'latLng': pos},
         function(results,status){
@@ -613,6 +715,7 @@ export default {
           }
           if (status == google.maps.GeocoderStatus.OK) {
             self.startPlace=results[1];
+            self.startPlace.name="Gare de " + self.selectedGare.stop_point.name;
             // Si le géocodage se passe correctement, on vérifie alors que le lieu souhaité est inclus dans les départements authorisés
             // le second paramètre sert pour différencier les erreurs
             self.verifyDepartment(self.startPlace,'gare');
@@ -624,6 +727,7 @@ export default {
       // Méthode qui permet de vérifier le département d'un objet PLACE
       // Le second paramètre LIEU permet de connaître l'origine de la demande (adresse, gare ou aéroport)
       verifyDepartment(place,lieu){
+        let types = place.types;
         let res = place.address_components;
         let found = false;
         let isInrange = false;
@@ -643,6 +747,7 @@ export default {
         }
         if (isInrange){
           this.errors[lieu]='';
+          this.verifyPrecision(place,lieu);
         }
         else{
           // on met une alerte pour lui dire que le lieu n'est pas encore desservi
@@ -657,11 +762,30 @@ export default {
         }
       },
 
+      // Méthode qui permet de vérifier la précision d'une adresse donnée
+      // Le second paramètre LIEU permet de connaître l'origine de la demande
+      verifyPrecision(place,lieu){
+        let text=this.$i18n.t('error_start_place');
+        if (lieu=='end'){
+          text=this.$i18n.t('error_end_place');
+        }
+        if (lieu=='gare'){
+          text=this.$i18n.t('error_gare');
+        }
+        let types = place.types;
+        if (types.includes('route')){
+          this.errors[lieu]=text+this.$i18n.t('error_precision');
+        }
+        else{
+          this.errors[lieu]="";
+        }
+      },
+
       // Geocode est utilisé pour transformer un objet pos en objet PLACE
 
       geocode(pos){
-        var self=this;
-        var geocoder = new google.maps.Geocoder();
+        let self=this;
+        let geocoder = new google.maps.Geocoder();
         geocoder.geocode({
           'latLng': pos},
           function(results,status){
@@ -695,8 +819,8 @@ export default {
 
         // On vérifie qu'il n y a plus d'erreurs : localisation non desservie, heure incorrecte...
         checkErrors(){
-          var ok=true;
-          for (var error in this.errors){
+          let ok=true;
+          for (let error in this.errors){
             if (this.errors[error] != ''){
               ok=false;
             }
@@ -736,11 +860,11 @@ export default {
 
           //on vérifie également que les bagages autres soient nommés
           bagageOk(tab){
-            var noms=[];
-            var ok=true;
+            let noms=[];
+            let ok=true;
             if (tab.length){
-              var self=this;
-              for (var i=0; i<tab.length;i++){
+              let self=this;
+              for (let i=0; i<tab.length;i++){
                 if (tab[i].name == ''){
                   ok=false;
                 }
@@ -757,63 +881,29 @@ export default {
             return ok;
           },
 
-          reponse(){
 
-            if (this.step==3) {
-              var req =
-              {
-                "start_position":
-                {
-                  'name': this.startPlace.name,
-                  'address':this.startPlace.formatted_address,
-                  'lat' :this.startPlace.geometry.location.lat(),
-                  'lng':this.startPlace.geometry.location.lng()
-                },
-                "end_position":
-                {
-                  'name': this.endPlace.name,
-                  'address':this.endPlace.formatted_address,
-                  'lat' :this.endPlace.geometry.location.lat(),
-                  'lng':this.endPlace.geometry.location.lng()
-                },
-                "delivery" :
-                {
-                  'comment' : "Commentaire",
-                  'start_date' : this.dateStartToJson,
-                  'end_date' : this.dateEndToJson,
-                  'livraisonDirecte': this.livraisonDirecte,
-                  'no_train': this.numTrain
-                },
-                "bagages" : {
-                  '1' : this.bagagesCabine,
-                  '2' : this.bagagesSoute,
-                  '3' : this.bagagesAutre
-                },
-                "mobile_token":localStorage.getItem('deviceId'),
+          createDelivery(){
+            let self=this;
 
-              }
-              var self=this;
-
-              $.ajax({
-                url: 'http://dev-deliverbag.supconception.fr/create/delivery',
-                type : 'POST',
-                data : req,
-                success: function(data){
-                  console.log(data.id);
-                  self.activeDeliveryId=data.id;
-                },
-                error:function(e){
-                  console.log(e);
-                },
-              });
-            }
-            return req;
+            $.ajax({
+              url: 'http://dev-deliverbag.supconception.fr/create/delivery',
+              type : 'POST',
+              data : self.reponse,
+              success: function(data){
+                self.payer();
+                console.log(data.id);
+                self.activeDeliveryId=data.id;
+              },
+              error:function(e){
+                console.log(e);
+              },
+            });
           },
 
 
           payer(){
 
-            var self=this;
+            let self=this;
             $.ajax({
               url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/payment',
               type : 'POST',
@@ -833,25 +923,25 @@ export default {
 
           traitementVol(){
 
-            var self=this;
-            var year = this.date.substring(0,4);
-            var month = this.date.substring(5,7);
-            var day = this.date.substring(8,10);
+            let self=this;
+            let year = this.date.substring(0,4);
+            let month = this.date.substring(5,7);
+            let day = this.date.substring(8,10);
 
-            if (this.numVol.length==6){
+            if (this.numVol.length>=5){
 
               $.ajax({
-                url: `https://api.flightstats.com/flex/flightstatus/rest/v2/jsonp/flight/status/${this.compagnyId}/${this.flightId}/arr/${year}/${month}/${day}?appId=${this.app_id}&appKey=${this.app_key}&utc=false`,
+                url: `https://api.flightstats.com/flex/flightstatus/rest/v2/jsonp/flight/status/${self.compagnyId}/${self.flightId}/arr/${year}/${month}/${day}?appId=${self.flight_app_id}&appKey=${self.flight_app_key}&utc=false`,
                 dataType: 'jsonp',
                 success: function(data){
                   //console.log(data);
                   if (!data.flightStatuses.length){
-                    self.error="Ce numéro de vol ne correspond à aucun vol à cette date";
+                    self.error=data.error.errorMessage;
                   }
                   else{
-                    var res = data.flightStatuses[0];
+                    let res = data.flightStatuses[0];
                     //var dateRunway = new Date(res.operationalTimes.estimatedRunwayArrival.dateLocal) ; //NOT ALWAYS DFINED !!!!!
-                    var dateGate = new Date(res.operationalTimes.scheduledGateArrival.dateLocal) ;
+                    let dateGate = new Date(res.operationalTimes.scheduledGateArrival.dateLocal) ;
 
                     if (res.operationalTimes.estimatedGateArrival){
                       dateGate = new Date(res.operationalTimes.estimatedGateArrival.dateLocal) ; //RUNWAY OR GATE
@@ -864,13 +954,13 @@ export default {
                   }
                   */
                   //console.log(data);
-                  var minGate = dateGate.getMinutes();
+                  let minGate = dateGate.getMinutes();
                   if (minGate<10){
                     minGate='0'+minGate;
                   }
-                  var departure_airport = res.departureAirportFsCode;
-                  var arrival_airport = res.arrivalAirportFsCode;
-                  var arrivee,city;
+                  let departure_airport = res.departureAirportFsCode;
+                  let arrival_airport = res.arrivalAirportFsCode;
+                  let arrivee,city;
                   data.appendix.airports.forEach( function(element){
                     if (element.fs == arrival_airport){
                       console.log(element);
@@ -884,7 +974,7 @@ export default {
                   });
 
                   if (res.delays){
-                    var delay = res.delays.arrivalGateDelayMinutes ;
+                    let delay = res.delays.arrivalGateDelayMinutes ;
                     if (delay){
                       console.log(`Il y'a un retard de ${delay} minute(s) sur ce vol.`);
                     }
@@ -894,7 +984,7 @@ export default {
                 }
               },
               error:function(e){
-                self.error="Une erreur inconnue est survenue lors de la recherche de ce vol";
+                self.error="Une erreur est survenue lors de la recherche de ce vol";
                 console.log(e);
               }
             });
@@ -910,30 +1000,32 @@ export default {
         // On récupère les bagages du client et les départements authorisés
         this.getBagages();
         this.getDepartments();
-        var self=this;
+        let self=this;
         // On crée les bornes de recherches pour orienter les résultats des autocompletes en GIRONDE
-        var boundsGironde = new google.maps.LatLngBounds(
+        let boundsGironde = new google.maps.LatLngBounds(
           new google.maps.LatLng(44.1939019, -1.2614241),
           new google.maps.LatLng(45.573636, 0.315137));
 
           let options = {
-            bounds : boundsGironde,
+            bounds  : boundsGironde,
             componentRestrictions : {'country' : 'fr'}
           };
 
           // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de la livraison
-          var addressEnd = this.$refs.autocomplete_end;
-          var endPlace = new google.maps.places.Autocomplete(addressEnd, options);
+          let addressEnd = this.$refs.autocomplete_end;
+          let endPlace = new google.maps.places.Autocomplete(addressEnd, options);
+          console.log(endPlace.types);
           endPlace.addListener('place_changed', function() {
             self.endPlace=this.getPlace();
+            console.log(self.endPlace.types)
             self.verifyDepartment(self.endPlace,'end');
           });
 
           if (this.type=='address'){
             // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de prise en charge
             // UNQIUEMENT SI ON EST EN SAISIE D'ADRESSE
-            var addressStart = this.$refs.autocomplete_start;
-            var startPlace = new google.maps.places.Autocomplete(addressStart, options);
+            let addressStart = this.$refs.autocomplete_start;
+            let startPlace = new google.maps.places.Autocomplete(addressStart, options);
             startPlace.addListener('place_changed', function() {
               self.startPlace=this.getPlace();
               self.verifyDepartment(self.startPlace,'start');

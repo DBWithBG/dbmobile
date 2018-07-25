@@ -27,7 +27,7 @@
       <v-flex xs12 sm6 offset-sm3>
 
 <!-- Gestion des bagages CABINE -->
-        <v-btn color="primary" @click.native="ajoutBagage('cabine')" >{{$t("bagages_ajout")}} {{$t("bagage_cabine")}}</v-btn>
+        <v-btn round color="primary" @click.native="ajoutBagage('cabine')" >{{$t("bagages_ajout")}} {{$t("bagage_cabine")}}</v-btn>
         <div v-for="bag in bagagesCabine" :key="bag.id">
           <v-layout row>
             <v-flex xs2>
@@ -52,7 +52,7 @@
 <!-- Gestion des bagages SOUTE -->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <v-btn color="primary" @click.native="ajoutBagage('soute')" >{{$t("bagages_ajout")}} {{$t("bagage_soute")}} </v-btn>
+        <v-btn round color="primary" @click.native="ajoutBagage('soute')" >{{$t("bagages_ajout")}} {{$t("bagage_soute")}} </v-btn>
         <div v-for="bag in bagagesSoute" :key="bag.id">
           <v-layout row>
             <v-flex xs2>
@@ -78,7 +78,7 @@
 <!-- Gestion des bagages AUTRE -->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <v-btn  color="primary" @click.native="ajoutBagage('autre')" >{{$t("bagages_ajout")}} {{$t("bagage_autre")}}</v-btn>
+        <v-btn round color="primary" @click.native="ajoutBagage('autre')" >{{$t("bagages_ajout")}} {{$t("bagage_autre")}}</v-btn>
         <div v-for="bag in bagagesAutre" :key="bag.id">
 
           <v-layout row>
@@ -106,7 +106,7 @@
     a correctement rempli les infos des bagages -->
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
-        <v-btn dark :disabled="!verifBagage()" color="action" @click.native="updateBagages(),snackbar=true" >Mettre à jour mes bagages</v-btn>
+        <v-btn round dark :disabled="!verifBagage()" color="action" @click.native="updateBagages(),snackbar=true" >Mettre à jour mes bagages</v-btn>
       </v-flex>
     </v-layout>
 

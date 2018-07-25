@@ -1,7 +1,7 @@
 
 <template>
 
-  <v-bottom-nav color="primary" :value="true" :active.sync="element" fixed>
+  <v-bottom-nav class="test" color="primary" :value="true" :active.sync="element" app  >
       <v-btn dark flat value="left" to="/courses">
         <span>{{$t("courses")}}</span>
         <v-icon>history</v-icon>
@@ -29,11 +29,7 @@ export default{
 
 </script>
 <i18n src='@/assets/trad.json'></i18n>
-<style>
+<style scoped>
 
-
-body {
-  padding-bottom:56px;
-}
 
 </style>
