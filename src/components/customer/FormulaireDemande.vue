@@ -76,6 +76,12 @@
       <!-- NUMERO DE VOL POUR VOL -->
       <v-flex xs12 v-if="type == 'flight'">
         <v-text-field v-model="numVol" v-on:input="traitementVol" v-on:click="resetData" type="text"  maxlength="6" :placeholder="$t('flight_number')"> </v-text-field>
+
+
+      <v-flex xs12 v-if="airport_chosen != ''">
+        <v-text-field v-model="airport_chosen"  readonly type="text"> </v-text-field>
+      </v-flex>
+
       </v-flex>
 
       <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
@@ -361,6 +367,8 @@ export default {
 
       // numéro de vol saisi
       numVol : '',
+
+      airport_chosen:'',
 
       // array des bagages cabine
       bagagesCabine : [],
@@ -727,6 +735,8 @@ export default {
       // Méthode qui permet de vérifier le département d'un objet PLACE
       // Le second paramètre LIEU permet de connaître l'origine de la demande (adresse, gare ou aéroport)
       verifyDepartment(place,lieu){
+        console.log(place);
+        console.log(lieu);
         let types = place.types;
         let res = place.address_components;
         let found = false;
@@ -757,6 +767,9 @@ export default {
           }
           if (lieu=='gare'){
             text=this.$i18n.t('error_gare');
+          }
+          if (lieu=='airport'){
+            text=this.$i18n.t('this_airport');
           }
           this.errors[lieu]=text+this.$i18n.t('error_place');
         }
@@ -890,9 +903,8 @@ export default {
               type : 'POST',
               data : self.reponse,
               success: function(data){
-                self.payer();
-                console.log(data.id);
                 self.activeDeliveryId=data.id;
+                self.payer();
               },
               error:function(e){
                 console.log(e);
@@ -923,7 +935,7 @@ export default {
 
           traitementVol(){
 
-            let self=this;
+            var self=this;
             let year = this.date.substring(0,4);
             let month = this.date.substring(5,7);
             let day = this.date.substring(8,10);
@@ -935,29 +947,25 @@ export default {
                 dataType: 'jsonp',
                 success: function(data){
                   //console.log(data);
-                  if (!data.flightStatuses.length){
-                    self.error=data.error.errorMessage;
+                  if (data.flightStatuses.length==0){
+                    self.error=self.$i18n.t('airport_error');
                   }
                   else{
                     let res = data.flightStatuses[0];
-                    //var dateRunway = new Date(res.operationalTimes.estimatedRunwayArrival.dateLocal) ; //NOT ALWAYS DFINED !!!!!
-                    let dateGate = new Date(res.operationalTimes.scheduledGateArrival.dateLocal) ;
-
+                    let dateGate = self.moment(res.operationalTimes.scheduledGateArrival.dateLocal)
                     if (res.operationalTimes.estimatedGateArrival){
-                      dateGate = new Date(res.operationalTimes.estimatedGateArrival.dateLocal) ; //RUNWAY OR GATE
+                      dateGate = self.moment(res.operationalTimes.estimatedGateArrival.dateLocal);
                     }
+                  self.date = dateGate;
 
-                    self.date = dateGate;
-                    /* var minRunway = dateRunway.getMinutes();
-                    if (minRunway<10){
-                    minRunway='0'+minRunway;
+                  self.time=self.moment(self.date).format('LT')
+                  if ( self.time<self.moment().format('LT') ){
+                    self.errors['error_date'] = self.$i18n.t('error_heure');
                   }
-                  */
-                  //console.log(data);
-                  let minGate = dateGate.getMinutes();
-                  if (minGate<10){
-                    minGate='0'+minGate;
+                  else{
+                    self.errors['error_date']='';
                   }
+
                   let departure_airport = res.departureAirportFsCode;
                   let arrival_airport = res.arrivalAirportFsCode;
                   let arrivee,city;
@@ -969,7 +977,21 @@ export default {
                       let lat = parseFloat(element.latitude);
                       let lng =  parseFloat(element.longitude);
                       let pos = {lat : lat, lng : lng};
-                      self.geocode(pos);
+                      let geocoder = new google.maps.Geocoder();
+                      geocoder.geocode({
+                        'latLng': pos},
+                        function(results,status){
+                          if (status !== google.maps.GeocoderStatus.OK) {
+                            alert("Erreur lors de l'appel a geocode");
+                            console.log(status);
+                            return null;
+                          }
+                          if (status == google.maps.GeocoderStatus.OK) {
+                            self.startPlace=results[1];
+                            self.startPlace.name=self.$i18n.t('airport') + city;
+                            self.verifyDepartment(self.startPlace,'airport');
+                          }
+                        });
                     }
                   });
 
@@ -979,7 +1001,9 @@ export default {
                       console.log(`Il y'a un retard de ${delay} minute(s) sur ce vol.`);
                     }
                   }
-                  console.log(`Le client sera à la sortie de ${arrivee} (${city}) le ${dateGate.getDate()}/${dateGate.getMonth()+1}/${dateGate.getFullYear()} à ${dateGate.getHours()}h${minGate}`);
+
+                  self.airport_chosen  = arrivee + ' ' + self.$t('at') + ' ' + self.moment(self.date).format('LT');
+                  //  console.log(`Le client sera à la sortie de ${arrivee} (${city}) le ${dateGate.getDate()}/${dateGate.getMonth()+1}/${dateGate.getFullYear()} à ${dateGate.getHours()}h${minGate}`);
                   //  console.log(`Le client sera à la porte à ${dateGate.getHours()}h${minGate}`);
                 }
               },

@@ -7,7 +7,7 @@
     <v-flex xs12>
       <v-card>
 
-        <v-list three-line>
+        <v-list class="margin" three-line>
 
           <v-list-tile to="/demands" avatar>
             <v-list-tile-content >
@@ -192,5 +192,9 @@ export default{
 
 </script>
 <i18n src='@/assets/trad.json'></i18n>
-<style>
+<style scoped>
+
+.margin{
+  margin-bottom: 56px;
+}
 </style>

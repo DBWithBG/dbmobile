@@ -31,9 +31,14 @@
       </v-card>
     </v-dialog>
 
+
     <v-dialog v-model="dialogMap">
-      <div v-for="demand in active_demands">
-        <v-card flat>
+      <v-btn class="cross" dark icon color="error" fixed @click.native.stop="dialogMap = false">
+         <v-icon>close</v-icon>
+      </v-btn>
+      <v-flex v-for="demand in active_demands" :key="demand.id">
+        <v-flex mt-4>
+        <v-card>
           {{demand.time_consigne}}
           <v-card-text> {{$t('takeover_label')}} : {{demand.start_position.address}} </v-card-text>
           <v-card-text> Le {{moment(demand.start_date).format('LL')}} à {{moment(demand.start_date).format('LT')}} </v-card-text>
@@ -73,8 +78,9 @@
         </v-list>
         <v-divider>
         </v-divider>
+      </v-flex>
+      </v-flex>
 
-      </div>
     </v-dialog>
 
     <v-dialog v-model="dialogBag" max-width="290">
@@ -401,6 +407,10 @@ export default {
 
 
         <style scoped>
+
+        .cross{
+          z-index:9999;
+        }
 
         p {
           font-size:1em;

@@ -1,6 +1,6 @@
 <template>
 
-  <div>
+  <div class="margin">
     <!--
     Ecran de chargement,
     ce qui est affiché lorsque l'on attend la récupération des données du serveur
@@ -433,5 +433,8 @@ export default {
 
 tbody li {
   width:100vw;
+}
+.margin{
+  margin-bottom: 56px;
 }
 </style>

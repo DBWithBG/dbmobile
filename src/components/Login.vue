@@ -16,7 +16,6 @@ export default {
   data(){
     return{
       deviceId :'',
-      email:'',    pwd:'',
       isDriver:false
 
     }
@@ -76,9 +75,9 @@ export default {
         success: function(data){
 
 
+          self.$router.replace({path: 'demand'});
           self.sendFirebaseToken();
 
-          self.$router.replace({path: 'demand'});
           navigator.splashscreen.hide();
         },
         error:function(e){

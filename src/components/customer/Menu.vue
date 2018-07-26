@@ -10,7 +10,7 @@
       <span>{{$t("demande")}}</span>
       <v-icon>pan_tool</v-icon>
     </v-btn>
-    <v-btn dark flat  value="right" to="/settings">
+    <v-btn dark flat value="right" to="/settings">
       <span>{{$t("settings")}}</span>
       <v-icon>settings</v-icon>
     </v-btn>

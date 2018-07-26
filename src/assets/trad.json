@@ -103,7 +103,7 @@
 	"any_date" : "Toutes les dates",
 	"luggages" : "bagages",
 	"map_display" : "Voir l'itinéraire",
-	"error_heure" : "L'heure d'arrivée à cet arrêt est passée",
+	"error_heure" : "L'heure d'arrivée est passée",
 	"declarer_litige" : "Déclarer un litige",
 	"declaration_litige" : "Déclaration d'un litige",
 	"litige_label" : "Raison du litige",
@@ -130,7 +130,9 @@
   "bagages_autre": "autres bagages",
   "bagages_cabine": "bagages cabine",
   "bagages_soute": "bagages soute",
-  "error_precision":" manque de précision"
+  "error_precision":" manque de précision",
+  "airport" : "Aéroport de ",
+  "airport_error" : "Ce numéro de vol ne correspond à aucun vol à cette date"
 
 },
     "en": {
@@ -240,7 +242,7 @@
   	"any_date" : "All dates",
   	"luggages" : "luggages",
   	"map_display" : "See on the map",
-  	"error_heure" : "Arrival time for this station is past",
+  	"error_heure" : "Arrival time is past",
   	"declarer_litige" : "Report a litigaton",
   	"declaration_litige" : "Reporting a litigaton",
   	"litige_label" : "Litigiation's reason",
