@@ -18,8 +18,8 @@
       <v-stepper-items>
         <!-- PRISE EN CHARGE -->
         <v-stepper-content step="1">
-          <v-subheader class="text-xs-center"> {{$t('subt_1')}}</v-subheader>
-          <v-flex mt-4 mb-3 xs12 class="text-xs-center" >{{$t('info_1')}}</v-flex>
+          <v-flex mb-3 class="text-xs-center font-weight-medium primary--text subheading"> {{$t('subt_1')}}</v-flex>
+          <v-flex mt-4 mb-3 xs12 class="text-xs-center font-weight-medium " > {{$t('info_1')}} </v-flex>
           <!-- MESSAGES D'ERREURS -->
           <v-flex xs12 v-if="error.length">
             <alert :message="error"> </alert>
@@ -32,8 +32,8 @@
           <v-layout row>
             <v-flex xs10>
               <!-- DATE PICKER START -->
-              <v-menu ref="menudate" :close-on-content-click="false" :nudge-right="40" :return-value.sync="date" transition="scale-transition" offset-y full-width min-width="290px">
-                <v-text-field slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly> </v-text-field>
+              <v-menu :nudge-left="30" ref="menudate" :close-on-content-click="false" :return-value.sync="date" full-width min-width="290px">
+                <v-text-field  slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly> </v-text-field>
                 <v-date-picker v-model="date" :min="minDate" @input="$refs.menudate.save(date),resetData()" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" > </v-date-picker>
               </v-menu>
             </v-flex>
@@ -42,17 +42,17 @@
             <!-- TIME PICKER POUR ADRESSE -->
             <v-flex xs10 v-if="type == 'address'">
               <!-- DATE PICKER -->
-              <v-menu ref="menutime" :close-on-content-click="false" :nudge-right="40" :return-value.sync="time" transition="scale-transition" offset-y lazy full-width min-width="290px">
-                <v-text-field slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" append-icon="access_time" readonly> </v-text-field>
+              <v-menu ref="menutime" :nudge-left="30" :close-on-content-click="false" :return-value.sync="time" lazy full-width min-width="290px">
+                <v-text-field slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" prepend-icon="access_time" readonly> </v-text-field>
                 <v-time-picker v-model="time" :min="minTime" :format="$t('date_format')" @change="$refs.menutime.save(time)" color="primary" :locale="this.$root.$i18n.locale" > </v-time-picker>
               </v-menu>
             </v-flex>
           </v-layout>
 
 
-          <v-flex v-if="type == 'train'" row xs6 offset-xs3>
+          <v-flex v-if="type == 'train'" row xs8 offset-xs2>
             <!-- NUMERO DE TRAIN si arrivée par train -->
-            <v-text-field v-model="numTrain" v-on:input="traitementTrain" v-on:click="resetData" pattern="\d*" type="number" :placeholder="$t('train_number')"></v-text-field>
+            <v-text-field outline v-model="numTrain" v-on:input="traitementTrain" v-on:click="resetData" pattern="\d*" type="number" :placeholder="$t('train_number')"></v-text-field>
           </v-flex>
 
           <!-- SELECTION DE L'ARRET EN GARE POUR TRAIN -->
@@ -74,23 +74,23 @@
 
 
       <!-- NUMERO DE VOL POUR VOL -->
-      <v-flex xs12 v-if="type == 'flight'">
-        <v-text-field v-model="numVol" v-on:input="traitementVol" v-on:click="resetData" type="text"  maxlength="6" :placeholder="$t('flight_number')"> </v-text-field>
+      <v-flex v-if="type == 'flight'" row xs8 offset-xs2>
+        <v-text-field outline v-model="numVol" v-on:input="traitementVol" v-on:click="resetData" type="text"  maxlength="6" :placeholder="$t('flight_number')"> </v-text-field>
 
 
-      <v-flex xs12 v-if="airport_chosen != ''">
-        <v-text-field v-model="airport_chosen"  readonly type="text"> </v-text-field>
-      </v-flex>
+        <v-flex xs12 v-if="airport_chosen != ''">
+          <v-text-field v-model="airport_chosen"  readonly type="text"> </v-text-field>
+        </v-flex>
 
       </v-flex>
 
       <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
       <v-flex xs12 v-if="type == 'address'">
-        <input class="autocomplete" ref="autocomplete_start" v-bind:placeholder="$t('label_address_depart')"/>
+        <input class="autocomplete" ref="autocomplete_start" type="search" v-bind:placeholder="$t('label_address_depart')"/>
       </v-flex>
 
       <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
-      <v-flex mt-4 mb-3 xs12 class="text-xs-center" >{{$t('info_2')}}</v-flex>
+      <v-flex mt-5 mb-3 xs12 class="text-xs-center font-weight-medium" >{{$t('info_2')}}</v-flex>
 
       <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
       <v-flex xs12>
@@ -108,7 +108,7 @@
     <v-layout v-if="!livraisonDirecte" row>
       <v-flex xs10 >
         <!-- DATE PICKER SI CONSIGNE -->
-        <v-menu ref="menudateend" :close-on-content-click="false" :nudge-right="40" :return-value.sync="dateEnd" transition="scale-transition" offset-y full-width min-width="290px">
+        <v-menu :nudge-left="30" ref="menudateend" :close-on-content-click="false"  :return-value.sync="dateEnd" full-width min-width="290px">
           <v-text-field
           slot="activator" v-model="displayDateEnd" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
         </v-text-field>
@@ -121,8 +121,8 @@
     <!-- TIME PICKER SI CONSIGNE -->
     <v-flex xs10>
       <!-- DATE PICKER -->
-      <v-menu ref="menutimeend" :close-on-content-click="false" :nudge-right="40" :return-value.sync="timeEnd" transition="scale-transition" offset-y lazy full-width min-width="290px">
-        <v-text-field slot="activator" v-model="displayTimeEnd" v-bind:label="$t('label_heure')" append-icon="access_time" readonly> </v-text-field>
+      <v-menu :nudge-left="30" ref="menutimeend" :close-on-content-click="false" :return-value.sync="timeEnd" lazy full-width min-width="290px">
+        <v-text-field slot="activator" v-model="displayTimeEnd" v-bind:label="$t('label_heure')" prepend-icon="access_time" readonly> </v-text-field>
         <v-time-picker v-model="timeEnd":format="$t('date_format')" @change="$refs.menutimeend.save(timeEnd)" color="primary" :locale="this.$root.$i18n.locale" ></v-time-picker>
       </v-menu>
     </v-flex>
@@ -132,10 +132,9 @@
   <!-- Bouton pour continuer la saisie des Informations
   Désactivé si le form n'est pas valide
 -->
-<v-flex xs12 >
-  <v-btn :disabled="!isFormOk()" color="primary" @click.native="step=2"dark >
-    <span> {{$t('next')}}</span>
-    <v-icon right>navigate_next</v-icon>
+<v-flex xs12 class="text-xs-right" >
+  <v-btn icon large :disabled="!isFormOk()" color="primary" @click.native="step=2"dark >
+    <v-icon x-large >navigate_next</v-icon>
   </v-btn>
 </v-flex>
 
@@ -147,63 +146,72 @@
 <v-stepper-content step="2">
 
 
-<v-subheader class="text-xs-center"> {{$t('subt_2')}}</v-subheader>
+  <v-flex mb-3 class="text-xs-center font-weight-medium primary--text subheading"> {{$t('subt_2')}}</v-flex>
   <!-- Gestion des bagages -->
 
   <v-flex xs12>
-    <v-btn round color="primary" @click.native="ajoutBagage('cabine')" dark > {{$t('bagages_ajout')}} {{$t('bagage_cabine')}}</v-btn>
-      <v-layout row v-for="bag in bagagesCabine" :key="bag.id">
-        <v-flex xs2>
-          <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
-            <v-icon>delete</v-icon>
-          </v-btn>
-        </v-flex>
-        <v-flex xs5>
-          <v-text-field  v-bind:label="$t('bagage_nom')" v-model="bag.name"></v-text-field>
-        </v-flex>
-        <v-divider vertical> </v-divider>
-        <v-flex xs5>
-          <v-text-field  v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
-        </v-flex>
-      </v-layout>
+    <v-btn round color="primary" @click.native="ajoutBagage('cabine')" dark >
+      <v-icon left>add</v-icon>
+      {{$t('bagage_cabine')}}
+    </v-btn>
+    <v-layout row v-for="bag in bagagesCabine" :key="bag.id">
+      <v-flex xs2 class="text-xs-center">
+        <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
+          <v-icon>clear</v-icon>
+        </v-btn>
+      </v-flex>
+      <v-flex xs5>
+        <v-text-field  allow-overflow v-bind:label="$t('bagage_nom')" v-model="bag.name"></v-text-field>
+      </v-flex>
+      <v-divider vertical> </v-divider>
+      <v-flex xs5>
+        <v-text-field  v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+      </v-flex>
+    </v-layout>
   </v-flex>
 
 
   <v-flex xs12 >
-    <v-btn round color="primary" @click.native="ajoutBagage('soute')" dark >{{$t('bagages_ajout')}} {{$t('bagage_soute')}} </v-btn>
-      <v-layout row v-for="bag in bagagesSoute" :key="bag.id">
-        <v-flex xs2>
-          <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
-            <v-icon>delete</v-icon>
-          </v-btn>
-        </v-flex>
-        <v-flex xs5>
-          <v-text-field  v-bind:label="$t('bagage_nom')" v-model="bag.name"
-          ></v-text-field>
-        </v-flex>
-        <v-divider vertical> </v-divider>
-        <v-flex xs5>
-          <v-text-field  v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
-        </v-flex>
-      </v-layout>
+    <v-btn round color="primary" @click.native="ajoutBagage('soute')" dark >
+      <v-icon left>add</v-icon>
+      {{$t('bagage_soute')}}
+    </v-btn>
+    <v-layout row v-for="bag in bagagesSoute" :key="bag.id">
+      <v-flex xs2>
+        <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
+          <v-icon>clear</v-icon>
+        </v-btn>
+      </v-flex>
+      <v-flex xs5>
+        <v-text-field  v-bind:label="$t('bagage_nom')" v-model="bag.name"
+        ></v-text-field>
+      </v-flex>
+      <v-divider vertical> </v-divider>
+      <v-flex xs5>
+        <v-text-field  v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+      </v-flex>
+    </v-layout>
   </v-flex>
 
   <v-flex xs12>
-    <v-btn round color="primary" @click.native="ajoutBagage('autre')" dark >{{$t('bagages_ajout')}} {{$t('bagage_autre')}}</v-btn>
-      <v-layout row v-for="bag in bagagesAutre" :key="bag.id">
-        <v-flex xs2>
-          <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
-            <v-icon>delete</v-icon>
-          </v-btn>
-        </v-flex>
-        <v-flex xs5>
-          <v-text-field  required v-bind:label="$t('bagage_nom')" v-model="bag.name":rules="[() => bag.name.length > 0 || $t('bagage_required')]"></v-text-field>
-        </v-flex>
-        <v-divider vertical> </v-divider>
-        <v-flex xs5>
-          <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
-        </v-flex>
-      </v-layout>
+    <v-btn round color="primary" @click.native="ajoutBagage('autre')" dark >
+      <v-icon left>add</v-icon>
+      {{$t('bagage_autre')}}
+    </v-btn>
+    <v-layout row v-for="bag in bagagesAutre" :key="bag.id">
+      <v-flex xs2>
+        <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
+          <v-icon>clear</v-icon>
+        </v-btn>
+      </v-flex>
+      <v-flex xs5>
+        <v-text-field  required v-bind:label="$t('bagage_nom')" v-model="bag.name":rules="[() => bag.name.length > 0 || $t('bagage_required')]"></v-text-field>
+      </v-flex>
+      <v-divider vertical> </v-divider>
+      <v-flex xs5>
+        <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+      </v-flex>
+    </v-layout>
   </v-flex>
 
 
@@ -211,18 +219,14 @@
     <v-subheader> Total : {{compteurBagages}} {{$t('luggages')}} </v-subheader>
   </v-flex>
   <v-layout row>
-    <v-flex xs4>
-      <v-btn color="orange lighten-1" @click.native="step=1" dark >
-        <v-icon>navigate_before</v-icon>
-        {{$t('prev')}}
+    <v-flex class="text-xs-left">
+      <v-btn icon large color="orange lighten-1" @click.native="step=1" dark >
+        <v-icon x-large>navigate_before</v-icon>
       </v-btn>
     </v-flex>
-    <v-flex xs2>
-    </v-flex>
-    <v-flex xs5>
-      <v-btn :disabled="!verifBagage()" color="primary" @click.native="step=3" dark >
-        {{$t('next')}}
-        <v-icon>navigate_next</v-icon>
+    <v-flex class="text-xs-right">
+      <v-btn icon large :disabled="!verifBagage()" color="primary" @click.native="step=3" dark >
+        <v-icon x-large>navigate_next</v-icon>
       </v-btn>
     </v-flex>
   </v-layout>
@@ -232,24 +236,24 @@
 <v-stepper-content step="3">
 
   <!-- Récapitulatif -->
-  <v-subheader class="text-xs-center"> {{$t('subt_3')}}</v-subheader>
+  <v-flex mb-3 class="text-xs-center font-weight-medium primary--text subheading"> {{$t('subt_3')}}</v-flex>
   <v-card v-if="reponse != null">
 
-      <v-flex pt-3 pb-4 class="text-xs-center subheading font-weight-bold"> {{$t('takeover_label')}}</v-flex>
-        <v-flex xs12 class="text-xs-center" v-if="type=='address'">
-          {{reponse.start_position.address}}
-        </v-flex>
-        <v-flex xs12 class="text-xs-center" v-else>
-          {{reponse.start_position.name}}
-        </v-flex>
-      <v-flex pt-1 xs12 class="text-xs-center">
-        Le {{moment(reponse.delivery.start_date).format('LL')}} {{$t('at')}} {{moment(reponse.delivery.start_date).format('LT')}}
-      </v-flex>
+    <v-flex pt-2 pb-2 mt-2 mb-2 class="text-xs-center subheading font-weight-bold green lighten-3" > {{$t('takeover_label')}}</v-flex>
+    <v-flex xs12 class="text-xs-center" v-if="type=='address'">
+      {{reponse.start_position.address}}
+    </v-flex>
+    <v-flex xs12 class="text-xs-center" v-else>
+      {{reponse.start_position.name}}
+    </v-flex>
+    <v-flex pt-1 xs12 class="text-xs-center">
+      Le {{moment(reponse.delivery.start_date).format('LL')}} {{$t('at')}} {{moment(reponse.delivery.start_date).format('LT')}}
+    </v-flex>
 
-    <v-flex pt-4 pb-4 class="text-xs-center subheading font-weight-bold"> {{$t('livraison_label')}}</v-flex>
-      <v-flex xs12 class="text-xs-center">
-        {{reponse.end_position.address}}
-      </v-flex>
+    <v-flex pt-2 pb-2 mt-2 mb-2 class="text-xs-center subheading font-weight-bold green lighten-3"> {{$t('livraison_label')}}</v-flex>
+    <v-flex xs12 class="text-xs-center">
+      {{reponse.end_position.address}}
+    </v-flex>
     <v-flex pt-1 xs12 class="text-xs-center" v-if="!reponse.delivery.livraisonDirecte">
       Le {{moment(reponse.delivery.end_date).format('LL')}} {{$t('at')}} {{moment(reponse.delivery.end_date).format('LT')}}
     </v-flex>
@@ -257,34 +261,33 @@
       {{$t('livraison_asap')}}
     </v-flex>
 
-  <v-flex pt-4 pb-4 class="text-xs-center subheading font-weight-bold"> {{$t('bagages')}}</v-flex>
+    <v-flex pt-2 pb-2 mt-2 mb-2 class="text-xs-center subheading font-weight-bold green lighten-3"> {{$t('bagages')}}</v-flex>
 
-<v-flex xs12 class="text-xs-center" v-if="compteurBagagesCabine>0 && compteurBagagesCabine<=1" >
-  {{compteurBagagesCabine}} {{$t('bagage_cabine')}}
-</v-flex>
-<v-flex xs12 class="text-xs-center" v-if="compteurBagagesCabine>1" >
-  {{compteurBagagesCabine}} {{$t('bagages_cabine')}}
-</v-flex>
+    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesCabine>0 && compteurBagagesCabine<=1" >
+      {{compteurBagagesCabine}} {{$t('bagage_cabine')}}
+    </v-flex>
+    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesCabine>1" >
+      {{compteurBagagesCabine}} {{$t('bagages_cabine')}}
+    </v-flex>
 
-<v-flex xs12 class="text-xs-center" v-if="compteurBagagesSoute>0 && compteurBagagesSoute<=1" >
-  {{compteurBagagesSoute}} {{$t('bagage_soute')}}
-</v-flex>
-<v-flex xs12 class="text-xs-center" v-if="compteurBagagesSoute>1" >
-  {{compteurBagagesSoute}} {{$t('bagages_soute')}}
-</v-flex>
+    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesSoute>0 && compteurBagagesSoute<=1" >
+      {{compteurBagagesSoute}} {{$t('bagage_soute')}}
+    </v-flex>
+    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesSoute>1" >
+      {{compteurBagagesSoute}} {{$t('bagages_soute')}}
+    </v-flex>
 
-<v-flex xs12 class="text-xs-center" v-if="compteurBagagesAutre>0 && compteurBagagesAutre<=1" >
-  {{compteurBagagesAutre}} {{$t('bagage_autre')}}
-</v-flex>
-<v-flex xs12 class="text-xs-center" v-if="compteurBagagesAutre>1" >
-  {{compteurBagagesAutre}} {{$t('bagages_autre')}}
-</v-flex>
+    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesAutre>0 && compteurBagagesAutre<=1" >
+      {{compteurBagagesAutre}} {{$t('bagage_autre')}}
+    </v-flex>
+    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesAutre>1" >
+      {{compteurBagagesAutre}} {{$t('bagages_autre')}}
+    </v-flex>
 
   </v-card>
 
-  <v-btn color="orange lighten-1" @click.native="step=2" dark >
-    <v-icon>navigate_before</v-icon>
-    {{$t('prev')}}
+  <v-btn icon large color="orange lighten-1" @click.native="step=2" dark >
+    <v-icon x-large>navigate_before</v-icon>
   </v-btn>
   <v-btn color="primary" @click.native="createDelivery()" dark >{{$t('payer')}} </v-btn>
 </v-stepper-content>
@@ -548,7 +551,7 @@ export default {
     reponse(){
       var req;
       if (this.step==3) {
-         req =
+        req =
         {
           "start_position":
           {
@@ -690,12 +693,13 @@ export default {
 
     // Méthode qui est appelée lorsque le client sélectionne une gare
     verifGare(){
-      //console.log(JSON.stringify(this.selectedGare));
+
       // On récupère les informatons de localisation ainsi que l'heure d'arrivée en gare
       let lat = parseFloat(this.selectedGare.stop_point.coord.lat);
       let lng =  parseFloat(this.selectedGare.stop_point.coord.lon);
       let trainTime = this.selectedGare.arrival_time;
 
+      // On formatte correctement l'heure d'arrivée
       this.time = this.moment(trainTime.substring(0,4), "hmm").format("HH:mm");
 
       // Si l'heure d'arrivée en gare est antérieure à l'heure actuelle, alors on déclenche une erreur
@@ -755,6 +759,8 @@ export default {
             }
           }
         }
+        // si le lieu est dans la région couverte par Deliverbag,
+        // on vérifie ensuite la précision du lieu indiqué
         if (isInrange){
           this.errors[lieu]='';
           this.verifyPrecision(place,lieu);
@@ -782,10 +788,14 @@ export default {
         if (lieu=='end'){
           text=this.$i18n.t('error_end_place');
         }
-        if (lieu=='gare'){
-          text=this.$i18n.t('error_gare');
-        }
+
         let types = place.types;
+
+        // url pour avoir la liste des types supportés par google maps qui peuvent être présents dans un objet PLACE
+        // https://developers.google.com/places/supported_types
+        // par exemple, si le client indique "Rue Sainte Catherine" sans numéro, alors on retrouvera le type "route" dans l'objet
+        // si le client rentre  9 rue xxxx alors il n'y aura pas le type "route"
+        // actuellement c'est uniquement une vérification pour empêcher la saisie d'une adresse sans numéro
         if (types.includes('route')){
           this.errors[lieu]=text+this.$i18n.t('error_precision');
         }
@@ -794,168 +804,149 @@ export default {
         }
       },
 
-      // Geocode est utilisé pour transformer un objet pos en objet PLACE
+      // Méthode qui remet à zéro les messages d'erreurs et les informations de train et de vol
+      // On l'apelle par exemple lorsque le client change la date
+      resetData(){
+        this.numVol='';
+        this.numTrain='';
+        this.gares=[];
+        this.error='';
+      },
 
-      geocode(pos){
-        let self=this;
-        let geocoder = new google.maps.Geocoder();
-        geocoder.geocode({
-          'latLng': pos},
-          function(results,status){
-            if (status !== google.maps.GeocoderStatus.OK) {
-              alert("Erreur lors de l'appel a geocode");
-              console.log(status);
-              return null;
-            }
-            if (status == google.maps.GeocoderStatus.OK) {
-              return results[1];
-            }
-          });
-        },
+      // On vérifie que les données saisies par le client sont correctes
+      isFormOk(){
+        this.verifDate;
+        if (this.error=='' && this.startPlace !='' && this.endPlace != '' && this.date !='' && this.checkErrors() ){
+          return true;
+        }
+      },
 
-        // Méthode qui remet à zéro les messages d'erreurs et les informations de train ou de vol
-        // On l'apelle par exemple lorsque le client change la date
-        resetData(){
-          this.numVol='';
-          this.numTrain='';
-          this.gares=[];
-          this.error='';
-        },
-
-        // On vérifie que les données saisies par le client sont correctes
-        isFormOk(){
-          this.verifDate;
-          if (this.error=='' && this.startPlace !='' && this.endPlace != '' && this.date !='' && this.checkErrors() ){
-            return true;
+      // On vérifie qu'il n y a plus d'erreurs : localisation non desservie, heure incorrecte...
+      checkErrors(){
+        let ok=true;
+        for (let error in this.errors){
+          if (this.errors[error] != ''){
+            ok=false;
           }
+        }
+        return ok;
+      },
+
+
+      // Méthode pour ajouter un bagage en fonction du type
+      ajoutBagage(type){
+        switch(type){
+          case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'details' : ''});
+          break;
+          case 'soute' : this.bagagesSoute.push({'name' : '' + '' , 'details' : ''});
+          break;
+          case 'autre' : this.bagagesAutre.push({ 'name' : '' + '' , 'details' : ''});
+          break;
+        }
+      },
+
+      // Méthode pour supprimer un bagage
+      supprBagage(array,obj){
+        let index = array.indexOf(obj);
+        if (index > -1) {
+          array.splice(index, 1);
+        }
+      },
+
+      // On vérifie que la partie concernant les bagages est correcte
+      // - il faut qu'il y ait au minimum un bagage (peu importe la catégorie)
+      // - on vérifie également que les bagages de type AUTRE soient nommés (facultatifs pour les types cabine et soute)
+      // TODO: définir une limite max de bagages que le client peut ajouter
+      verifBagage(){
+        return (
+          (this.bagagesCabine.length || this.bagagesSoute.length || this.bagagesAutre.length) && this.bagageOk(this.bagagesAutre) ) ;
         },
 
-        // On vérifie qu'il n y a plus d'erreurs : localisation non desservie, heure incorrecte...
-        checkErrors(){
+        //on vérifie également que les bagages autres soient nommés
+        bagageOk(tab){
+          let noms=[];
           let ok=true;
-          for (let error in this.errors){
-            if (this.errors[error] != ''){
-              ok=false;
+          if (tab.length){
+            let self=this;
+            for (let i=0; i<tab.length;i++){
+              if (tab[i].name == ''){
+                ok=false;
+              }
+              else{
+                if (noms.includes(tab[i].name)){
+                  ok=false;
+                }
+                else{
+                  noms.push(tab[i].name)
+                }
+              }
             }
           }
           return ok;
         },
 
 
-        // Méthode pour ajouter un bagage en fonction du type
-        ajoutBagage(type){
-          switch(type){
-            case 'cabine' : this.bagagesCabine.push({'name' : '' + '' , 'details' : ''});
-            break;
-            case 'soute' : this.bagagesSoute.push({'name' : '' + '' , 'details' : ''});
-            break;
-            case 'autre' : this.bagagesAutre.push({ 'name' : '' + '' , 'details' : ''});
-            break;
-          }
+        createDelivery(){
+          let self=this;
+
+          $.ajax({
+            url: 'http://dev-deliverbag.supconception.fr/create/delivery',
+            type : 'POST',
+            data : self.reponse,
+            success: function(data){
+              self.activeDeliveryId=data.id;
+              self.payer();
+            },
+            error:function(e){
+              console.log(e);
+            },
+          });
         },
 
-        // Méthode pour supprimer un bagage
-        supprBagage(array,obj){
-          let index = array.indexOf(obj);
-          if (index > -1) {
-            array.splice(index, 1);
-          }
+
+        payer(){
+
+          let self=this;
+          $.ajax({
+            url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/payment',
+            type : 'POST',
+            data : {
+              "delivery_id" : self.activeDeliveryId,
+              "mobile_token": localStorage.getItem('deviceId')
+            },
+            success: function(data){
+              console.log(data);
+            },
+            error:function(e){
+              console.log(e);
+            },
+          });
+
         },
 
-        // On vérifie que la partie concernant les bagages est correcte
-        // - il faut qu'il y ait au minimum un bagage (peu importe la catégorie)
-        // - on vérifie également que les bagages de type AUTRE soient nommés (facultatifs pour les types cabine et soute)
-        // TODO: définir une limite max de bagages que le client peut ajouter
-        verifBagage(){
-          return (
-            (this.bagagesCabine.length || this.bagagesSoute.length || this.bagagesAutre.length) && this.bagageOk(this.bagagesAutre) ) ;
-          },
+        traitementVol(){
 
-          //on vérifie également que les bagages autres soient nommés
-          bagageOk(tab){
-            let noms=[];
-            let ok=true;
-            if (tab.length){
-              let self=this;
-              for (let i=0; i<tab.length;i++){
-                if (tab[i].name == ''){
-                  ok=false;
+          var self=this;
+          let year = this.date.substring(0,4);
+          let month = this.date.substring(5,7);
+          let day = this.date.substring(8,10);
+
+          if (this.numVol.length>=5){
+
+            $.ajax({
+              url: `https://api.flightstats.com/flex/flightstatus/rest/v2/jsonp/flight/status/${self.compagnyId}/${self.flightId}/arr/${year}/${month}/${day}?appId=${self.flight_app_id}&appKey=${self.flight_app_key}&utc=false`,
+              dataType: 'jsonp',
+              success: function(data){
+                //console.log(data);
+                if (data.flightStatuses.length==0){
+                  self.error=self.$i18n.t('airport_error');
                 }
                 else{
-                  if (noms.includes(tab[i].name)){
-                    ok=false;
+                  let res = data.flightStatuses[0];
+                  let dateGate = self.moment(res.operationalTimes.scheduledGateArrival.dateLocal)
+                  if (res.operationalTimes.estimatedGateArrival){
+                    dateGate = self.moment(res.operationalTimes.estimatedGateArrival.dateLocal);
                   }
-                  else{
-                    noms.push(tab[i].name)
-                  }
-                }
-              }
-            }
-            return ok;
-          },
-
-
-          createDelivery(){
-            let self=this;
-
-            $.ajax({
-              url: 'http://dev-deliverbag.supconception.fr/create/delivery',
-              type : 'POST',
-              data : self.reponse,
-              success: function(data){
-                self.activeDeliveryId=data.id;
-                self.payer();
-              },
-              error:function(e){
-                console.log(e);
-              },
-            });
-          },
-
-
-          payer(){
-
-            let self=this;
-            $.ajax({
-              url: 'http://dev-deliverbag.supconception.fr/mobile/deliveries/payment',
-              type : 'POST',
-              data : {
-                "delivery_id" : self.activeDeliveryId,
-                "mobile_token": localStorage.getItem('deviceId')
-              },
-              success: function(data){
-                console.log(data);
-              },
-              error:function(e){
-                console.log(e);
-              },
-            });
-
-          },
-
-          traitementVol(){
-
-            var self=this;
-            let year = this.date.substring(0,4);
-            let month = this.date.substring(5,7);
-            let day = this.date.substring(8,10);
-
-            if (this.numVol.length>=5){
-
-              $.ajax({
-                url: `https://api.flightstats.com/flex/flightstatus/rest/v2/jsonp/flight/status/${self.compagnyId}/${self.flightId}/arr/${year}/${month}/${day}?appId=${self.flight_app_id}&appKey=${self.flight_app_key}&utc=false`,
-                dataType: 'jsonp',
-                success: function(data){
-                  //console.log(data);
-                  if (data.flightStatuses.length==0){
-                    self.error=self.$i18n.t('airport_error');
-                  }
-                  else{
-                    let res = data.flightStatuses[0];
-                    let dateGate = self.moment(res.operationalTimes.scheduledGateArrival.dateLocal)
-                    if (res.operationalTimes.estimatedGateArrival){
-                      dateGate = self.moment(res.operationalTimes.estimatedGateArrival.dateLocal);
-                    }
                   self.date = dateGate;
 
                   self.time=self.moment(self.date).format('LT')
@@ -969,7 +960,7 @@ export default {
                   let departure_airport = res.departureAirportFsCode;
                   let arrival_airport = res.arrivalAirportFsCode;
                   let arrivee,city;
-                  data.appendix.airports.forEach( function(element){
+                  data.appendix.airports.forEach(function(element){
                     if (element.fs == arrival_airport){
                       console.log(element);
                       arrivee = element.name ;
@@ -992,81 +983,72 @@ export default {
                             self.verifyDepartment(self.startPlace,'airport');
                           }
                         });
-                    }
-                  });
+                      }
+                    });
 
-                  if (res.delays){
-                    let delay = res.delays.arrivalGateDelayMinutes ;
-                    if (delay){
-                      console.log(`Il y'a un retard de ${delay} minute(s) sur ce vol.`);
-                    }
+                    // c'est le texte que le client verra  :
+                    // aéroport d'arrivée + heure d'arrivée
+                    self.airport_chosen  = arrivee + ' ' + self.$t('at') + ' ' + self.moment(self.date).format('LT');
                   }
-
-                  self.airport_chosen  = arrivee + ' ' + self.$t('at') + ' ' + self.moment(self.date).format('LT');
-                  //  console.log(`Le client sera à la sortie de ${arrivee} (${city}) le ${dateGate.getDate()}/${dateGate.getMonth()+1}/${dateGate.getFullYear()} à ${dateGate.getHours()}h${minGate}`);
-                  //  console.log(`Le client sera à la porte à ${dateGate.getHours()}h${minGate}`);
+                },
+                error:function(e){
+                  self.error="Une erreur est survenue lors de la recherche de ce vol";
+                  console.log(e);
                 }
-              },
-              error:function(e){
-                self.error="Une erreur est survenue lors de la recherche de ce vol";
-                console.log(e);
-              }
-            });
-          }
+              });
+            }
+          },
+
+
         },
 
-
-      },
-
-      mounted(){
+        mounted(){
 
 
-        // On récupère les bagages du client et les départements authorisés
-        this.getBagages();
-        this.getDepartments();
-        let self=this;
-        // On crée les bornes de recherches pour orienter les résultats des autocompletes en GIRONDE
-        let boundsGironde = new google.maps.LatLngBounds(
-          new google.maps.LatLng(44.1939019, -1.2614241),
-          new google.maps.LatLng(45.573636, 0.315137));
+          // On récupère les bagages du client et les départements authorisés
+          this.getBagages();
+          this.getDepartments();
+          let self=this;
+          // On crée les bornes de recherches pour orienter les résultats des autocompletes en GIRONDE
+          let boundsGironde = new google.maps.LatLngBounds(
+            new google.maps.LatLng(44.1939019, -1.2614241),
+            new google.maps.LatLng(45.573636, 0.315137));
 
-          let options = {
-            bounds  : boundsGironde,
-            componentRestrictions : {'country' : 'fr'}
-          };
+            let options = {
+              bounds  : boundsGironde,
+              componentRestrictions : {'country' : 'fr'}
+            };
 
-          // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de la livraison
-          let addressEnd = this.$refs.autocomplete_end;
-          let endPlace = new google.maps.places.Autocomplete(addressEnd, options);
-          console.log(endPlace.types);
-          endPlace.addListener('place_changed', function() {
-            self.endPlace=this.getPlace();
-            console.log(self.endPlace.types)
-            self.verifyDepartment(self.endPlace,'end');
-          });
-
-          if (this.type=='address'){
-            // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de prise en charge
-            // UNQIUEMENT SI ON EST EN SAISIE D'ADRESSE
-            let addressStart = this.$refs.autocomplete_start;
-            let startPlace = new google.maps.places.Autocomplete(addressStart, options);
-            startPlace.addListener('place_changed', function() {
-              self.startPlace=this.getPlace();
-              self.verifyDepartment(self.startPlace,'start');
+            // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de la livraison
+            let addressEnd = this.$refs.autocomplete_end;
+            let endPlace = new google.maps.places.Autocomplete(addressEnd, options);
+            endPlace.addListener('place_changed', function() {
+              self.endPlace=this.getPlace();
+              self.verifyDepartment(self.endPlace,'end');
             });
+
+            if (this.type=='address'){
+              // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de prise en charge
+              // UNQIUEMENT SI ON EST EN SAISIE D'ADRESSE
+              let addressStart = this.$refs.autocomplete_start;
+              let startPlace = new google.maps.places.Autocomplete(addressStart, options);
+              startPlace.addListener('place_changed', function() {
+                self.startPlace=this.getPlace();
+                self.verifyDepartment(self.startPlace,'start');
+              });
+            }
           }
         }
-      }
-      </script>
-      <i18n src='@/assets/trad.json'></i18n>
+        </script>
+        <i18n src='@/assets/trad.json'></i18n>
 
-      <style scoped>
+        <style scoped>
 
-      input {
-        width: 500px;
-        height:40px;
-        border-bottom: 2px solid #59A34E;
-        box-sizing: border-box;
-      }
+        input {
+          width: 100%;
+          height:40px;
+          border-bottom: 2px solid #59A34E;
+          box-sizing: border-box;
+        }
 
-      </style>
+        </style>

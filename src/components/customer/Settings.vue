@@ -1,14 +1,9 @@
 <template>
 
-
   <div>
-
-
     <v-flex xs12>
       <v-card>
-
         <v-list class="margin" three-line>
-
           <v-list-tile to="/demands" avatar>
             <v-list-tile-content >
               <v-list-tile-title>Switch côté chauffeur</v-list-tile-title>
@@ -28,8 +23,6 @@
             </v-list-tile-content>
           </v-list-tile>
 
-
-
           <v-list-tile @click.native="getProfile()" avatar >
             <v-list-tile-avatar>
               <v-icon color="primary" large>person</v-icon>
@@ -40,8 +33,6 @@
             </v-list-tile-content>
           </v-list-tile>
 
-
-
           <v-list-tile avatar>
             <v-list-tile-avatar>
               <v-icon color="primary" large>euro_symbol</v-icon>
@@ -51,8 +42,6 @@
               <v-list-tile-sub-title>{{$t("paiement_sbt")}}</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
-
-
 
           <v-list-tile @click.native.stop="dialLangue=true" avatar>
             <v-list-tile-avatar>
@@ -149,12 +138,18 @@ export default{
     return {
       dialLangue:false,
       dialogContact:false,
-      langues:[
+
+
+    }
+  },
+
+  computed:{
+    langues(){
+      return [
         {code : 'fr' ,text: this.$i18n.t("fr")},
         {code : 'en' ,text: this.$i18n.t("en")},
         {code : 'es' ,text: this.$i18n.t("es")}
       ]
-
     }
   },
   methods:{

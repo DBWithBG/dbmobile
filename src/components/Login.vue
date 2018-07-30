@@ -24,8 +24,8 @@ export default {
   created(){
 
     var self=this;
-    localStorage.setItem('deviceId',"41bccd72a3d20fe5");
-    self.$router.replace({path: '/demands'});
+  //  localStorage.setItem('deviceId',"41bccd72a3d20fe5");
+  //  self.$router.replace({path: '/demands'});
     document.addEventListener('deviceReady', () => {
 
       self.deviceId=device.uuid;
@@ -73,10 +73,9 @@ export default {
         type : 'GET',
         datatype : 'jsonp',
         success: function(data){
-
+          self.sendFirebaseToken();
 
           self.$router.replace({path: 'demand'});
-          self.sendFirebaseToken();
 
           navigator.splashscreen.hide();
         },
@@ -121,7 +120,6 @@ export default {
       var ref = cordova.InAppBrowser.open('http://dev-deliverbag.supconception.fr/connexion', '_blank', 'location=no,zoom=no',);
       var tok = this.deviceId;
       ref.addEventListener('loadstop', function(){
-        alert('loadstop');
         navigator.splashscreen.hide();
         var t= '$("form").append("<input type=\'hidden\' id=\'deviceId\' value=\''+tok+'\'>")';
         ref.executeScript( {code : t});
@@ -134,7 +132,6 @@ export default {
             code:'if($("#test").val()=="ok"){true}else{false}'},
             function(val){
               if (val != 'false'){
-                localStorage.setItem('deviceId',self.deviceId);
                 self.getUser();
                 ref.close();
                 //ajax
@@ -162,6 +159,10 @@ export default {
 [class$="--disabled"],
 [class*="--disabled "] * {
     color: #757575 !important;
+}
+
+input:focus {
+     outline:  none;
 }
 
 

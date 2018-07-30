@@ -13,7 +13,7 @@
       </v-btn>
     </v-flex>
       <v-flex xs6 offset-xs3>
-        <v-select :items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
+        <v-select append-icon="event" outline class="primary--text":items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
       </v-flex>
     </v-layout>
     <div id="google-map" > </div>
@@ -68,12 +68,13 @@
               </v-chip>
 
             </div>
-            <v-btn color='primary' @click.native="dialogTake=true,demandId=demand.id">
-              <span>{{$t('confirm_demand')}}</span>
-            </v-btn>
             <v-btn color='primary' @click.native="seeOnMap(demand.start_position.lat,demand.start_position.lng,demand.end_position.lat,demand.end_position.lng)">
               <span> Voir sur la carte</span>
             </v-btn>
+            <v-btn color='primary' @click.native="dialogTake=true,demandId=demand.id">
+              <span>{{$t('confirm_demand')}}</span>
+            </v-btn>
+
           </v-layout>
         </v-list>
         <v-divider>
