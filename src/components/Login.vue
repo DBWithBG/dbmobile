@@ -24,8 +24,8 @@ export default {
   created(){
 
     var self=this;
-    localStorage.setItem('deviceId',"41bccd72a3d20fe5");
-    self.$router.replace({path: '/demands'});
+  //  localStorage.setItem('deviceId',"41bccd72a3d20fe5");
+  //  self.$router.replace({path: '/demands'});
     document.addEventListener('deviceReady', () => {
 
       self.deviceId=device.uuid;
@@ -73,11 +73,18 @@ methods:{
       type : 'GET',
       datatype : 'jsonp',
       success: function(data){
+        data=JSON.parse(data);
         self.sendFirebaseToken();
+        if (data.driver != null){
+          self.$router.replace({path: 'demands'});
+          navigator.splashscreen.hide();
+        }
+        else{
+          self.$router.replace({path: 'demand'});
+          navigator.splashscreen.hide();
 
-        self.$router.replace({path: 'demand'});
+        }
 
-        navigator.splashscreen.hide();
       },
       error:function(e){
         console.log(e);
@@ -121,7 +128,7 @@ methods:{
     var tok = this.deviceId;
     ref.addEventListener('loadstop', function(){
       navigator.splashscreen.hide();
-      var t= '$("form").append("<input type=\'hidden\' id=\'deviceId\' value=\''+tok+'\'>")';
+      var t= '$("form").append("<input name=\'mobile_token\' type=\'hidden\' id=\'deviceId\' value=\''+tok+'\'>")';
       ref.executeScript( {code : t});
       var i = window.setInterval(function(){
         ref.executeScript(

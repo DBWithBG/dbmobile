@@ -315,7 +315,7 @@ export default {
                 break;
                 case 5 : self.demandes[1].push(elem);
               }
-              if (index === array.length -1){
+              if (index === array.length -1 || array.length === 0){
                 self.loading=false;
                 setTimeout(function(){ self.$forceUpdate(); }, 1000);
               }
