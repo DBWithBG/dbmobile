@@ -1,6 +1,8 @@
 <template>
 
-  <div>
+  <div v-touch="{
+    right:swipeRight
+    }">
     <v-flex xs12>
       <v-card>
         <v-list class="margin" three-line>
@@ -81,8 +83,8 @@
             <v-icon color="primary" large>contacts</v-icon>
           </v-list-tile-avatar>
           <v-list-tile-content >
-            <v-list-tile-title>Contact</v-list-tile-title>
-            <v-list-tile-sub-title>Informations pour contacter directement Deliverbag</v-list-tile-sub-title>
+            <v-list-tile-title>{{$t('db_contact')}}</v-list-tile-title>
+            <v-list-tile-sub-title>{{$t('db_contact_info')}}</v-list-tile-sub-title>
           </v-list-tile-content>
         </v-list-tile>
 
@@ -112,7 +114,7 @@
           {{$t('tel_number')}} : {{$t('db_tel')}}
           <v-btn flat color="primary" @click.native="openTel()">
             {{$t('call')}}
-            <v-icon large>call</v-icon>
+            <v-icon right large>call</v-icon>
           </v-btn>
 
         </v-card-text>
@@ -121,7 +123,7 @@
           {{$t('email')}} : {{$t('db_email')}}
           <v-btn flat color="primary" @click.native="openMail()">
             {{$t('mail')}}
-            <v-icon large>mail</v-icon>
+            <v-icon right large>mail</v-icon>
           </v-btn>
         </v-card-text>
       </v-layout>
@@ -180,6 +182,11 @@ export default{
       localStorage.removeItem('deviceId');
       this.$router.replace('/');
 
+    },
+
+
+    swipeRight(){
+      this.$router.replace({path: 'demand'});
     }
 
   }
@@ -192,4 +199,5 @@ export default{
 .margin{
   margin-bottom: 56px;
 }
+
 </style>

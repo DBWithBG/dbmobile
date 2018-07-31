@@ -13,10 +13,10 @@
       </v-btn>
     </v-flex>
       <v-flex xs6 offset-xs3>
-        <v-select append-icon="event" outline class="primary--text":items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
+        <v-select append-icon="event" outline class=" primary--text":items="listDate" v-model="activeDate" single-line auto hide-details @input="getDeliveries()"></v-select>
       </v-flex>
     </v-layout>
-    <div id="google-map" > </div>
+    <div id="google-map"> </div>
 
 
     <v-dialog v-model="dialogTake" max-width="290">
@@ -419,7 +419,7 @@ export default {
         }
 
         #google-map {
-          height:70vh;
+          height:75vh;
           width: 100%;
         }
 

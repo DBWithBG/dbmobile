@@ -15,9 +15,7 @@
 </v-layout>
 
 
-  <div v-if="!loading" v-touch="{
-    right:swipeRight
-    }">
+  <div v-if="!loading">
 
     <!-- Gestion des bagages -->
 
@@ -32,7 +30,7 @@
           <v-layout row>
             <v-flex xs2>
               <v-btn icon flat color="error" @click.native="supprBagage(bagagesCabine, bag)">
-                <v-icon>delete</v-icon>
+                <v-icon>clear</v-icon>
               </v-btn>
             </v-flex>
             <v-flex xs5>
@@ -57,7 +55,7 @@
           <v-layout row>
             <v-flex xs2>
               <v-btn icon flat color="error" @click.native="supprBagage(bagagesSoute, bag)">
-                <v-icon>delete</v-icon>
+                <v-icon>clear</v-icon>
               </v-btn>
             </v-flex>
             <v-flex xs5>
@@ -84,7 +82,7 @@
           <v-layout row>
             <v-flex xs2>
               <v-btn icon flat color="error" @click.native="supprBagage(bagagesAutre, bag)">
-                <v-icon>delete</v-icon>
+                <v-icon>clear</v-icon>
               </v-btn>
             </v-flex>
             <v-flex xs5>
@@ -203,7 +201,7 @@ export default {
       }
     },
 
-    // on supprime le bagage correspondant
+    // on supprime le bagage correspondant dans le tableau
     supprBagage(array,obj){
       let index = array.indexOf(obj);
       if (index > -1) {
@@ -212,7 +210,7 @@ export default {
     },
 
     // méthode de mise à jour des bagages
-    // j'envoie les différents bagages en fonction de leur type et le mobile token du client
+    // j'envoie les différents bagages en fonction de leur type + le mobile token du client
     updateBagages(){
 
       let data = {
@@ -273,9 +271,6 @@ export default {
       return ok;
     },
 
-    swipeRight(){
-      this.$router.replace({path: 'demand'});
-    }
   }
 }
 

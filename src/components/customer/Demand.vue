@@ -9,12 +9,11 @@
 <!--
   Pour accéder au formulaire de demande avec saisie d'adresses
 -->
-
       <v-flex xs12>
-        <v-card class="vh33" color="green lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'address'} }">
+        <v-card class="vh" color="green lighten-4" :to="{name :'demande-form' , params: {type:'address'} }">
           <v-card-title primary-title>
             <div>
-              <h3 class="headline mb-0 text-xs-center">
+              <h3 class="headline text-xs-center">
                 <v-icon left>add_location</v-icon>
                 {{$t("address")}}</h3>
               <div class="text-xs-center"> {{$t("address_subt")}} </div>
@@ -28,10 +27,10 @@
     -->
 
       <v-flex xs12>
-        <v-card class="vh33" color="light-green lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'train'} }">
+        <v-card class="vh" color="light-green lighten-4" :to="{name :'demande-form' , params: {type:'train'} }">
           <v-card-title primary-title>
             <div>
-              <h3 class="headline mb-0 text-xs-center">
+              <h3 class="headline text-xs-center">
                 <v-icon left>train</v-icon>
                 {{$t("train")}}
               </h3>
@@ -45,10 +44,10 @@
       Pour accéder au formulaire de demande avec saisie de numéro de vol
     -->
       <v-flex xs12>
-        <v-card class="vh33" color="lime lighten-4" elevation-5 :to="{name :'demande-form' , params: {type:'flight'} }">
+        <v-card class="vh" color="lime lighten-4" :to="{name :'demande-form' , params: {type:'flight'} }">
           <v-card-title primary-title>
             <div>
-              <h3 class="headline mb-0 text-xs-center">
+              <h3 class="headline text-xs-center">
                 <v-icon left>flight</v-icon>
                 {{$t("flight")}}</h3>
               <div class="text-xs-center"> {{$t("flight_subt")}} </div>
@@ -105,7 +104,7 @@ body{
   height:92vh;
 }
 
-.vh33{
+.vh{
   height:30.5vh;
 }
 
