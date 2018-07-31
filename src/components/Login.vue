@@ -25,9 +25,9 @@ export default {
 
     var self=this;
   //  localStorage.setItem('deviceId',"41bccd72a3d20fe5");
-  //  self.$router.replace({path: '/demands'});
+    self.$router.replace({path: '/demands'});
     document.addEventListener('deviceReady', () => {
-
+      console.log("test");
       self.deviceId=device.uuid;
       var id = localStorage.getItem('deviceId');
       //navigator.splashscreen.hide();
@@ -98,7 +98,8 @@ methods:{
 
     var self=this;
     var tok='';
-    cordova.plugins.firebase.messaging.getToken().then(function(token) {
+    cordova.plugins.firebase.mes
+    .saging.getToken().then(function(token) {
       var data = {
         "mobile_token" : localStorage.getItem('deviceId'),
         "notify_token": token,
