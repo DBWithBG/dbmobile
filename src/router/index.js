@@ -21,7 +21,6 @@ import DemandsList from '@/components/driver/DemandsList'
 import MesCoursesDriver from '@/components/driver/MesCoursesDriver'
 import SettingsDriver from '@/components/driver/SettingsDriver'
 
-import StaticMap from 'vue-static-map';
 
 Vue.use(Router);
 Vue.component('db-menu',Menu);
@@ -36,7 +35,6 @@ Vue.component('my-bags',MyBags);
 Vue.component('demands-list',DemandsList);
 Vue.component('demand',Demand);
 
-Vue.component('static-map',StaticMap);
 
 export default new Router({
   mode:'history',

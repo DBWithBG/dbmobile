@@ -82,7 +82,6 @@ methods:{
         else{
           self.$router.replace({path: 'demand'});
           navigator.splashscreen.hide();
-
         }
 
       },
