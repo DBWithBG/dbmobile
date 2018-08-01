@@ -101,6 +101,8 @@ methods:{
     var self=this;
     var tok='';
     cordova.plugins.firebase.messaging.getToken().then(function(token) {
+      alert('getting token');
+      alert(token);
       var data = {
         "mobile_token" : localStorage.getItem('deviceId'),
         "notify_token": token,
@@ -125,7 +127,7 @@ methods:{
 
   webviewConnexion(){
     var self=this;
-    var ref = cordova.InAppBrowser.open('http://dev-deliverbag.supconception.fr/connexion', '_blank', 'location=no,zoom=no',);
+    var ref = cordova.InAppBrowser.open('http://dev-deliverbag.supconception.fr/connexion', '_blank', 'toolbar=no,location=no,zoom=no',);
     var tok = this.deviceId;
     ref.addEventListener('loadstop', function(){
       navigator.splashscreen.hide();
