@@ -74,7 +74,6 @@
     <preference name="SplashScreen" value="screen" />
     <preference name="AutoHideSplashScreen" value="true" />
     <preference name="ShowSplashScreenSpinner" value="false" />
-    <hook src="scripts/vueify-build.js" type="before_compile" />
     <plugin name="cordova-plugin-googlemaps" spec="^2.2.9">
         <variable name="API_KEY_FOR_ANDROID" value=" AIzaSyA_lr5x_T8Y4poGVzW8RCqDGCOXBoC8waM" />
         <variable name="API_KEY_FOR_IOS" value="AIzaSyASmealsjtx8tJBRBuqq3g40GyiDCki3G0" />

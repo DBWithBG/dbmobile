@@ -1,11 +1,7 @@
 <template>
     <div id="home">
-      <p>  {{ message }} </p>
-      <v-btn v-on:click="webviewConnexion"> Connexion
-    </v-btn>
-    </br>
-        <router-view>
-      </router-view>
+      <h3>Deliverbag</h3>
+      <v-btn v-on:click="webviewConnexion">Connexion</v-btn>
     </div>
 </template>
 
@@ -16,7 +12,7 @@ export default {
 
     data(){
         return {
-            message : 'TODO : Insérer un super titre'
+            message : 'TODO : My messageuh'
         };
     },
     methods:{
