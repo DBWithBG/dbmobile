@@ -21,7 +21,6 @@ export default {
   components: {
     datetime: Datetime,
     alert: Alert,
-    "db-menu": Menu,
     "demand-header": DemandHeader
   },
 

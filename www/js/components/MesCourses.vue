@@ -2,17 +2,14 @@
 
 
 <div id="home">
-  <v-container :class="{'px-0': $vuetify.breakpoint.xsOnly }" v-touch="{
-    left:swipeLeft
-    }">
+  <v-container :class="{'px-0': $vuetify.breakpoint.xsOnly }" v-touch="{left:swipeLeft}">
     <v-tabs fixed-tabs>
-      <v-tab v-for="tab in tabs" >
+      <v-tab :key="tab" v-for="tab in tabs" >
         {{ tab }}
       </v-tab>
-      <v-tab-item v-for="tab in tabs">
+      <v-tab-item :key="tab" v-for="tab in tabs">
         {{ tab }}
       </v-tab-item>
-
     </v-tabs>
   </v-container>
 </div>
@@ -20,34 +17,23 @@
 
 
 <script>
-
 export default {
-  data () {
+  data() {
     return {
-      tabs: [
-        'En cours', 'Passées', 'Prévues']
-      }
-    },
+      tabs: ["En cours", "Passées", "Prévues"]
+    };
+  },
 
-    methods: {
-      demandsNow(){
-
-      },
-      demandsPast(){
-
-      },
-      demandsPlanned(){
-
-      },
-      swipeLeft(){
-        this.$router.replace({path: 'demand'});
-      }
-
-
+  methods: {
+    demandsNow() {},
+    demandsPast() {},
+    demandsPlanned() {},
+    swipeLeft() {
+      this.$router.replace({ path: "demand" });
     }
   }
-
-  </script>
+};
+</script>
 
   <style>
-  </style>
+</style>
