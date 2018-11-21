@@ -10,9 +10,7 @@ import Address from './components/Address.vue'
 import Train from './components/Train.vue'
 import Flight from './components/Flight.vue'
 import DemandNext from './components/DemandNext.vue'
-import Alert from './components/Alert.vue'
 import Courses from './components/MesCourses.vue'
-
 
 Vue.use(VueRouter);
 
@@ -39,17 +37,19 @@ const router = new VueRouter({
   routes: routes
 });
 
-document.addEventListener('deviceready', function () {
-
-  navigator.splashscreen.hide();
-  var vm = new Vue({
+function bindVue() {
+  console.log("Binding vue app to #app")
+  new Vue({
     el: '#app',
     router: router,
     components: {
       'db-menu': Menu
     }
   });
+} 
 
-
-
-});
+// L'event deviceready n'éxiste que dans cordova
+// Étant donné qu'on dev avec webpack/webpack-dev-server, on utilise l'event DOMContentLoaded
+// TODO : changer quand on build l'app android/ios :/
+// document.addEventListener('deviceready', bindVue);
+document.addEventListener('DOMContentLoaded', bindVue);

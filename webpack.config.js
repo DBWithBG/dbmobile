@@ -1,13 +1,15 @@
-const path = require('path');
-
 const { VueLoaderPlugin } = require('vue-loader')
 
 module.exports = {
     mode: 'development',
     entry: './www/js/main.js',
     output: {
-        path: path.resolve(__dirname, 'www/js'),
-        filename: 'bundle.js'
+        path: __dirname + '/www/js',
+        filename: 'bundle.js',
+    },
+    devServer: {
+        publicPath: '/js/',
+        contentBase: __dirname + '/www',
     },
     module: {
         rules: [
@@ -36,6 +38,6 @@ module.exports = {
         new VueLoaderPlugin()
     ],
     resolve: {
-		alias: {   vue: 'vue/dist/vue.js'   }
-	}
+        alias: { vue: 'vue/dist/vue.js' }
+    }
 };

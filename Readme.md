@@ -4,7 +4,14 @@ Utilise Apache Cordova.
 
 # Setup
 
+`npm install` permet d'installer les dépendances présentes dans `package.json`
+
 `cordova prepare` après avoir cloné le dépôt permet de télécharger les plugins / platforms présent(e)s dans le `config.xml`.
+
+Pour packer le JS en ligne de commande, il est nécessaire d'installer webpack globallement sur la machine : `npm i -g webpack`. Cependant, webpack est exécuté par cordova grâce à un hook défini dans `config.xml`.
+
+Pour lancer le serveur de dev : `./node_modules/.bin/webpack-dev-server`
+
 
 # Android Build Tips
 
