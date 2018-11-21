@@ -52,24 +52,14 @@
     </v-btn>
 
     </v-container>
-    <db-menu> </db-menu>
 
   </div>
 </template>
 
 
 <script>
-import Menu from "./Menu.vue";
 
 export default {
-  components: {
-    "db-menu": Menu
-  },
-
-  data() {
-    return {};
-  },
-
   methods: {
     webviewConnexion() {
       var view = cordova.InAppBrowser.open(

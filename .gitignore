@@ -16,3 +16,4 @@ resources/signing
 .gradle
 
 # other
+bundle.js
