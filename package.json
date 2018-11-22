@@ -1,13 +1,14 @@
 {
-  "name": "helloworld",
-  "displayName": "HelloCordova",
+  "name": "deliverbagmobile",
+  "displayName": "Deliverbag mobile",
   "version": "1.0.0",
-  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "description": "Deliverbag mobile app",
   "main": "index.js",
   "scripts": {
+    "dev": "./node_modules/.bin/webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Apache Cordova Team",
+  "author": "The Dev team",
   "license": "Apache-2.0",
   "dependencies": {
     "aliasify": "^2.1.0",
@@ -67,8 +68,7 @@
     },
     "platforms": [
       "browser",
-      "android",
-      "ios"
+      "android"
     ]
   },
   "devDependencies": {
