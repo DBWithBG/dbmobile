@@ -18,6 +18,8 @@ import RegisterCustomer from './components/register/RegisterCustomer.vue'
 import RegisterDriver from './components/register/RegisterDriver.vue'
 import DemandChoice from './components/customer/DemandChoice.vue'
 import MyCourses from './components/customer/MyCourses.vue'
+import Settings from './components/customer/Settings.vue'
+import MyBags from './components/customer/MyBags.vue'
 
 Vue.use(VueRouter)
 Vue.use(VueI18n)
@@ -33,6 +35,8 @@ const routes = [
   { path: '/register-driver', component: RegisterDriver },
   { path: '/demand-choice', component : DemandChoice},
   { path: '/my-courses', component: MyCourses},
+  { path: '/settings', component: Settings},
+  { path: '/my-bags', component: MyBags},
   
   
   { path: '/demands', component : MyMap},
