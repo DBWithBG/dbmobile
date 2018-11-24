@@ -5,7 +5,7 @@
     <alert v-if="error.length" :message="error"> </alert>
     <datetime v-model="date" placeholder="Entrez la date" type="date" moment-locale="fr" max-date="2018-07-01">
     </datetime>
-    <div  v-if="date !== '' "> </br>
+    <div  v-if="date !== '' "> <br/>
       <!--
       <alert v-if="errorNumTrain" message="Le numéro de train rentré semble incorrect"> </alert>
     -->
@@ -22,7 +22,7 @@
 -->
 <div v-if="numTrain.length==4 " >
   <ul>
-    <li v-for="item in gares">
+    <li v-for="item in gares" :key="item">
       <button v-on:click="isInGironde(item)" class="btn btn-medium border border-green uppercase xround-2 " > {{item.name}} </button>
     </li>
   </ul>

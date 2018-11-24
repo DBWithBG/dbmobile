@@ -48,18 +48,23 @@
         </v-flex>
       </v-layout>
 
-      <v-btn v-on:click="webviewConnexion"> Connexion
-    </v-btn>
-
     </v-container>
+
+    <db-menu></db-menu>
 
   </div>
 </template>
 
 
 <script>
+import Menu from './Menu.vue'
 
 export default {
+
+  components: {
+    'db-menu':  Menu
+  },
+
   methods: {
     webviewConnexion() {
       var view = cordova.InAppBrowser.open(

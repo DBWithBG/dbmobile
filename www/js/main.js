@@ -12,6 +12,10 @@ import Flight from './components/Flight.vue'
 import DemandNext from './components/DemandNext.vue'
 import Courses from './components/MesCourses.vue'
 
+import Root from './components/Root.vue'
+import Login from './components/Login.vue'
+import RegisterChoice from './components/RegisterChoice.vue'
+
 Vue.use(VueRouter);
 
 Vue.use(Vuetify, {
@@ -23,7 +27,10 @@ Vue.use(Vuetify, {
 Vue.use(require('vue-moment'));
 
 const routes = [
-  { path: '/', component: Home },
+  { path: '/', component: Root },
+  { path: '/login', component: Login },
+  { path: '/register-choice', component: RegisterChoice },
+  
   { path: '/demand', component : Demand},
   { path: '/courses', component: Courses},
   { path: '/demands', component : MyMap},
