@@ -4,19 +4,21 @@
   <div id="register">
     
     <v-container>
-          <v-form>
+          <v-form v-model="valid" lazy-validation>
               <v-layout row wrap>
+                  <v-flex xs12 v-if="error"><v-alert value="true" dismissible type="error">{{error}}</v-alert></v-flex>
+                  
                   <v-flex xs12 mt-4 mb-4>
                     <h1 class="display-2">Deliverbag</h1>
                   </v-flex>
                   <v-flex xs12>
-                      <v-text-field label="Email"></v-text-field>
+                      <v-text-field :rules="emailRules" v-model="email" type="email" label="Email"></v-text-field>
                   </v-flex>
                   <v-flex xs12>
-                      <v-text-field type="password" label="Mot de passe"></v-text-field>
+                      <v-text-field v-model="password" type="password" label="Mot de passe"></v-text-field>
                   </v-flex>
                   <v-flex xs12 class="text-xs-center">
-                    <v-btn flat color="success" @click="login">Se connecter</v-btn>
+                    <v-btn :disabled="!valid" flat color="success" @click="login">Se connecter</v-btn>
                   </v-flex>
 
                   <v-flex xs12 mt-3 mb-3>
@@ -52,13 +54,31 @@
 
 <script>
 export default {
+    data: () => ({
+        error: null,
+        email: '',
+        password: '',
+        valid: false,
+        emailRules: [
+        v => !!v || "L'adresse mail est requise",
+        v => /.+@.+/.test(v) || "L'addresse mail doit être valide"
+      ],
+    }),
+
     methods: {
         register() {
             this.$router.push({path: '/register-choice'})
         },
 
         login() {
+            if (this.email.length == 0 || this.password.length == 0) return;
+            // axios.post('api.blahblah').then()
+            
+            // Success
             this.$router.push({path: '/demand'})
+
+            // Error
+            //this.error = 'Email ou mot de passe invalide'
         }
     }
 };

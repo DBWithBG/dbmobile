@@ -10,42 +10,53 @@
       }">
       <v-layout row wrap>
 
-        <v-flex md12>
-          <v-card elevation-5 to="/demand-address" color="blue-grey darken-2" class="white--text" >
-            <v-card-title primary-title>
-              <div>
-                <h3 class="headline mb-0">J'indique une adresse</h3>
-                <div> Choisissez un lieu et une heure de <br/>prise en charge pour vos bagages </div>
-              </div>
-            </v-card-title>
-          </v-card>
-        </v-flex>
-      
+        <v-flex xs12>
+        <v-card class="vh" color="green lighten-4" :to="{name :'demande-form' , params: {type:'address'} }">
+          <v-card-title primary-title>
+            <div>
+              <h3 class="headline">
+                <v-icon left>add_location</v-icon>
+                {{$t("address")}}</h3>
+              <div> {{$t("address_subt")}} </div>
+            </div>
+          </v-card-title>
+        </v-card>
+      </v-flex>
 
-      
-        <v-flex md12>
-          <v-card elevation-10 to="/demand-train" color="cyan darken-2" class="white--text">
-            <v-card-title primary-title>
-              <div>
-                <h3 class="headline mb-0">J'arrive en train</h3>
-                <div> Vos bagages seront pris en charge à l'arrivée de votre train en gare </div>
-              </div>
-            </v-card-title>
-          </v-card>
-        </v-flex>
-      
+    <!--
+      Pour accéder au formulaire de demande avec saisie de numéro de train
+    -->
 
-      
-        <v-flex md12>
-          <v-card elevation-15 to="/demand-flight" color="purple" class="white--text">
-            <v-card-title primary-title>
-              <div>
-                <h3 class="headline mb-0">Je voyage en avion</h3>
-                <div>Partez l'esprit serein en indiquant simplement votre vol </div>
-              </div>
-            </v-card-title>
-          </v-card>
-        </v-flex>
+      <v-flex xs12>
+        <v-card class="vh" color="light-green lighten-4" :to="{name :'demande-form' , params: {type:'train'} }">
+          <v-card-title primary-title>
+            <div>
+              <h3 class="headline">
+                <v-icon left>train</v-icon>
+                {{$t("train")}}
+              </h3>
+              <div> {{$t("train_subt")}} </div>
+            </div>
+          </v-card-title>
+        </v-card>
+      </v-flex>
+
+    <!--
+      Pour accéder au formulaire de demande avec saisie de numéro de vol
+    -->
+      <v-flex xs12>
+        <v-card class="vh" color="lime lighten-4" :to="{name :'demande-form' , params: {type:'flight'} }">
+          <v-card-title primary-title>
+            <div>
+              <h3 class="headline">
+                <v-icon left>flight</v-icon>
+                {{$t("flight")}}</h3>
+              <div> {{$t("flight_subt")}} </div>
+            </div>
+          </v-card-title>
+        </v-card>
+      </v-flex>
+
       </v-layout>
 
     </v-container>

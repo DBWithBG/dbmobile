@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import VueRouter from 'vue-router'
+import VueI18n from 'vue-i18n'
+import Lang from './lang'
 
 import Home from './components/Home.vue'
 import Menu from './components/Menu.vue'
@@ -16,15 +18,11 @@ import Root from './components/Root.vue'
 import Login from './components/Login.vue'
 import RegisterChoice from './components/RegisterChoice.vue'
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
+Vue.use(VueI18n)
+Vue.use(Vuetify, { theme: { primary: '#3EB93A'}});
 
-Vue.use(Vuetify, {
-  theme: {
-    primary: '#3EB93A',
-  }
-});
-
-Vue.use(require('vue-moment'));
+// Routes 
 
 const routes = [
   { path: '/', component: Root },
@@ -40,18 +38,16 @@ const routes = [
   { path: '/demand-next', component : DemandNext, name:'demand-next' , props:true}
 ];
 
-const router = new VueRouter({
-  routes: routes
-});
+const router = new VueRouter({routes: routes});
+
+const i18n = new VueI18n({ locale: 'fr', messages: Lang})
 
 function bindVue() {
   console.log("Binding vue app to #app")
   new Vue({
     el: '#app',
-    router: router,
-    components: {
-      'db-menu': Menu
-    }
+    router,
+    i18n
   });
 } 
 
