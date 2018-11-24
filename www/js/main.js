@@ -4,19 +4,20 @@ import VueRouter from 'vue-router'
 import VueI18n from 'vue-i18n'
 import Lang from './lang'
 
-import Demand from './components/Demand.vue'
+
 import MyMap from './components/Map.vue'
 import Address from './components/Address.vue'
 import Train from './components/Train.vue'
 import Flight from './components/Flight.vue'
 import DemandNext from './components/DemandNext.vue'
-import Courses from './components/MesCourses.vue'
 
 import Root from './components/Root.vue'
 import Login from './components/login/Login.vue'
 import RegisterChoice from './components/register/RegisterChoice.vue'
 import RegisterCustomer from './components/register/RegisterCustomer.vue'
 import RegisterDriver from './components/register/RegisterDriver.vue'
+import DemandChoice from './components/customer/DemandChoice.vue'
+import MyCourses from './components/customer/MyCourses.vue'
 
 Vue.use(VueRouter)
 Vue.use(VueI18n)
@@ -30,9 +31,10 @@ const routes = [
   { path: '/register-choice', component: RegisterChoice },
   { path: '/register-customer', component: RegisterCustomer },
   { path: '/register-driver', component: RegisterDriver },
+  { path: '/demand-choice', component : DemandChoice},
+  { path: '/my-courses', component: MyCourses},
   
-  { path: '/demand', component : Demand},
-  { path: '/courses', component: Courses},
+  
   { path: '/demands', component : MyMap},
   { path: '/demand-address', component : Address},
   { path: '/demand-train', component : Train},

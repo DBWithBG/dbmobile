@@ -75,7 +75,7 @@ export default {
             // axios.post('api.blahblah').then()
             
             // Success
-            this.$router.push({path: '/demand'})
+            this.$router.push({path: '/demand-choice'})
 
             // Error
             //this.error = 'Email ou mot de passe invalide'

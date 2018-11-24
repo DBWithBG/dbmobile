@@ -1,22 +1,18 @@
 <template>
 
-  <v-bottom-nav :value="true" :active.sync="element" fixed>
-
-    <v-btn flat color="teal" value="history" to="/courses">
-      <span>Mes courses</span>
-      <v-icon>history</v-icon>
+  <v-bottom-nav class="test" color="primary" :value="true" :active.sync="element" app  >
+      <v-btn dark flat value="left" to="/my-courses">
+        <span>{{$t("courses")}}</span>
+        <v-icon>history</v-icon>
+      </v-btn>
+    <v-btn dark flat value="main" to="/demand-choice">
+      <span>{{$t("demande")}}</span>
+      <v-icon>pan_tool</v-icon>
     </v-btn>
-
-    <v-btn flat color="teal" value="demande" to="/demand">
-        <span>Faire une <br/> demande</span>
-        <v-icon>favorite</v-icon>
+    <v-btn dark flat value="right" to="/settings">
+      <span>{{$t("settings")}}</span>
+      <v-icon>settings</v-icon>
     </v-btn>
-
-    <v-btn flat color="teal" value="map" to="/demands">
-      <span>Demandes clients</span>
-      <v-icon>map</v-icon>
-    </v-btn>
-
   </v-bottom-nav>
 </template>
 

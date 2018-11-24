@@ -11,6 +11,7 @@ export default {
     "phone_number": "Numéro de téléphone",
     "customer": "Client",
     "driver": "Chauffeur",
+    "unable_to_retrieve_data_from_server": "Erreur serveur",
 
     "address": "J'indique une adresse",
     "address_subt": "Définissez un lieu et une heure de prise en charge pour vos bagages",
