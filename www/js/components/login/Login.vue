@@ -15,10 +15,10 @@
                       <v-text-field :rules="emailRules" v-model="email" type="email" label="Email"></v-text-field>
                   </v-flex>
                   <v-flex xs12>
-                      <v-text-field v-model="password" type="password" label="Mot de passe"></v-text-field>
+                      <v-text-field v-model="password" type="password" :label="$t('password')"></v-text-field>
                   </v-flex>
                   <v-flex xs12 class="text-xs-center">
-                    <v-btn :disabled="!valid" flat color="success" @click="login">Se connecter</v-btn>
+                    <v-btn :disabled="!valid" flat color="success" @click="login">{{$t('to_log_in')}}</v-btn>
                   </v-flex>
 
                   <v-flex xs12 mt-3 mb-3>
@@ -39,7 +39,7 @@
 
 
                   <v-flex xs12 mt-4 class="text-xs-center">
-                      <v-btn @click="register" flat small>Créer un compte</v-btn>
+                      <v-btn @click="register" flat small>{{$t('to_create_an_account')}}</v-btn>
                   </v-flex>
 
                   

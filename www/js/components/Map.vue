@@ -22,13 +22,11 @@
 <script>
 
 import mapStyle from '../mapStyle.json'
-import Home from './Home.vue';
 import Menu from './Menu.vue';
 
 export default {
 
   components : {
-    'db-component': Home,
     'db-menu' : Menu
   },
 

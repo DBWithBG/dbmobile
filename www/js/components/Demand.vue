@@ -2,12 +2,7 @@
 
 
   <div id="home">
-    <v-container 
-      grid-list-lg 
-      :class="{'px-0': $vuetify.breakpoint.xsOnly }" v-touch="{
-      left:swipeLeft ,
-      right:swipeRight
-      }">
+    <v-container grid-list-lg>
       <v-layout row wrap>
 
         <v-flex xs12>

@@ -4,8 +4,6 @@ import VueRouter from 'vue-router'
 import VueI18n from 'vue-i18n'
 import Lang from './lang'
 
-import Home from './components/Home.vue'
-import Menu from './components/Menu.vue'
 import Demand from './components/Demand.vue'
 import MyMap from './components/Map.vue'
 import Address from './components/Address.vue'
@@ -15,8 +13,10 @@ import DemandNext from './components/DemandNext.vue'
 import Courses from './components/MesCourses.vue'
 
 import Root from './components/Root.vue'
-import Login from './components/Login.vue'
-import RegisterChoice from './components/RegisterChoice.vue'
+import Login from './components/login/Login.vue'
+import RegisterChoice from './components/register/RegisterChoice.vue'
+import RegisterCustomer from './components/register/RegisterCustomer.vue'
+import RegisterDriver from './components/register/RegisterDriver.vue'
 
 Vue.use(VueRouter)
 Vue.use(VueI18n)
@@ -28,6 +28,8 @@ const routes = [
   { path: '/', component: Root },
   { path: '/login', component: Login },
   { path: '/register-choice', component: RegisterChoice },
+  { path: '/register-customer', component: RegisterCustomer },
+  { path: '/register-driver', component: RegisterDriver },
   
   { path: '/demand', component : Demand},
   { path: '/courses', component: Courses},
