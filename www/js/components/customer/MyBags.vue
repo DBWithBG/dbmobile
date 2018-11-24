@@ -114,9 +114,22 @@
       {{$t('snackbar_bags_update')}}
     </v-snackbar>
 
-    <v-snackbar v-model="hasError" color="warning" top>
-      {{error}}
-    </v-snackbar>
+    <v-dialog v-model="hasError">
+      <v-card>
+        <v-card-title class="headline">Erreur</v-card-title>
+
+        <v-card-text>
+          {{error}}
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" flat="flat" @click="hasError = false">
+            Fermer
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
   </div>
 </div>
@@ -125,7 +138,7 @@
 
 <script>
 import BackHeader from "../BackHeader.vue";
-import Menu from "../Menu.vue"
+import Menu from "./Menu.vue"
 
 export default {
   components: {
@@ -193,7 +206,7 @@ export default {
           console.log(e);
           self.connecting = false;
           self.loading = false;
-          self.error = "Erreur serveur"
+          self.error = self.$i18n.t("unable_to_retrieve_data_from_server");
           self.hasError = true
         }
       });

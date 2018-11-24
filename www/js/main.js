@@ -3,13 +3,7 @@ import Vuetify from 'vuetify'
 import VueRouter from 'vue-router'
 import VueI18n from 'vue-i18n'
 import Lang from './lang'
-
-
-import MyMap from './components/Map.vue'
-import Address from './components/Address.vue'
-import Train from './components/Train.vue'
-import Flight from './components/Flight.vue'
-import DemandNext from './components/DemandNext.vue'
+import moment from 'moment'
 
 import Root from './components/Root.vue'
 import Login from './components/login/Login.vue'
@@ -20,10 +14,14 @@ import DemandChoice from './components/customer/DemandChoice.vue'
 import MyCourses from './components/customer/MyCourses.vue'
 import Settings from './components/customer/Settings.vue'
 import MyBags from './components/customer/MyBags.vue'
+import DemandForm from './components/customer/DemandForm.vue'
 
 Vue.use(VueRouter)
 Vue.use(VueI18n)
 Vue.use(Vuetify, { theme: { primary: '#3EB93A'}});
+
+moment.locale('fr');
+Vue.prototype.moment =  moment ;
 
 // Routes 
 
@@ -37,13 +35,7 @@ const routes = [
   { path: '/my-courses', component: MyCourses},
   { path: '/settings', component: Settings},
   { path: '/my-bags', component: MyBags},
-  
-  
-  { path: '/demands', component : MyMap},
-  { path: '/demand-address', component : Address},
-  { path: '/demand-train', component : Train},
-  { path: '/demand-flight', component : Flight},
-  { path: '/demand-next', component : DemandNext, name:'demand-next' , props:true}
+  { path: '/demand-form', component: DemandForm}
 ];
 
 const router = new VueRouter({routes: routes});

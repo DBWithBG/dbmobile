@@ -2,10 +2,6 @@
 
   <div class="margin">
 
-      <v-layout row wrap>
-            <v-flex xs12 v-if="error"><v-alert value="true" dismissible type="error">{{error}}</v-alert></v-flex>
-      </v-layout>
-
     <!--
     Ecran de chargement,
     ce qui est affiché lorsque l'on attend la récupération des données du serveur
@@ -61,7 +57,7 @@
               </v-flex>
             </v-layout>
             <v-flex xs10 offset-xs1>
-              <v-sliderv-model="props.item.status" :max="3.0" :min="1.0" :step="0.1" readonly>
+              <v-slider v-model="props.item.status" :max="3.0" :min="1.0" :step="0.1" readonly>
             </v-slider>
           </v-flex>
         </div>
@@ -233,7 +229,22 @@ Dialog popup concernant la déclaration d'un litige d'une course
   {{$t('snackbar_litige')}}
 </v-snackbar>
 
+<v-dialog v-model="hasError">
+      <v-card>
+        <v-card-title class="headline">Erreur</v-card-title>
 
+        <v-card-text>
+          {{error}}
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" flat="flat" @click="hasError = false">
+            Fermer
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
 <db-menu> </db-menu>
 </div>
@@ -242,16 +253,17 @@ Dialog popup concernant la déclaration d'un litige d'une course
 
 
 <script>
-import Menu from "../Menu.vue";
+import Menu from "./Menu.vue";
 
 export default {
   components: {
-      'db-menu': Menu
+    "db-menu": Menu
   },
 
   data() {
     return {
-        error: null,
+      hasError: false,
+      error: "",
 
       // pour savoir si les données sont chargées
       loading: true,
@@ -337,8 +349,9 @@ export default {
         },
         error: function(e) {
           console.log(e);
-          self.error = self.$i18n.t('unable_to_retrieve_data_from_server')
-          self.loading = false
+          self.error = self.$i18n.t("unable_to_retrieve_data_from_server");
+          self.loading = false;
+          self.hasError = true;
         }
       });
     },
