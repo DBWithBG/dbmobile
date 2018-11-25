@@ -26,16 +26,16 @@ Vue.prototype.moment =  moment ;
 // Routes 
 
 const routes = [
-  { path: '/', component: Root },
-  { path: '/login', component: Login },
-  { path: '/register-choice', component: RegisterChoice },
-  { path: '/register-customer', component: RegisterCustomer },
-  { path: '/register-driver', component: RegisterDriver },
-  { path: '/demand-choice', component : DemandChoice},
-  { path: '/my-courses', component: MyCourses},
-  { path: '/settings', component: Settings},
-  { path: '/my-bags', component: MyBags},
-  { path: '/demand-form', component: DemandForm}
+  { name: 'Root', path: '/', component: Root },
+  { name: 'Login', path: '/login', component: Login },
+  { name: 'RegisterChoice', path: '/register-choice', component: RegisterChoice },
+  { name: 'RegisterCustomer', path: '/register-customer', component: RegisterCustomer },
+  { name: 'RegisterDriver', path: '/register-driver', component: RegisterDriver },
+  { name: 'DemandChoice', path: '/demand-choice', component : DemandChoice},
+  { name: 'MyCourses', path: '/my-courses', component: MyCourses},
+  { name: 'Settings', path: '/settings', component: Settings},
+  { name: 'MyBags', path: '/my-bags', component: MyBags},
+  { name: 'DemandForm', path: '/demand-form', component: DemandForm, props: true}
 ];
 
 const router = new VueRouter({routes: routes});
@@ -55,4 +55,5 @@ function bindVue() {
 // Étant donné qu'on dev avec webpack/webpack-dev-server, on utilise l'event DOMContentLoaded
 // TODO : changer quand on build l'app android/ios :/
 // document.addEventListener('deviceready', bindVue);
-document.addEventListener('DOMContentLoaded', bindVue);
+if (typeof(cordova) == 'undefined') document.addEventListener('DOMContentLoaded', bindVue);
+else document.addEventListener('deviceready', bindVue);

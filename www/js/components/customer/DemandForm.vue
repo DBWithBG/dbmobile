@@ -21,12 +21,9 @@
           <v-flex mb-3 class="text-xs-center font-weight-medium primary--text subheading"> {{$t('subt_1')}}</v-flex>
           <v-flex mt-4 mb-3 xs12 class="text-xs-center font-weight-medium " > {{$t('info_1')}} </v-flex>
           <!-- MESSAGES D'ERREURS -->
-          <v-flex xs12 v-if="error.length">
-            <alert :message="error"> </alert>
-          </v-flex>
 
           <v-flex xs12 v-for="error in errors" :key="error.id">
-            <alert v-if="error !='' " :message="error"> </alert>
+            <v-alert value="true" type="error" v-if="error !='' ">{{error}}</v-alert>
           </v-flex>
 
           <v-layout row>
@@ -129,7 +126,7 @@
 
     <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
     <v-flex xs12 v-if="type == 'address'">
-      <input class="autocomplete" ref="autocomplete_start" type="search" v-bind:placeholder="$t('label_address_depart')"/>
+      <v-text-field v-model="startPlaceTextfield" ref="autocomplete_start" :placeholder="$t('label_address_depart')"></v-text-field>
     </v-flex>
 
     <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
@@ -137,7 +134,7 @@
 
     <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
     <v-flex xs12>
-      <input class="autocomplete" ref="autocomplete_end" v-bind:placeholder="$t('label_address_livraison')" />
+      <v-text-field v-model="endPlaceTextfield" ref="autocomplete_end" :placeholder="$t('label_address_livraison')"></v-text-field>
     </v-flex>
 
     <!-- SWITCH correspondant au type de prestation : livraison ou consigne
@@ -398,6 +395,24 @@ Désactivé si le form n'est pas valide
 </v-stepper-items>
 
 </v-stepper>
+
+<v-dialog v-model="hasError">
+      <v-card>
+        <v-card-title class="headline">Erreur</v-card-title>
+
+        <v-card-text>
+          {{error}}
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" flat="flat" @click="hasError = false">
+            Fermer
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
 <db-menu></db-menu>
 
 </div>
@@ -418,6 +433,12 @@ export default {
 
   data() {
     return {
+      // Déclencheur de la modal d'erreur
+      hasError: false,
+
+      // Message d'erreur
+      error: '',
+
       // définit l'étape actuelle du formulaire
       step: 0,
 
@@ -451,14 +472,13 @@ export default {
         .add(2, "hours")
         .format("LT"),
 
-      // lieu de prise en charge
-      startPlace: "",
+      // lieu de prise en charge (Objet / string)
+      startPlace: null,
+      startPlaceTextfield: '',
 
-      // lieu de livraison
-      endPlace: "",
-
-      // message d'erreur
-      error: "",
+      // lieu de livraison (Objet / string)
+      endPlace: null,
+      endPlaceTextfield: '',
 
       // toutes les erreurs lors de la saisie (date incorrecte, lieu non desservi...)
       errors: {},
@@ -776,8 +796,9 @@ export default {
           }
         },
         error: function(e) {
-          alert("erreur de connexion");
-          console.log(e);
+          self.error = self.$i18n.t("unable_to_retrieve_data_from_server")
+          self.hasError = true
+          console.log(e)
         }
       });
     },
@@ -968,7 +989,7 @@ export default {
     isFormOk() {
       this.verifDate;
       if (
-        this.error == "" &&
+        //this.error == "" &&
         this.startPlace != "" &&
         this.endPlace != "" &&
         this.date != "" &&
@@ -1187,23 +1208,25 @@ export default {
     };
 
     // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de la livraison
-    let addressEnd = this.$refs.autocomplete_end;
+    let addressEnd = this.$refs.autocomplete_end.$refs.input;
     let endPlace = new google.maps.places.Autocomplete(addressEnd, options);
     endPlace.addListener("place_changed", function() {
       self.endPlace = this.getPlace();
+      self.endPlaceTextfield = this.getPlace()['formatted_address']
       self.verifyDepartment(self.endPlace, "end");
     });
 
     if (this.type == "address") {
       // On initialise l'autocomplete GOOGLE MAPS pour l'adresse de prise en charge
       // UNQIUEMENT SI ON EST EN SAISIE D'ADRESSE
-      let addressStart = this.$refs.autocomplete_start;
+      let addressStart = this.$refs.autocomplete_start.$refs.input;
       let startPlace = new google.maps.places.Autocomplete(
         addressStart,
         options
       );
       startPlace.addListener("place_changed", function() {
         self.startPlace = this.getPlace();
+        self.startPlaceTextfield = this.getPlace()['formatted_address']
         self.verifyDepartment(self.startPlace, "start");
       });
     }

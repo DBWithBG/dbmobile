@@ -6,7 +6,7 @@
       <v-layout row wrap>
 
         <v-flex xs12>
-        <v-card class="vh" color="green lighten-4" :to="{path :'demand-form' , params: {type:'address'} }">
+        <v-card class="vh" color="green lighten-4" :to="{name :'DemandForm' , params: {type:'address'} }">
           <v-card-title primary-title>
             <div>
               <h3 class="headline">
@@ -23,7 +23,7 @@
     -->
 
       <v-flex xs12>
-        <v-card class="vh" color="light-green lighten-4" :to="{path :'demand-form' , params: {type:'train'} }">
+        <v-card class="vh" color="light-green lighten-4" :to="{name :'DemandForm' , params: {type:'train'} }">
           <v-card-title primary-title>
             <div>
               <h3 class="headline">
@@ -40,7 +40,7 @@
       Pour accéder au formulaire de demande avec saisie de numéro de vol
     -->
       <v-flex xs12>
-        <v-card class="vh" color="lime lighten-4" :to="{path :'demand-form' , params: {type:'flight'} }">
+        <v-card class="vh" color="lime lighten-4" :to="{name :'DemandForm' , params: {type:'flight'} }">
           <v-card-title primary-title>
             <div>
               <h3 class="headline">
