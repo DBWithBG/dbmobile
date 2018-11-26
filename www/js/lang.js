@@ -12,6 +12,7 @@ export default {
     "customer": "Client",
     "driver": "Chauffeur",
     "unable_to_retrieve_data_from_server": "Une erreur s'est produite lors de la communication avec le serveur. Veuillez réessayer plus tard. ",
+    "invalid_credentials": "Les identifiants de connexion ne sont pas valides",
 
     "address": "J'indique une adresse",
     "address_subt": "Définissez un lieu et une heure de prise en charge pour vos bagages",

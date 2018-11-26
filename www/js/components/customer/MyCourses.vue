@@ -321,14 +321,13 @@ export default {
       let self = this;
       this.demandes = [[], [], []];
       $.ajax({
-        url:
-          "http://dev-deliverbag.supconception.fr/mobile/deliveries/customers?mobile_token=" +
-          localStorage.getItem("deviceId"),
         type: "GET",
+        url: "http://dev-deliverbag.supconception.fr/mobile/deliveries/customers",
         datatype: "jsonp",
-        //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
+        beforeSend: function(request) {
+          request.setRequestHeader("Authorization", 'Bearer ' + window.localStorage.getItem('jwt'));
+        },
         success: function(data) {
-          console.log(data);
 
           // Les demandes à l'index 0 correspondent à celles en cours :
           // Dans la base, ce sont les indexs 2,3 et 4 qui correspondent respectivement à
@@ -348,6 +347,7 @@ export default {
           self.$forceUpdate();
         },
         error: function(e) {
+          console.error('Error in getDeliveries')
           console.log(e);
           self.error = self.$i18n.t("unable_to_retrieve_data_from_server");
           self.loading = false;

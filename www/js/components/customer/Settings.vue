@@ -177,11 +177,12 @@ export default {
       //  ref.executeScript( {code : t});
     },
 
-    // on clean le cache contenant le keep login
-    // on redirige l'utilisateur sur l'écran de connexion
+    // On clean le localStorage
+    // On redirige l'utilisateur sur l'écran de connexion
     disconnect() {
-      localStorage.removeItem("deviceId");
-      this.$router.replace("/");
+      localStorage.removeItem('jwt')
+      localStorage.removeItem('type')
+      this.$router.replace('/')
     },
 
     swipeRight() {
