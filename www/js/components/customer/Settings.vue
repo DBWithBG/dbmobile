@@ -8,7 +8,7 @@
         <v-list class="margin" three-line>
           
 
-          <v-list-tile to="/my-bags" avatar>
+          <!--<v-list-tile to="/my-bags" avatar>
             <v-list-tile-avatar>
               <v-icon color="primary" large>work</v-icon>
             </v-list-tile-avatar>
@@ -17,9 +17,9 @@
 
               <v-list-tile-sub-title>{{$t("bagages_subt")}} </v-list-tile-sub-title>
             </v-list-tile-content>
-          </v-list-tile>
+          </v-list-tile>-->
 
-          <v-list-tile @click.native="getProfile()" avatar >
+          <!--<v-list-tile @click.native="getProfile()" avatar >
             <v-list-tile-avatar>
               <v-icon color="primary" large>person</v-icon>
             </v-list-tile-avatar>
@@ -27,9 +27,9 @@
               <v-list-tile-title>{{$t("profil")}}</v-list-tile-title>
               <v-list-tile-sub-title >{{$t("profil_sbt")}}</v-list-tile-sub-title>
             </v-list-tile-content>
-          </v-list-tile>
+          </v-list-tile>-->
 
-          <v-list-tile avatar>
+          <!--<v-list-tile avatar>
             <v-list-tile-avatar>
               <v-icon color="primary" large>euro_symbol</v-icon>
             </v-list-tile-avatar>
@@ -37,9 +37,9 @@
               <v-list-tile-title>{{$t("paiement")}}</v-list-tile-title>
               <v-list-tile-sub-title>{{$t("paiement_sbt")}}</v-list-tile-sub-title>
             </v-list-tile-content>
-          </v-list-tile>
+          </v-list-tile>-->
 
-          <v-list-tile @click.native.stop="dialLangue=true" avatar>
+          <!--<v-list-tile @click.native.stop="dialLangue=true" avatar>
             <v-list-tile-avatar>
               <v-icon color="primary" large>language</v-icon>
             </v-list-tile-avatar>
@@ -70,7 +70,7 @@
               </v-flex>
             </v-btn>
           </v-list-tile-action>
-        </v-list-tile>
+        </v-list-tile>-->
 
         <v-list-tile @click.native="dialogContact=true" >
           <v-list-tile-avatar>

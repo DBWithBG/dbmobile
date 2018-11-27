@@ -361,8 +361,7 @@ export default {
     cancelDelivery(id) {
       let self = this;
       $.ajax({
-        url:
-          "http://dev-deliverbag.supconception.fr/mobile/customers/deliveries/cancelDelivery",
+        url: "http://dev-deliverbag.supconception.fr/mobile/customers/deliveries/cancelDelivery",
         type: "POST",
         data: {
           delivery_id: id,

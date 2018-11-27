@@ -10,7 +10,7 @@
             <v-text-field :rules="emailRules" v-model="email" type="email" label="Email"></v-text-field>
           </v-flex>
           <v-flex xs12>
-            <v-text-field v-model="password" type="password" :label="$t('password')"></v-text-field>
+            <v-text-field :rules="[otherRules.required]" v-model="password" type="password" :label="$t('password')"></v-text-field>
           </v-flex>
           <v-flex xs12 class="text-xs-center">
             <v-btn :disabled="!valid" flat color="success" @click="login">{{$t('to_log_in')}}</v-btn>
@@ -20,7 +20,7 @@
             <v-divider></v-divider>
           </v-flex>
 
-          <v-flex xs12>
+          <!--<v-flex xs12>
             <v-layout row wrap>
               <v-flex xs6>
                 <v-btn block>Google</v-btn>
@@ -30,8 +30,7 @@
                 <v-btn block>Facebook</v-btn>
               </v-flex>
             </v-layout>
-          </v-flex>
-
+          </v-flex>-->
           <v-flex xs12 mt-4 class="text-xs-center">
             <v-btn @click="register" flat small>{{$t('to_create_an_account')}}</v-btn>
           </v-flex>
@@ -64,23 +63,36 @@ export default {
         return {
             hasError: false,
             error: '',
+
+            // Form data
             email: '',
             password: '',
+
+            // Is the form valid ?
             valid: false,
+
+            // Rules
             emailRules: [
                 v => !!v || "L'adresse mail est requise",
                 v => /.+@.+/.test(v) || "L'addresse mail doit être valide"
-            ]
+            ],
+
+            otherRules: {
+                required: value => !!value || this.$i18n.t('required')
+            }
         }
     },
 
     mounted() {
         if (this.checkIfUserIsLoggedIn) {
             let type = window.localStorage.getItem('type')
+            
             if (type == 'customer')
                 this.$router.push({name: 'DemandChoice'})
+            
             else if (type == 'driver')
                 this.$router.push({name: 'DemandChoice'})
+            
             else {
                 // Le type est invalide, on clean tout
                 window.localStorage.removeItem('type')    

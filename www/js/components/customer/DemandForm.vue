@@ -22,10 +22,6 @@
           <v-flex mt-4 mb-3 xs12 class="text-xs-center font-weight-medium " > {{$t('info_1')}} </v-flex>
           <!-- MESSAGES D'ERREURS -->
 
-          <v-flex xs12 v-for="error in errors" :key="error.id">
-            <v-alert value="true" type="error" v-if="error !='' ">{{error}}</v-alert>
-          </v-flex>
-
           <v-layout row>
             <v-flex xs10>
               <!-- DATE PICKER START -->
@@ -438,6 +434,7 @@ export default {
 
       // Message d'erreur
       error: '',
+      errors: [],
 
       // définit l'étape actuelle du formulaire
       step: 0,
@@ -479,9 +476,6 @@ export default {
       // lieu de livraison (Objet / string)
       endPlace: null,
       endPlaceTextfield: '',
-
-      // toutes les erreurs lors de la saisie (date incorrecte, lieu non desservi...)
-      errors: {},
 
       // les départements authorisés qui seront pris en compte
       authorized: [],
@@ -769,13 +763,13 @@ export default {
     getBagages() {
       let self = this;
       $.ajax({
-        url:
-          "http://dev-deliverbag.supconception.fr/mobile/bags/users/" +
-          localStorage.getItem("deviceId"),
         type: "GET",
+        url: "http://dev-deliverbag.supconception.fr/mobile/bags/users",
         datatype: "jsonp",
+        beforeSend: function(request) {
+          request.setRequestHeader("Authorization", 'Bearer ' + window.localStorage.getItem('jwt'));
+        },
         success: function(data) {
-          data = JSON.parse(data);
           self.bagagesCabine = [];
           self.bagagesSoute = [];
           self.bagagesAutre = [];
@@ -987,16 +981,7 @@ export default {
 
     // On vérifie que les données saisies par le client sont correctes
     isFormOk() {
-      this.verifDate;
-      if (
-        //this.error == "" &&
-        this.startPlace != "" &&
-        this.endPlace != "" &&
-        this.date != "" &&
-        this.checkErrors()
-      ) {
-        return true;
-      }
+      return this.startPlace != "" && this.endPlace != "" && this.date != ''
     },
 
     // On vérifie qu'il n y a plus d'erreurs : localisation non desservie, heure incorrecte...

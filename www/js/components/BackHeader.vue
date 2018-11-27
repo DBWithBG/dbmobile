@@ -1,7 +1,7 @@
 <template>
   <v-layout row>
     <v-flex xs12>
-      <v-toolbar dark color="primary">
+      <v-toolbar>
         <v-btn @click="back" icon flat>
           <v-icon>arrow_back</v-icon>
         </v-btn>
