@@ -1,14 +1,13 @@
 <template>
   <div>
-
     <!-- header retourn arrière -->
-    <back-header :message="$t('header')"> </back-header>
+    <back-header :message="$t('header')"></back-header>
 
     <!-- STEPPER Horizontal de progression-->
     <v-stepper v-model="step">
       <v-stepper-header>
         <!-- étape 1 : infos de prise en chagre et livraison -->
-        <v-stepper-step :complete="step > 1" step="1" > {{$t('subt_1')}}</v-stepper-step>
+        <v-stepper-step :complete="step > 1" step="1">{{$t('subt_1')}}</v-stepper-step>
         <!-- étape 2 : infos de bagages-->
         <v-stepper-step :complete="step > 2" step="2">{{$t('subt_2')}}</v-stepper-step>
         <!-- étape 3 : récap et paiement-->
@@ -18,35 +17,84 @@
       <v-stepper-items>
         <!-- PRISE EN CHARGE -->
         <v-stepper-content step="1">
-          <v-flex mb-3 class="text-xs-center font-weight-medium primary--text subheading"> {{$t('subt_1')}}</v-flex>
-          <v-flex mt-4 mb-3 xs12 class="text-xs-center font-weight-medium " > {{$t('info_1')}} </v-flex>
+          <v-flex
+            mb-3
+            class="text-xs-center font-weight-medium primary--text subheading"
+          >{{$t('subt_1')}}</v-flex>
+          <v-flex mt-4 mb-3 xs12 class="text-xs-center font-weight-medium">{{$t('info_1')}}</v-flex>
           <!-- MESSAGES D'ERREURS -->
-
           <v-layout row>
             <v-flex xs10>
               <!-- DATE PICKER START -->
-              <v-menu :nudge-left="30" ref="menudate" :close-on-content-click="false" :return-value.sync="date" full-width min-width="290px">
-                <v-text-field  slot="activator" v-model="displayDate" v-bind:label="$t('label_date')" prepend-icon="event" readonly> </v-text-field>
-                <v-date-picker v-model="date" :min="minDate" @change="$refs.menudate.save(date),resetData()" color="primary" no-title scrollable :locale="this.$root.$i18n.locale" > </v-date-picker>
+              <v-menu
+                :nudge-left="30"
+                ref="menudate"
+                :close-on-content-click="false"
+                :return-value.sync="date"
+                full-width
+                min-width="290px"
+              >
+                <v-text-field
+                  slot="activator"
+                  v-model="displayDate"
+                  v-bind:label="$t('label_date')"
+                  prepend-icon="event"
+                  readonly
+                ></v-text-field>
+                <v-date-picker
+                  v-model="date"
+                  :min="minDate"
+                  @change="$refs.menudate.save(date),resetData()"
+                  color="primary"
+                  no-title
+                  scrollable
+                  :locale="this.$root.$i18n.locale"
+                ></v-date-picker>
               </v-menu>
             </v-flex>
-            <v-flex xs2>
-            </v-flex>
+            <v-flex xs2></v-flex>
             <!-- TIME PICKER POUR ADRESSE -->
             <v-flex xs10 v-if="type == 'address'">
               <!-- DATE PICKER -->
-              <v-menu ref="menutime" :nudge-left="30" :close-on-content-click="false" :return-value.sync="time" lazy full-width min-width="290px">
-                <v-text-field slot="activator" v-model="displayTime" v-bind:label="$t('label_heure')" prepend-icon="access_time" readonly> </v-text-field>
-                <v-time-picker v-model="time" :min="minTime" :format="$t('date_format')" @change="$refs.menutime.save(time)" color="primary" :locale="this.$root.$i18n.locale" > </v-time-picker>
+              <v-menu
+                ref="menutime"
+                :nudge-left="30"
+                :close-on-content-click="false"
+                :return-value.sync="time"
+                lazy
+                full-width
+                min-width="290px"
+              >
+                <v-text-field
+                  slot="activator"
+                  v-model="displayTime"
+                  v-bind:label="$t('label_heure')"
+                  prepend-icon="access_time"
+                  readonly
+                ></v-text-field>
+                <v-time-picker
+                  v-model="time"
+                  :min="minTime"
+                  :format="$t('date_format')"
+                  @change="$refs.menutime.save(time)"
+                  color="primary"
+                  :locale="this.$root.$i18n.locale"
+                ></v-time-picker>
               </v-menu>
             </v-flex>
           </v-layout>
 
-
-          <v-layout v-if="type == 'train'" row >
+          <v-layout v-if="type == 'train'" row>
             <v-flex xs6 offset-xs1>
               <!-- NUMERO DE TRAIN si arrivée par train -->
-              <v-text-field v-model="numTrain" v-on:input="traitementTrain" v-on:click="resetData" pattern="\d*" type="number" :placeholder="$t('train_number')"></v-text-field>
+              <v-text-field
+                v-model="numTrain"
+                v-on:input="traitementTrain"
+                v-on:click="resetData"
+                pattern="\d*"
+                type="number"
+                :placeholder="$t('train_number')"
+              ></v-text-field>
             </v-flex>
 
             <!-- BULLE D AIDE A LA SAISIE DU NUMERO DE TRAIN -->
@@ -56,369 +104,435 @@
                   <v-icon x-large color="primary">help</v-icon>
                 </v-btn>
                 <v-card raised>
-                  <v-card-title primary-title class="text-xs-center primary--text">
-                    {{$t('helper_train_titre')}}
-                  </v-card-title>
-                  <v-flex pa-1 class="grey--text text-xs-center">
-                    {{$t('helper_train_content')}}
-                  </v-flex>
+                  <v-card-title
+                    primary-title
+                    class="text-xs-center primary--text"
+                  >{{$t('helper_train_titre')}}</v-card-title>
+                  <v-flex pa-1 class="grey--text text-xs-center">{{$t('helper_train_content')}}</v-flex>
                 </v-card>
               </v-menu>
-
             </v-flex>
           </v-layout>
 
-
           <!-- SELECTION DE L'ARRET EN GARE POUR TRAIN -->
           <v-flex v-if="gares.length" xs12>
-
             <!--
             Le texte du select correspond au NOM de la gare + HEURE d'arrivée
             L'objet que l'on traite est un OBJET gare contentant plus d'infos
             Lorsque l'on choisit une gare, on apelle verifGare() qui vérifie :
             - le lieu
             - les horaires
-          -->
-          <v-select
-          :items="gares" v-model="selectedGare"
-          item-text="select_display" item-value="gare"
-          v-bind:label="$t('select_gare')" single-line v-on:input="verifGare">
-        </v-select>
-      </v-flex>
+            -->
+            <v-select
+              :items="gares"
+              v-model="selectedGare"
+              item-text="select_display"
+              item-value="gare"
+              v-bind:label="$t('select_gare')"
+              single-line
+              v-on:input="verifGare"
+            ></v-select>
+          </v-flex>
 
+          <!-- NUMERO DE VOL POUR VOL -->
+          <v-layout v-if="type == 'flight'" row>
+            <v-flex xs6 offset-xs1>
+              <v-text-field
+                v-model="numVol"
+                mask="NN ####"
+                v-on:input="traitementVol"
+                v-on:click="resetData"
+                type="text"
+                :placeholder="$t('flight_number')"
+              ></v-text-field>
+            </v-flex>
 
-      <!-- NUMERO DE VOL POUR VOL -->
-      <v-layout v-if="type == 'flight'" row >
-        <v-flex xs6 offset-xs1>
+            <v-flex xs1 offset-xs2>
+              <!-- BULLE D AIDE A LA SAISIE DU NUMERO DE VOL -->
+              <v-menu right offset-y max-width="130">
+                <v-btn icon slot="activator">
+                  <v-icon x-large color="primary">help</v-icon>
+                </v-btn>
+                <v-card raised>
+                  <v-card-title
+                    primary-title
+                    class="text-xs-center primary--text"
+                  >{{$t('helper_flight_titre')}}</v-card-title>
+                  <v-flex pa-1 class="grey--text text-xs-center">{{$t('helper_flight_content')}}</v-flex>
+                </v-card>
+              </v-menu>
+            </v-flex>
+          </v-layout>
 
-          <v-text-field v-model="numVol" mask="NN ####" v-on:input="traitementVol" v-on:click="resetData" type="text"  :placeholder="$t('flight_number')"> </v-text-field>
-        </v-flex>
+          <v-flex xs12 v-if="airport_chosen != ''">
+            <v-text-field v-model="airport_chosen" readonly type="text"></v-text-field>
+          </v-flex>
 
-        <v-flex xs1 offset-xs2>
+          <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
+          <v-flex xs12 v-if="type == 'address'">
+            <v-text-field
+              v-model="startPlaceTextfield"
+              ref="autocomplete_start"
+              :placeholder="$t('label_address_depart')"
+            ></v-text-field>
+          </v-flex>
 
-          <!-- BULLE D AIDE A LA SAISIE DU NUMERO DE VOL -->
-          <v-menu right offset-y max-width="130">
-            <v-btn icon slot="activator">
-              <v-icon x-large color="primary">help</v-icon>
-            </v-btn>
-            <v-card raised>
-              <v-card-title primary-title class="text-xs-center primary--text">
-                {{$t('helper_flight_titre')}}
-              </v-card-title>
-              <v-flex pa-1 class="grey--text text-xs-center">
-                {{$t('helper_flight_content')}}
-              </v-flex>
-            </v-card>
-          </v-menu>
-        </v-flex>
+          <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
+          <v-flex mt-5 mb-3 xs12 class="text-xs-center font-weight-medium">{{$t('info_2')}}</v-flex>
 
-      </v-layout>
+          <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
+          <v-flex xs12>
+            <v-text-field
+              v-model="endPlaceTextfield"
+              ref="autocomplete_end"
+              :placeholder="$t('label_address_livraison')"
+            ></v-text-field>
+          </v-flex>
 
-      <v-flex xs12 v-if="airport_chosen != ''">
-        <v-text-field v-model="airport_chosen"  readonly type="text"> </v-text-field>
-      </v-flex>
-
-
-
-    <!-- ADRESSE DE PRISE EN CHARGE POUR ADRESSE -->
-    <v-flex xs12 v-if="type == 'address'">
-      <v-text-field v-model="startPlaceTextfield" ref="autocomplete_start" :placeholder="$t('label_address_depart')"></v-text-field>
-    </v-flex>
-
-    <!-- INFORMATIONS DE LIVRAISON ET TYPE DE PRESTATION -->
-    <v-flex mt-5 mb-3 xs12 class="text-xs-center font-weight-medium" >{{$t('info_2')}}</v-flex>
-
-    <!-- ADRESSE DE LIVRAISON POUR TOUS LES CAS -->
-    <v-flex xs12>
-      <v-text-field v-model="endPlaceTextfield" ref="autocomplete_end" :placeholder="$t('label_address_livraison')"></v-text-field>
-    </v-flex>
-
-    <!-- SWITCH correspondant au type de prestation : livraison ou consigne
+          <!-- SWITCH correspondant au type de prestation : livraison ou consigne
     par défaut consigne
-  -->
-  <v-flex mt-3 mb-2 xs12>
-    <v-switch v-bind:label="$t('livraison_asap')" v-model="livraisonDirecte" color="primary"> </v-switch>
-  </v-flex>
+          -->
+          <v-flex mt-3 mb-2 xs12>
+            <v-switch
+              v-bind:label="$t('livraison_asap')"
+              v-model="livraisonDirecte"
+              color="primary"
+            ></v-switch>
+          </v-flex>
 
+          <v-layout v-if="!livraisonDirecte" row>
+            <v-flex xs10>
+              <!-- DATE PICKER SI CONSIGNE -->
+              <v-menu
+                :nudge-left="30"
+                ref="menudateend"
+                :close-on-content-click="false"
+                :return-value.sync="dateEnd"
+                full-width
+                min-width="290px"
+              >
+                <v-text-field
+                  slot="activator"
+                  v-model="displayDateEnd"
+                  v-bind:label="$t('label_date')"
+                  prepend-icon="event"
+                  readonly
+                ></v-text-field>
 
-  <v-layout v-if="!livraisonDirecte" row>
-    <v-flex xs10 >
-      <!-- DATE PICKER SI CONSIGNE -->
-      <v-menu :nudge-left="30" ref="menudateend" :close-on-content-click="false"  :return-value.sync="dateEnd" full-width min-width="290px">
-        <v-text-field
-        slot="activator" v-model="displayDateEnd" v-bind:label="$t('label_date')" prepend-icon="event" readonly>
-      </v-text-field>
+                <v-date-picker
+                  v-model="dateEnd"
+                  :min="minDateEnd"
+                  @input="$refs.menudateend.save(dateEnd)"
+                  color="primary"
+                  scrollable
+                  no-title
+                  :locale="this.$root.$i18n.locale"
+                ></v-date-picker>
+              </v-menu>
+            </v-flex>
+            <v-flex xs2></v-flex>
+            <!-- TIME PICKER SI CONSIGNE -->
+            <v-flex xs10>
+              <!-- DATE PICKER -->
+              <v-menu
+                :nudge-left="30"
+                ref="menutimeend"
+                :close-on-content-click="false"
+                :return-value.sync="timeEnd"
+                lazy
+                full-width
+                min-width="290px"
+              >
+                <v-text-field
+                  slot="activator"
+                  v-model="displayTimeEnd"
+                  v-bind:label="$t('label_heure')"
+                  prepend-icon="access_time"
+                  readonly
+                ></v-text-field>
+                <v-time-picker
+                  v-model="timeEnd"
+                  :format="$t('date_format')"
+                  @change="$refs.menutimeend.save(timeEnd)"
+                  color="primary"
+                  :locale="this.$root.$i18n.locale"
+                ></v-time-picker>
+              </v-menu>
+            </v-flex>
+          </v-layout>
 
-      <v-date-picker v-model="dateEnd" :min="minDateEnd" @input="$refs.menudateend.save(dateEnd)" color="primary" scrollable no-title :locale="this.$root.$i18n.locale"> </v-date-picker>
-    </v-menu>
-  </v-flex>
-  <v-flex xs2>
-  </v-flex>
-  <!-- TIME PICKER SI CONSIGNE -->
-  <v-flex xs10>
-    <!-- DATE PICKER -->
-    <v-menu :nudge-left="30" ref="menutimeend" :close-on-content-click="false" :return-value.sync="timeEnd" lazy full-width min-width="290px">
-      <v-text-field slot="activator" v-model="displayTimeEnd" v-bind:label="$t('label_heure')" prepend-icon="access_time" readonly> </v-text-field>
-      <v-time-picker v-model="timeEnd" :format="$t('date_format')" @change="$refs.menutimeend.save(timeEnd)" color="primary" :locale="this.$root.$i18n.locale" ></v-time-picker>
-    </v-menu>
-  </v-flex>
-</v-layout>
-
-
-<!-- Bouton pour continuer la saisie des Informations
+          <!-- Bouton pour continuer la saisie des Informations
 Désactivé si le form n'est pas valide
--->
-<v-flex xs12 class="text-xs-right" >
-  <v-btn icon large :disabled="!isFormOk()" color="primary" @click.native="step=2" dark >
-    <v-icon x-large >navigate_next</v-icon>
-  </v-btn>
-</v-flex>
-
-</v-stepper-content>
-
-
-<!-- Deuxième étape : saisie des bagages -->
-
-<v-stepper-content step="2">
-
-
-  <v-flex mb-3 class="text-xs-center font-weight-medium primary--text subheading"> {{$t('subt_2')}}</v-flex>
-  <!-- Gestion des bagages -->
-<v-layout row>
-  <v-flex xs4>
-    <v-btn round color="primary" @click.native="ajoutBagage('cabine')" dark >
-      <v-icon left>add</v-icon>
-      {{$t('bagage_cabine')}}
-    </v-btn>
-</v-flex>
-    <!-- BULLE D INFO POUR LES BAGAGES  -->
-    <v-flex xs2 offset-xs4>
-    <v-menu right offset-y max-width="150">
-      <v-btn icon slot="activator">
-        <v-icon x-large color="grey">help</v-icon>
-      </v-btn>
-      <v-card raised>
-        <v-flex pa-2 class="primary--text text-xs-center ">
-          {{$t('helper_cabine_titre')}}
-        </v-flex>
-        <v-flex pa-1 class="grey--text text-xs-center">
-          {{$t('helper_cabine_content')}}
-        </v-flex>
-      </v-card>
-    </v-menu>
-  </v-flex>
-
-</v-layout>
-
-    <v-layout row v-for="bag in bagagesCabine" :key="bag.id">
-      <v-flex xs2 class="text-xs-center">
-        <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
-          <v-icon>clear</v-icon>
-        </v-btn>
-      </v-flex>
-      <v-flex xs5>
-        <v-text-field  allow-overflow v-bind:label="$t('bagage_nom')" v-model="bag.name"></v-text-field>
-      </v-flex>
-      <v-divider vertical> </v-divider>
-      <v-flex xs5>
-        <v-text-field  v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
-      </v-flex>
-    </v-layout>
-
-  <v-layout row>
-  <v-flex xs4 >
-    <v-btn round color="primary" @click.native="ajoutBagage('soute')" dark >
-      <v-icon left>add</v-icon>
-      {{$t('bagage_soute')}}
-    </v-btn>
-  </v-flex>
-
-    <v-flex xs2 offset-xs4>
-    <!-- BULLE D INFO POUR LES BAGAGES  -->
-    <v-menu right offset-y max-width="150">
-      <v-btn icon slot="activator">
-        <v-icon x-large color="grey">help</v-icon>
-      </v-btn>
-      <v-card raised>
-        <v-flex pa-2 class="primary--text text-xs-center ">
-          {{$t('helper_soute_titre')}}
-        </v-flex>
-        <v-flex pa-1 class="grey--text text-xs-center">
-          {{$t('helper_soute_content')}}
-        </v-flex>
-      </v-card>
-    </v-menu>
-  </v-flex>
-</v-layout>
-    <v-layout row v-for="bag in bagagesSoute" :key="bag.id">
-      <v-flex xs2>
-        <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
-          <v-icon>clear</v-icon>
-        </v-btn>
-      </v-flex>
-      <v-flex xs5>
-        <v-text-field  v-bind:label="$t('bagage_nom')" v-model="bag.name"
-        ></v-text-field>
-      </v-flex>
-      <v-divider vertical> </v-divider>
-      <v-flex xs5>
-        <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
-      </v-flex>
-    </v-layout>
-
-
-  <v-layout row>
-    <v-flex xs4>
-      <v-btn round color="primary" @click.native="ajoutBagage('autre')" dark >
-        <v-icon left>add</v-icon>
-        {{$t('bagage_autre')}}
-      </v-btn>
-    </v-flex>
-    <v-flex xs2 offset-xs4>
-      <!-- BULLE D INFO POUR LES BAGAGES  -->
-      <v-menu right offset-y max-width="150">
-        <v-btn  icon slot="activator">
-          <v-icon x-large color="grey">help</v-icon>
-        </v-btn>
-        <v-card raised>
-          <v-flex pa-2 class="primary--text text-xs-center ">
-            {{$t('helper_autre_titre')}}
+          -->
+          <v-flex xs12 class="text-xs-right">
+            <v-btn icon large :disabled="!isFormOk()" color="primary" @click.native="step=2" dark>
+              <v-icon x-large>navigate_next</v-icon>
+            </v-btn>
           </v-flex>
-          <v-flex pa-1 class="grey--text text-xs-center">
-            {{$t('helper_autre_content')}}
+        </v-stepper-content>
+
+        <!-- Deuxième étape : saisie des bagages -->
+        <v-stepper-content step="2">
+          <v-flex
+            mb-3
+            class="text-xs-center font-weight-medium primary--text subheading"
+          >{{$t('subt_2')}}</v-flex>
+          <!-- Gestion des bagages -->
+          <v-layout row>
+            <v-flex xs4>
+              <v-btn round color="primary" @click.native="ajoutBagage('cabine')" dark>
+                <v-icon left>add</v-icon>
+                {{$t('bagage_cabine')}}
+              </v-btn>
+            </v-flex>
+            <!-- BULLE D INFO POUR LES BAGAGES  -->
+            <v-flex xs2 offset-xs4>
+              <v-menu right offset-y max-width="150">
+                <v-btn icon slot="activator">
+                  <v-icon x-large color="grey">help</v-icon>
+                </v-btn>
+                <v-card raised>
+                  <v-flex pa-2 class="primary--text text-xs-center">{{$t('helper_cabine_titre')}}</v-flex>
+                  <v-flex pa-1 class="grey--text text-xs-center">{{$t('helper_cabine_content')}}</v-flex>
+                </v-card>
+              </v-menu>
+            </v-flex>
+          </v-layout>
+
+          <v-layout row v-for="bag in bagagesCabine" :key="bag.id">
+            <v-flex xs2 class="text-xs-center">
+              <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesCabine, bag)">
+                <v-icon>clear</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex xs5>
+              <v-text-field allow-overflow v-bind:label="$t('bagage_nom')" v-model="bag.name"></v-text-field>
+            </v-flex>
+            <v-divider vertical></v-divider>
+            <v-flex xs5>
+              <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+            </v-flex>
+          </v-layout>
+
+          <v-layout row>
+            <v-flex xs4>
+              <v-btn round color="primary" @click.native="ajoutBagage('soute')" dark>
+                <v-icon left>add</v-icon>
+                {{$t('bagage_soute')}}
+              </v-btn>
+            </v-flex>
+
+            <v-flex xs2 offset-xs4>
+              <!-- BULLE D INFO POUR LES BAGAGES  -->
+              <v-menu right offset-y max-width="150">
+                <v-btn icon slot="activator">
+                  <v-icon x-large color="grey">help</v-icon>
+                </v-btn>
+                <v-card raised>
+                  <v-flex pa-2 class="primary--text text-xs-center">{{$t('helper_soute_titre')}}</v-flex>
+                  <v-flex pa-1 class="grey--text text-xs-center">{{$t('helper_soute_content')}}</v-flex>
+                </v-card>
+              </v-menu>
+            </v-flex>
+          </v-layout>
+          <v-layout row v-for="bag in bagagesSoute" :key="bag.id">
+            <v-flex xs2>
+              <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesSoute, bag)">
+                <v-icon>clear</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex xs5>
+              <v-text-field v-bind:label="$t('bagage_nom')" v-model="bag.name"></v-text-field>
+            </v-flex>
+            <v-divider vertical></v-divider>
+            <v-flex xs5>
+              <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+            </v-flex>
+          </v-layout>
+
+          <v-layout row>
+            <v-flex xs4>
+              <v-btn round color="primary" @click.native="ajoutBagage('autre')" dark>
+                <v-icon left>add</v-icon>
+                {{$t('bagage_autre')}}
+              </v-btn>
+            </v-flex>
+            <v-flex xs2 offset-xs4>
+              <!-- BULLE D INFO POUR LES BAGAGES  -->
+              <v-menu right offset-y max-width="150">
+                <v-btn icon slot="activator">
+                  <v-icon x-large color="grey">help</v-icon>
+                </v-btn>
+                <v-card raised>
+                  <v-flex pa-2 class="primary--text text-xs-center">{{$t('helper_autre_titre')}}</v-flex>
+                  <v-flex pa-1 class="grey--text text-xs-center">{{$t('helper_autre_content')}}</v-flex>
+                </v-card>
+              </v-menu>
+            </v-flex>
+          </v-layout>
+          <v-layout row v-for="bag in bagagesAutre" :key="bag.id">
+            <v-flex xs2>
+              <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
+                <v-icon>clear</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex xs5>
+              <v-text-field
+                required
+                v-bind:label="$t('bagage_nom')"
+                v-model="bag.name"
+                :rules="[() => bag.name.length > 0 || $t('bagage_required')]"
+              ></v-text-field>
+            </v-flex>
+            <v-divider vertical></v-divider>
+            <v-flex xs5>
+              <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+            </v-flex>
+          </v-layout>
+
+          <v-flex xs12>
+            <v-subheader
+              v-if="compteurBagages > 1"
+            >{{$t('total')}} : {{compteurBagages}} {{$t('luggages')}}</v-subheader>
+            <v-subheader
+              v-if="compteurBagages == 1"
+            >{{$t('total')}} : {{compteurBagages}} {{$t('luggage')}}</v-subheader>
+            <v-subheader v-if="compteurBagages ==0">{{$t('bagages_empty')}}</v-subheader>
           </v-flex>
-        </v-card>
-      </v-menu>
-    </v-flex>
-  </v-layout>
-  <v-layout row v-for="bag in bagagesAutre" :key="bag.id">
-    <v-flex xs2>
-      <v-btn icon flat color="red darken-4" @click.native="supprBagage(bagagesAutre, bag)">
-        <v-icon>clear</v-icon>
-      </v-btn>
-    </v-flex>
-    <v-flex xs5>
-      <v-text-field  required v-bind:label="$t('bagage_nom')" v-model="bag.name" :rules="[() => bag.name.length > 0 || $t('bagage_required')]"></v-text-field>
-    </v-flex>
-    <v-divider vertical> </v-divider>
-    <v-flex xs5>
-      <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
-    </v-flex>
-  </v-layout>
+          <v-layout row>
+            <v-flex class="text-xs-left">
+              <v-btn icon large color="orange lighten-1" @click.native="step=1" dark>
+                <v-icon x-large>navigate_before</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex class="text-xs-right">
+              <v-btn
+                icon
+                large
+                :disabled="!verifBagage()"
+                color="primary"
+                @click.native="step=3"
+                dark
+              >
+                <v-icon x-large>navigate_next</v-icon>
+              </v-btn>
+            </v-flex>
+          </v-layout>
+        </v-stepper-content>
 
+        <v-stepper-content step="3">
+          <!-- Récapitulatif -->
+          <v-flex
+            mb-3
+            class="text-xs-center font-weight-medium primary--text subheading"
+          >{{$t('subt_3')}}</v-flex>
+          <v-card v-if="reponse != null">
+            <v-flex
+              pt-2
+              pb-2
+              mt-2
+              mb-2
+              class="text-xs-center subheading font-weight-bold green lighten-3"
+            >{{$t('takeover_label')}}</v-flex>
+            <v-flex
+              xs12
+              class="text-xs-center"
+              v-if="type=='address'"
+            >{{reponse.start_position.address}}</v-flex>
+            <v-flex xs12 class="text-xs-center" v-else>{{reponse.start_position.name}}</v-flex>
+            <v-flex
+              pt-1
+              xs12
+              class="text-xs-center"
+            >Le {{moment(reponse.delivery.start_date).format('LL')}} {{$t('at')}} {{moment(reponse.delivery.start_date).format('LT')}}</v-flex>
 
+            <v-flex
+              pt-2
+              pb-2
+              mt-2
+              mb-2
+              class="text-xs-center subheading font-weight-bold green lighten-3"
+            >{{$t('livraison_label')}}</v-flex>
+            <v-flex xs12 class="text-xs-center">{{reponse.end_position.address}}</v-flex>
+            <v-flex
+              pt-1
+              xs12
+              class="text-xs-center"
+              v-if="!reponse.delivery.livraisonDirecte"
+            >Le {{moment(reponse.delivery.end_date).format('LL')}} {{$t('at')}} {{moment(reponse.delivery.end_date).format('LT')}}</v-flex>
+            <v-flex pt-1 xs12 class="text-xs-center" v-else>{{$t('livraison_asap')}}</v-flex>
 
+            <v-flex
+              pt-2
+              pb-2
+              mt-2
+              mb-2
+              class="text-xs-center subheading font-weight-bold green lighten-3"
+            >{{$t('bagages')}}</v-flex>
 
-  <v-flex xs12>
-    <v-subheader v-if="compteurBagages > 1"> {{$t('total')}} : {{compteurBagages}} {{$t('luggages')}} </v-subheader>
-    <v-subheader v-if="compteurBagages == 1"> {{$t('total')}} : {{compteurBagages}} {{$t('luggage')}} </v-subheader>
-    <v-subheader v-if="compteurBagages ==0"> {{$t('bagages_empty')}} </v-subheader>
+            <v-flex
+              xs12
+              class="text-xs-center"
+              v-if="compteurBagagesCabine>0 && compteurBagagesCabine<=1"
+            >{{compteurBagagesCabine}} {{$t('bagage_cabine')}}</v-flex>
+            <v-flex
+              xs12
+              class="text-xs-center"
+              v-if="compteurBagagesCabine>1"
+            >{{compteurBagagesCabine}} {{$t('bagages_cabine')}}</v-flex>
 
-  </v-flex>
-  <v-layout row>
-    <v-flex class="text-xs-left">
-      <v-btn icon large color="orange lighten-1" @click.native="step=1" dark >
-        <v-icon x-large>navigate_before</v-icon>
-      </v-btn>
-    </v-flex>
-    <v-flex class="text-xs-right">
-      <v-btn icon large :disabled="!verifBagage()" color="primary" @click.native="step=3" dark >
-        <v-icon x-large>navigate_next</v-icon>
-      </v-btn>
-    </v-flex>
-  </v-layout>
+            <v-flex
+              xs12
+              class="text-xs-center"
+              v-if="compteurBagagesSoute>0 && compteurBagagesSoute<=1"
+            >{{compteurBagagesSoute}} {{$t('bagage_soute')}}</v-flex>
+            <v-flex
+              xs12
+              class="text-xs-center"
+              v-if="compteurBagagesSoute>1"
+            >{{compteurBagagesSoute}} {{$t('bagages_soute')}}</v-flex>
 
-</v-stepper-content>
+            <v-flex
+              xs12
+              class="text-xs-center"
+              v-if="compteurBagagesAutre>0 && compteurBagagesAutre<=1"
+            >{{compteurBagagesAutre}} {{$t('bagage_autre')}}</v-flex>
+            <v-flex
+              xs12
+              class="text-xs-center"
+              v-if="compteurBagagesAutre>1"
+            >{{compteurBagagesAutre}} {{$t('bagages_autre')}}</v-flex>
+          </v-card>
 
-<v-stepper-content step="3">
+          <v-btn icon large color="orange lighten-1" @click.native="step=2" dark>
+            <v-icon x-large>navigate_before</v-icon>
+          </v-btn>
+          <v-btn color="primary" @click.native="createDelivery()" dark>{{$t('payer')}}</v-btn>
+        </v-stepper-content>
+      </v-stepper-items>
+    </v-stepper>
 
-  <!-- Récapitulatif -->
-  <v-flex mb-3 class="text-xs-center font-weight-medium primary--text subheading"> {{$t('subt_3')}}</v-flex>
-  <v-card v-if="reponse != null">
-
-    <v-flex pt-2 pb-2 mt-2 mb-2 class="text-xs-center subheading font-weight-bold green lighten-3" > {{$t('takeover_label')}}</v-flex>
-    <v-flex xs12 class="text-xs-center" v-if="type=='address'">
-      {{reponse.start_position.address}}
-    </v-flex>
-    <v-flex xs12 class="text-xs-center" v-else>
-      {{reponse.start_position.name}}
-    </v-flex>
-    <v-flex pt-1 xs12 class="text-xs-center">
-      Le {{moment(reponse.delivery.start_date).format('LL')}} {{$t('at')}} {{moment(reponse.delivery.start_date).format('LT')}}
-    </v-flex>
-
-    <v-flex pt-2 pb-2 mt-2 mb-2 class="text-xs-center subheading font-weight-bold green lighten-3"> {{$t('livraison_label')}}</v-flex>
-    <v-flex xs12 class="text-xs-center">
-      {{reponse.end_position.address}}
-    </v-flex>
-    <v-flex pt-1 xs12 class="text-xs-center" v-if="!reponse.delivery.livraisonDirecte">
-      Le {{moment(reponse.delivery.end_date).format('LL')}} {{$t('at')}} {{moment(reponse.delivery.end_date).format('LT')}}
-    </v-flex>
-    <v-flex pt-1 xs12 class="text-xs-center" v-else>
-      {{$t('livraison_asap')}}
-    </v-flex>
-
-    <v-flex pt-2 pb-2 mt-2 mb-2 class="text-xs-center subheading font-weight-bold green lighten-3"> {{$t('bagages')}}</v-flex>
-
-    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesCabine>0 && compteurBagagesCabine<=1" >
-      {{compteurBagagesCabine}} {{$t('bagage_cabine')}}
-    </v-flex>
-    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesCabine>1" >
-      {{compteurBagagesCabine}} {{$t('bagages_cabine')}}
-    </v-flex>
-
-    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesSoute>0 && compteurBagagesSoute<=1" >
-      {{compteurBagagesSoute}} {{$t('bagage_soute')}}
-    </v-flex>
-    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesSoute>1" >
-      {{compteurBagagesSoute}} {{$t('bagages_soute')}}
-    </v-flex>
-
-    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesAutre>0 && compteurBagagesAutre<=1" >
-      {{compteurBagagesAutre}} {{$t('bagage_autre')}}
-    </v-flex>
-    <v-flex xs12 class="text-xs-center" v-if="compteurBagagesAutre>1" >
-      {{compteurBagagesAutre}} {{$t('bagages_autre')}}
-    </v-flex>
-
-  </v-card>
-
-  <v-btn icon large color="orange lighten-1" @click.native="step=2" dark >
-    <v-icon x-large>navigate_before</v-icon>
-  </v-btn>
-  <v-btn color="primary" @click.native="createDelivery()" dark >{{$t('payer')}} </v-btn>
-</v-stepper-content>
-</v-stepper-items>
-
-</v-stepper>
-
-<v-dialog v-model="hasError">
+    <v-dialog v-model="hasError">
       <v-card>
         <v-card-title class="headline">Erreur</v-card-title>
 
-        <v-card-text>
-          {{error}}
-        </v-card-text>
+        <v-card-text>{{error}}</v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="red darken-1" flat="flat" @click="hasError = false">
-            Fermer
-          </v-btn>
+          <v-btn color="red darken-1" flat="flat" @click="hasError = false">Fermer</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-<db-menu></db-menu>
-
-</div>
-
-
+    <db-menu></db-menu>
+  </div>
 </template>
 
 <script>
 import BackHeader from "../BackHeader.vue";
-import Menu from "./Menu.vue"
+import Menu from "./Menu.vue";
+import axios from "axios";
 
 export default {
   components: {
@@ -433,8 +547,13 @@ export default {
       hasError: false,
 
       // Message d'erreur
-      error: '',
-      errors: [],
+      error: "",
+      status: {
+        startPlaceOk: false,
+        endPlaceOK: false,
+        startDateOk: true,
+        endDateOk: true
+      },
 
       // définit l'étape actuelle du formulaire
       step: 0,
@@ -471,11 +590,11 @@ export default {
 
       // lieu de prise en charge (Objet / string)
       startPlace: null,
-      startPlaceTextfield: '',
+      startPlaceTextfield: "",
 
       // lieu de livraison (Objet / string)
       endPlace: null,
-      endPlaceTextfield: '',
+      endPlaceTextfield: "",
 
       // les départements authorisés qui seront pris en compte
       authorized: [],
@@ -730,8 +849,7 @@ export default {
             "1": this.bagagesCabine,
             "2": this.bagagesSoute,
             "3": this.bagagesAutre
-          },
-          mobile_token: localStorage.getItem("deviceId")
+          }
         };
       }
       //this.createDelivery();
@@ -740,36 +858,44 @@ export default {
   },
 
   methods: {
+
     // Méthode qui permet de récupérer les départements authorisés par l'application
     getDepartments() {
       let self = this;
-      $.ajax({
-        url:
-          "https://dev-deliverbag.supconception.fr/" + "departments/authorized",
-        dataType: "jsonp",
-        success: function(json) {
-          for (let i = 0; i < JSON.parse(json).length; i++) {
-            self.authorized.push(JSON.parse(json)[i].number.toString());
-            self.authorized.push(JSON.parse(json)[i].name);
+      let jwt = window.localStorage.getItem("jwt");
+      axios
+        .get("https://dev-deliverbag.supconception.fr/departments/authorized", {
+          headers: {
+            Authorization: "Bearer " + jwt
           }
-        },
-        error: function(error) {
+        })
+        .then(response => {
+          let json = JSON.parse(response.data);
+          for (let i = 0; i < json.length; i++) {
+            self.authorized.push(json[i].number.toString());
+            self.authorized.push(json[i].name);
+          }
+        })
+        .catch(error => {
+          console.log("An error occured in getDepartments");
           console.log(error);
-        }
-      });
+        });
     },
 
     // Méthode qui permet de récupérer les bagages du client
     getBagages() {
       let self = this;
-      $.ajax({
-        type: "GET",
-        url: "http://dev-deliverbag.supconception.fr/mobile/bags/users",
-        datatype: "jsonp",
-        beforeSend: function(request) {
-          request.setRequestHeader("Authorization", 'Bearer ' + window.localStorage.getItem('jwt'));
-        },
-        success: function(data) {
+      let jwt = window.localStorage.getItem("jwt");
+
+      axios
+        .get("https://dev-deliverbag.supconception.fr/mobile/bags/users", {
+          headers: {
+            Authorization: "Bearer " + jwt
+          }
+        })
+        .then(response => {
+          let data = response.data;
+
           self.bagagesCabine = [];
           self.bagagesSoute = [];
           self.bagagesAutre = [];
@@ -788,13 +914,11 @@ export default {
               }
             }
           }
-        },
-        error: function(e) {
-          self.error = self.$i18n.t("unable_to_retrieve_data_from_server")
-          self.hasError = true
-          console.log(e)
-        }
-      });
+        })
+        .catch(error => {
+          self.error = self.$i18n.t("unable_to_retrieve_data_from_server");
+          self.hasError = true;
+        });
     },
 
     // C'est la méthode qui est appelé lors de la saisie du numéro de train
@@ -892,7 +1016,7 @@ export default {
               "Gare de " + self.selectedGare.stop_point.name;
             // Si le géocodage se passe correctement, on vérifie alors que le lieu souhaité est inclus dans les départements authorisés
             // le second paramètre sert pour différencier les erreurs
-            self.verifyDepartment(self.startPlace, "gare");
+            self.status.startPlaceOk = self.verifyDepartment(self.startPlace, "gare");
           }
         }
       );
@@ -901,6 +1025,7 @@ export default {
     // Méthode qui permet de vérifier le département d'un objet PLACE
     // Le second paramètre LIEU permet de connaître l'origine de la demande (adresse, gare ou aéroport)
     verifyDepartment(place, lieu) {
+      console.log('------ Verify department ------')
       console.log(place);
       console.log(lieu);
       let types = place.types;
@@ -930,10 +1055,9 @@ export default {
       // si le lieu est dans la région couverte par Deliverbag,
       // on vérifie ensuite la précision du lieu indiqué
       if (isInrange) {
-        this.errors[lieu] = "";
-        this.verifyPrecision(place, lieu);
+        return this.verifyPrecision(place, lieu);
       } else {
-        // on met une alerte pour lui dire que le lieu n'est pas encore desservi
+        // On averti l'utilisateur : le lieu n'est pas encore desservi
         let text = this.$i18n.t("error_start_place");
         if (lieu == "end") {
           text = this.$i18n.t("error_end_place");
@@ -944,7 +1068,9 @@ export default {
         if (lieu == "airport") {
           text = this.$i18n.t("this_airport");
         }
-        this.errors[lieu] = text + this.$i18n.t("error_place");
+        this.error = text + this.$i18n.t("error_place");;
+        this.hasError = true;
+        return false;
       }
     },
 
@@ -964,9 +1090,10 @@ export default {
       // si le client rentre  9 rue xxxx alors il n'y aura pas le type "route"
       // actuellement c'est uniquement une vérification pour empêcher la saisie d'une adresse sans numéro
       if (types.includes("route")) {
-        this.errors[lieu] = text + this.$i18n.t("error_precision");
+        this.error = text + this.$i18n.t("error_precision");
+        this.hasError = true;
       } else {
-        this.errors[lieu] = "";
+        return true;
       }
     },
 
@@ -981,18 +1108,7 @@ export default {
 
     // On vérifie que les données saisies par le client sont correctes
     isFormOk() {
-      return this.startPlace != "" && this.endPlace != "" && this.date != ''
-    },
-
-    // On vérifie qu'il n y a plus d'erreurs : localisation non desservie, heure incorrecte...
-    checkErrors() {
-      let ok = true;
-      for (let error in this.errors) {
-        if (this.errors[error] != "") {
-          ok = false;
-        }
-      }
-      return ok;
+      return this.status.startPlaceOk && this.status.endPlaceOK && this.date != "";
     },
 
     // Méthode pour ajouter un bagage en fonction du type
@@ -1054,19 +1170,30 @@ export default {
 
     createDelivery() {
       let self = this;
+      let jwt = window.localStorage.getItem("jwt");
 
-      $.ajax({
-        url: "http://dev-deliverbag.supconception.fr/create/delivery",
-        type: "POST",
-        data: self.reponse,
-        success: function(data) {
+      console.log("Creating delivery");
+      console.log(self.reponse);
+      console.log(JSON.stringify(self.reponse));
+
+      axios
+        .post(
+          "https://dev-deliverbag.supconception.fr/create/delivery",
+          self.reponse,
+          {
+            headers: {
+              Authorization: "Bearer " + jwt
+            }
+          }
+        )
+        .then(response => {
           self.activeDeliveryId = data.id;
           self.payer();
-        },
-        error: function(e) {
-          console.log(e);
-        }
-      });
+        })
+        .catch(error => {
+          console.log("An error occured in createDelivery");
+          console.log(error);
+        });
     },
 
     payer() {
@@ -1149,7 +1276,7 @@ export default {
                       if (status == google.maps.GeocoderStatus.OK) {
                         self.startPlace = results[1];
                         self.startPlace.name = self.$i18n.t("airport") + city;
-                        self.verifyDepartment(self.startPlace, "airport");
+                        self.status.startPlaceOk = self.verifyDepartment(self.startPlace, "airport");
                       }
                     }
                   );
@@ -1197,8 +1324,8 @@ export default {
     let endPlace = new google.maps.places.Autocomplete(addressEnd, options);
     endPlace.addListener("place_changed", function() {
       self.endPlace = this.getPlace();
-      self.endPlaceTextfield = this.getPlace()['formatted_address']
-      self.verifyDepartment(self.endPlace, "end");
+      self.endPlaceTextfield = this.getPlace()["formatted_address"];
+      self.status.endPlaceOK = self.verifyDepartment(self.endPlace, "end");
     });
 
     if (this.type == "address") {
@@ -1211,8 +1338,8 @@ export default {
       );
       startPlace.addListener("place_changed", function() {
         self.startPlace = this.getPlace();
-        self.startPlaceTextfield = this.getPlace()['formatted_address']
-        self.verifyDepartment(self.startPlace, "start");
+        self.startPlaceTextfield = this.getPlace()["formatted_address"];
+        self.status.startPlaceOk = self.verifyDepartment(self.startPlace, "start");
       });
     }
   }
