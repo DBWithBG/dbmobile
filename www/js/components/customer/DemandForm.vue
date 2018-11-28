@@ -858,7 +858,6 @@ export default {
   },
 
   methods: {
-
     // Méthode qui permet de récupérer les départements authorisés par l'application
     getDepartments() {
       let self = this;
@@ -1016,7 +1015,10 @@ export default {
               "Gare de " + self.selectedGare.stop_point.name;
             // Si le géocodage se passe correctement, on vérifie alors que le lieu souhaité est inclus dans les départements authorisés
             // le second paramètre sert pour différencier les erreurs
-            self.status.startPlaceOk = self.verifyDepartment(self.startPlace, "gare");
+            self.status.startPlaceOk = self.verifyDepartment(
+              self.startPlace,
+              "gare"
+            );
           }
         }
       );
@@ -1025,7 +1027,7 @@ export default {
     // Méthode qui permet de vérifier le département d'un objet PLACE
     // Le second paramètre LIEU permet de connaître l'origine de la demande (adresse, gare ou aéroport)
     verifyDepartment(place, lieu) {
-      console.log('------ Verify department ------')
+      console.log("------ Verify department ------");
       console.log(place);
       console.log(lieu);
       let types = place.types;
@@ -1068,7 +1070,7 @@ export default {
         if (lieu == "airport") {
           text = this.$i18n.t("this_airport");
         }
-        this.error = text + this.$i18n.t("error_place");;
+        this.error = text + this.$i18n.t("error_place");
         this.hasError = true;
         return false;
       }
@@ -1108,7 +1110,9 @@ export default {
 
     // On vérifie que les données saisies par le client sont correctes
     isFormOk() {
-      return this.status.startPlaceOk && this.status.endPlaceOK && this.date != "";
+      return (
+        this.status.startPlaceOk && this.status.endPlaceOK && this.date != ""
+      );
     },
 
     // Méthode pour ajouter un bagage en fonction du type
@@ -1178,7 +1182,7 @@ export default {
 
       axios
         .post(
-          "https://dev-deliverbag.supconception.fr/create/delivery",
+          "https://dev-deliverbag.supconception.fr/mobile/deliveries",
           self.reponse,
           {
             headers: {
@@ -1187,7 +1191,7 @@ export default {
           }
         )
         .then(response => {
-          self.activeDeliveryId = data.id;
+          self.activeDeliveryId = response.data.id;
           self.payer();
         })
         .catch(error => {
@@ -1198,19 +1202,23 @@ export default {
 
     payer() {
       let self = this;
-      $.ajax({
-        url: "http://dev-deliverbag.supconception.fr/mobile/deliveries/payment",
-        type: "POST",
-        data: {
-          delivery_id: self.activeDeliveryId,
-          mobile_token: localStorage.getItem("deviceId")
-        },
-        success: function(data) {
-          console.log(data);
-        },
-        error: function(e) {
-          console.log(e);
+      let jwt = window.localStorage.getItem('jwt');
+
+      axios.post(
+        "https://dev-deliverbag.supconception.fr/mobile/deliveries/payment", {
+            delivery_id: self.activeDeliveryId
+        }, {
+          headers: {
+            'Authorization': 'Bearer ' + jwt
+          }
         }
+      ).then(response => {
+          let data = response.data;
+          console.log(data);
+          self.$router.push('/my-courses');
+      }).catch(error => {
+          console.log("An error occured in payer()");
+          console.log(error);
       });
     },
 
@@ -1276,7 +1284,10 @@ export default {
                       if (status == google.maps.GeocoderStatus.OK) {
                         self.startPlace = results[1];
                         self.startPlace.name = self.$i18n.t("airport") + city;
-                        self.status.startPlaceOk = self.verifyDepartment(self.startPlace, "airport");
+                        self.status.startPlaceOk = self.verifyDepartment(
+                          self.startPlace,
+                          "airport"
+                        );
                       }
                     }
                   );
@@ -1339,7 +1350,10 @@ export default {
       startPlace.addListener("place_changed", function() {
         self.startPlace = this.getPlace();
         self.startPlaceTextfield = this.getPlace()["formatted_address"];
-        self.status.startPlaceOk = self.verifyDepartment(self.startPlace, "start");
+        self.status.startPlaceOk = self.verifyDepartment(
+          self.startPlace,
+          "start"
+        );
       });
     }
   }

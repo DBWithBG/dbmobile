@@ -114,9 +114,9 @@
 
 
     <v-flex row xs12>
-      <v-btn flat color='primary' @click.native="detailsCourse(props.item.id)">
+      <!--<v-btn flat color='primary' @click.native="detailsCourse(props.item.id)">
         <span> {{$t("suivi_course")}}</span>
-      </v-btn>
+      </v-btn>-->
     </v-flex>
     <v-flex row xs12 v-if="props.item.status === 1">
       <v-btn flat color='error' @click.native.stop="active=props.item,dialogDel = true">
@@ -254,6 +254,7 @@ Dialog popup concernant la déclaration d'un litige d'une course
 
 <script>
 import Menu from "./Menu.vue";
+import axios from "axios";
 
 export default {
   components: {
@@ -322,12 +323,13 @@ export default {
       this.demandes = [[], [], []];
       $.ajax({
         type: "GET",
-        url: "http://dev-deliverbag.supconception.fr/mobile/deliveries/customers",
+        url: "https://dev-deliverbag.supconception.fr/mobile/deliveries/customers",
         datatype: "jsonp",
         beforeSend: function(request) {
           request.setRequestHeader("Authorization", 'Bearer ' + window.localStorage.getItem('jwt'));
         },
         success: function(data) {
+          console.log(data)
 
           // Les demandes à l'index 0 correspondent à celles en cours :
           // Dans la base, ce sont les indexs 2,3 et 4 qui correspondent respectivement à
@@ -360,23 +362,21 @@ export default {
     // params : id de la delivery + mobile token pour vérifier que c'est un client
     cancelDelivery(id) {
       let self = this;
-      $.ajax({
-        url: "http://dev-deliverbag.supconception.fr/mobile/customers/deliveries/cancelDelivery",
-        type: "POST",
-        data: {
-          delivery_id: id,
-          mobile_token: localStorage.getItem("deviceId")
-        },
-        //localStorage.getItem('deviceId') pour avoir le vrai token de l'appareil
-        success: function(data) {
-          // on reset les demandes et on recharge la page
-          self.demandes = [[], [], []];
-          self.getDeliveries();
-          console.log(data);
-        },
-        error: function(e) {
-          console.log(e);
+      let jwt = window.localStorage.getItem("jwt");
+
+      axios.post("https://dev-deliverbag.supconception.fr/mobile/customers/deliveries/cancelDelivery", {
+        delivery_id: id
+      }, {
+        headers: {
+          Authorization: 'Bearer ' + jwt
         }
+      }).then(response => {
+        let data = response.data;
+        self.demandes = [[], [], []];
+        self.getDeliveries();
+        console.log(data);
+      }).catch(error => {
+        console.log(error);
       });
     },
 
