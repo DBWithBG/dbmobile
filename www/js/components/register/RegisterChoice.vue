@@ -13,9 +13,9 @@
             <v-card-title primary-title>
               <div>
                 <h3 class="headline">
-                  {{$t('customer')}}
+                  <v-icon class="icon" left>perm_identity</v-icon>{{$t('customer')}}
                 </h3>
-                <div>{{$t('customer_register_choice')}}</div>
+                <div class="card-text">{{$t('customer_register_choice')}}</div>
               </div>
             </v-card-title>
           </v-card>
@@ -50,5 +50,12 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+.card-text {
+  padding-top: 0.8em;
+}
+
+.icon {
+  margin-right: 0.3em;
+}
 </style>
