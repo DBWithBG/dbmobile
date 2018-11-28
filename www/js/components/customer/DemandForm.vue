@@ -310,7 +310,7 @@ Désactivé si le form n'est pas valide
             </v-flex>
             <v-divider vertical></v-divider>
             <v-flex xs5>
-              <v-text-field v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
+              <v-text-field class="bagage-descr" v-bind:label="$t('bagage_descr')" v-model="bag.details"></v-text-field>
             </v-flex>
           </v-layout>
 
@@ -987,9 +987,11 @@ export default {
 
       // Si l'heure d'arrivée en gare est antérieure à l'heure actuelle, alors on déclenche une erreur
       if (this.time < this.moment().format("LT")) {
-        this.errors["error_date"] = this.$i18n.t("error_heure");
+        this.status.startPlaceOk = false;
+        this.error = this.$i18n.t("error_heure");
+        this.hasError = true;
       } else {
-        this.errors["error_date"] = "";
+        this.status.startPlaceOk = true;
       }
       //  this.time.setMinutes(parseInt(trainTime.substring(2,4)));
 
@@ -1006,7 +1008,9 @@ export default {
         },
         function(results, status) {
           if (status !== google.maps.GeocoderStatus.OK) {
-            alert("Erreur lors de l'appel a geocode");
+            this.status.startPlaceOk = false;
+            this.error = "Erreur lors de l'appel à géocode"
+            this.hasError = true;
             console.log(status);
           }
           if (status == google.maps.GeocoderStatus.OK) {
@@ -1366,5 +1370,9 @@ input {
   height: 40px;
   border-bottom: 2px solid #59a34e;
   box-sizing: border-box;
+}
+
+.bagage-descr {
+  padding-left: 0.2em;
 }
 </style>

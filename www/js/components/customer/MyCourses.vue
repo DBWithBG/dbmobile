@@ -36,7 +36,6 @@
               <!--  Partie CONCERNANT LE HEADER DU PANEL (ce qui est toujours visible)-->
             <div slot="header">
               {{$t("suivi_course")}} {{props.item.id}}
-
             </div>
 
             <!-- Contenu du panel lorsqu'il est étendu -->
@@ -63,12 +62,12 @@
         </div>
 
         <v-layout row xs12>
-          <v-flex class="text-xs-center" xs4>
+          <v-flex class="text-xs-center" xs4 offset-xs1>
             {{ props.item.start_position.address}}
             <v-divider> </v-divider>
             {{moment(props.item.start_date).format('LLL')}}
           </v-flex>
-          <v-flex xs2 offset-xs1>
+          <v-flex xs1 class="arrow-flex">
             <v-icon align-center>arrow_forward</v-icon>
           </v-flex>
           <v-flex class="text-xs-center" xs4>
@@ -456,10 +455,16 @@ export default {
 </script>
 
 <style>
-tbody li {
-  width: 100vw;
+tbody {
+  display: block;
 }
+
+
 .margin {
   margin-bottom: 56px;
+}
+
+.arrow-flex {
+  margin: 1em;
 }
 </style>

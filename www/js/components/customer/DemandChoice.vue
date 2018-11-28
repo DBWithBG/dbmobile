@@ -14,7 +14,7 @@
                   <v-icon left>add_location</v-icon>
                   {{$t("address")}}
                 </h3>
-                <div>{{$t("address_subt")}}</div>
+                <div class="card-text">{{$t("address_subt")}}</div>
               </div>
             </v-card-title>
           </v-card>
@@ -35,7 +35,7 @@
                   <v-icon left>train</v-icon>
                   {{$t("train")}}
                 </h3>
-                <div>{{$t("train_subt")}}</div>
+                <div class="card-text">{{$t("train_subt")}}</div>
               </div>
             </v-card-title>
           </v-card>
@@ -56,7 +56,7 @@
                   <v-icon left>flight</v-icon>
                   {{$t("flight")}}
                 </h3>
-                <div>{{$t("flight_subt")}}</div>
+                <div class="card-text">{{$t("flight_subt")}}</div>
               </div>
             </v-card-title>
           </v-card>
@@ -108,5 +108,9 @@ p {
 
 a {
   text-decoration: none;
+}
+
+.card-text {
+  padding-top: 0.8em;
 }
 </style>
