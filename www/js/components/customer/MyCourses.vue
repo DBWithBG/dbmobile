@@ -402,7 +402,7 @@ export default {
       // si il y'a un commentaire, alors l'utilisateur ne peut pas à nouveau envoyer la notation
 
       $.ajax({
-        url: "http://dev-deliverbag.supconception.fr/mobile/deliveries/ratings",
+        url: "https://dev-deliverbag.supconception.fr/mobile/deliveries/ratings",
         type: "POST",
         data: {
           delivery_id: id,
@@ -430,7 +430,7 @@ export default {
 
       $.ajax({
         url:
-          "http://dev-deliverbag.supconception.fr/mobile/deliveries/disputes",
+          "https://dev-deliverbag.supconception.fr/mobile/deliveries/disputes",
         type: "POST",
         data: {
           delivery_id: id,

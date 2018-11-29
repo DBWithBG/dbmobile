@@ -118,7 +118,7 @@ export default {
 
             if (this.email.length == 0 || this.password.length == 0) return;
             // axios.post('api.blahblah').then()
-            axios.post('http://dev-deliverbag.supconception.fr/mobile/login', 
+            axios.post('https://dev-deliverbag.supconception.fr/mobile/login', 
                 {
                     'email': this.email, 
                     'password': this.password

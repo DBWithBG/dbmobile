@@ -166,7 +166,7 @@ export default {
     // webview du profil détaillé de l'utilisateur
     getProfile() {
       let url =
-        "http://dev-deliverbag.supconception.fr/customers/profile?mobile_token=" +
+        "https://dev-deliverbag.supconception.fr/customers/profile?mobile_token=" +
         localStorage.getItem("deviceId");
       let ref = window.open(url, "_blank", "location=no,zoom=no");
       let tok = localStorage.getItem("deviceId");

@@ -144,7 +144,7 @@ export default {
     register() {
         let self = this
 
-        axios.post('http://dev-deliverbag.supconception.fr/mobile/register',
+        axios.post('https://dev-deliverbag.supconception.fr/mobile/register',
         {
             email: self.email,
             password: self.password,
