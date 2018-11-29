@@ -16,7 +16,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <!--<v-list-tile @click.native="getProfile()" avatar >
+          <v-list-tile avatar @click="alert_dev">
             <v-list-tile-avatar>
               <v-icon color="primary" large>person</v-icon>
             </v-list-tile-avatar>
@@ -24,8 +24,8 @@
               <v-list-tile-title>{{$t("profil")}}</v-list-tile-title>
               <v-list-tile-sub-title >{{$t("profil_sbt")}}</v-list-tile-sub-title>
             </v-list-tile-content>
-          </v-list-tile>-->
-          <!--<v-list-tile avatar>
+          </v-list-tile>
+          <v-list-tile avatar @click="alert_dev">
             <v-list-tile-avatar>
               <v-icon color="primary" large>euro_symbol</v-icon>
             </v-list-tile-avatar>
@@ -33,7 +33,7 @@
               <v-list-tile-title>{{$t("paiement")}}</v-list-tile-title>
               <v-list-tile-sub-title>{{$t("paiement_sbt")}}</v-list-tile-sub-title>
             </v-list-tile-content>
-          </v-list-tile>-->
+          </v-list-tile>
           <v-list-tile @click.native.stop="dialLangue=true" avatar>
             <v-list-tile-avatar>
               <v-icon color="primary" large>language</v-icon>
@@ -145,6 +145,10 @@ export default {
     }
   },
   methods: {
+
+    alert_dev() {
+      alert('En cours de développement ou en attente de précision');
+    },
     // redirection sur l'appli de messagerie selectionnée par le client
     openMail() {
       window.open("mailto:" + this.$i18n.t("db_email"), "_system");
