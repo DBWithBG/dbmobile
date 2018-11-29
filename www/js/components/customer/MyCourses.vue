@@ -25,20 +25,30 @@
     <v-tab v-for="tab in tabs" :key="tab.id" >
       {{ tab }}
     </v-tab>
+    
     <v-tabs-items :v-model="tabs">
+
+      
+      
       <v-tab-item
       v-for="tab in demandes" :key="tab.id" >
+
+      
+      
       <v-data-table :headers="headers" :items="tab" hide-actions class="elevation-1" hide-headers>
+        
         <template slot="items" slot-scope="props">
+          
           <v-expansion-panel>
             <v-expansion-panel-content>
 
               <!--  Partie CONCERNANT LE HEADER DU PANEL (ce qui est toujours visible)-->
             <div slot="header">
-              {{$t("suivi_course")}} {{props.item.id}}
+              {{$t("suivi_course")}} {{moment(props.item.start_date).format('LLL')}} <b>{{props.item.price}}€</b>
             </div>
 
             <!-- Contenu du panel lorsqu'il est étendu -->
+            
 
           <!-- slider de suivi de la course -->
           <div v-if="props.item.status === 2 || props.item.status === 3 || props.item.status === 4">
@@ -61,11 +71,14 @@
           </v-flex>
         </div>
 
+        
+
+
         <v-layout row xs12>
           <v-flex class="text-xs-center" xs4 offset-xs1>
             {{ props.item.start_position.address}}
             <v-divider> </v-divider>
-            {{moment(props.item.start_date).format('LLL')}}
+            <b>{{moment(props.item.start_date).format('LLL')}}</b>
           </v-flex>
           <v-flex xs1 class="arrow-flex">
             <v-icon align-center>arrow_forward</v-icon>
@@ -74,13 +87,15 @@
             {{props.item.end_position.address}}
             <v-divider> </v-divider>
             <div v-if="props.item.time_consigne">
-              {{moment(props.item.end_date).format('LLL')}}
+              <b>{{moment(props.item.end_date).format('LLL')}}</b>
             </div>
             <div v-else>
-              {{$t('livraison_asap')}}
+              <b>{{$t('livraison_asap')}}</b>
             </div>
           </v-flex>
         </v-layout>
+
+        
 
         <br>
         <!--
@@ -112,12 +127,11 @@
   </div>
 
 
-    <v-flex row xs12>
-      <!--<v-btn flat color='primary' @click.native="detailsCourse(props.item.id)">
-        <span> {{$t("suivi_course")}}</span>
-      </v-btn>-->
+
+    <v-flex class="text-xs-center" row xs12 v-if="props.item.status === 1">
+      <b>{{$t('en_attente_explication')}}</b>
     </v-flex>
-    <v-flex row xs12 v-if="props.item.status === 1">
+    <v-flex class="text-xs-center" row xs12 v-if="props.item.status === 1">
       <v-btn flat color='error' @click.native.stop="active=props.item,dialogDel = true">
         <span> {{$t("cancel_course")}}</span>
       </v-btn>
@@ -345,6 +359,7 @@ export default {
           // 'TERMINÉ'
           self.demandes[2].push.apply(self.demandes[2], data[5]);
           self.loading = false;
+          console.log(self.demandes[1])
           self.$forceUpdate();
         },
         error: function(e) {
@@ -441,11 +456,9 @@ export default {
     // webview pour avoir le détail d'une course
     // param : id de la course
     detailsCourse(id) {
+      let jwt = window.localStorage.getItem("jwt");
       let ref = window.open(
-        "http://dev-deliverbag.supconception.fr/mobile/deliveries/" +
-          id +
-          "?mobile_token=" +
-          localStorage.getItem("deviceId"),
+        "https://dev-deliverbag.supconception.fr/mobile/deliveries/" + id + '?token=' + jwt,
         "_blank",
         "location=no,zoom=no"
       );

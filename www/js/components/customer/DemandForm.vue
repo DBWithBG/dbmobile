@@ -44,7 +44,7 @@
                 <v-date-picker
                   v-model="date"
                   :min="minDate"
-                  @change="$refs.menudate.save(date),resetData()"
+                  @change="$refs.menudate.save(date),resetData(),checkStartDate()"
                   color="primary"
                   no-title
                   scrollable
@@ -76,7 +76,7 @@
                   v-model="time"
                   :min="minTime"
                   :format="$t('date_format')"
-                  @change="$refs.menutime.save(time)"
+                  @change="$refs.menutime.save(time),checkStartDate()"
                   color="primary"
                   :locale="this.$root.$i18n.locale"
                 ></v-time-picker>
@@ -93,6 +93,7 @@
                 v-on:click="resetData"
                 pattern="\d*"
                 type="number"
+                minlength="4"
                 :placeholder="$t('train_number')"
               ></v-text-field>
             </v-flex>
@@ -222,7 +223,7 @@
                 <v-date-picker
                   v-model="dateEnd"
                   :min="minDateEnd"
-                  @input="$refs.menudateend.save(dateEnd)"
+                  @input="$refs.menudateend.save(dateEnd),checkEndDate()"
                   color="primary"
                   scrollable
                   no-title
@@ -253,7 +254,7 @@
                 <v-time-picker
                   v-model="timeEnd"
                   :format="$t('date_format')"
-                  @change="$refs.menutimeend.save(timeEnd)"
+                  @change="$refs.menutimeend.save(timeEnd),checkEndDate()"
                   color="primary"
                   :locale="this.$root.$i18n.locale"
                 ></v-time-picker>
@@ -576,7 +577,7 @@ export default {
         .substring(0, 10),
 
       // correspond à l'heure de prise en charge
-      time: this.moment().format("LT"),
+      time: this.moment().add(4, 'hours').format("LT"),
 
       // correspond à la date de livraison
       dateEnd: this.moment()
@@ -585,7 +586,7 @@ export default {
 
       // correspond à l'heure de livraison
       timeEnd: this.moment()
-        .add(2, "hours")
+        .add(6, "hours")
         .format("LT"),
 
       // lieu de prise en charge (Objet / string)
@@ -673,7 +674,7 @@ export default {
       let time;
       // si c'est aujourd'hui alors on modifie l'heure et le minimum
       if (this.moment(this.dateTime).isSame(this.moment(), "day")) {
-        let now = this.moment().format("LT");
+        let now = this.moment().add(4, 'hours').format("LT");
         // si jamais l'heure sélectionnée est antérieure à l'heure actuelle alors on la remet à l'heure courante
         if (this.time < this.moment().format("LT")) {
           this.time = now;
@@ -858,6 +859,41 @@ export default {
   },
 
   methods: {
+
+    // La date de début doit être au moins 4 après après now
+    checkStartDate() {
+      let start = this.moment(this.date + ' ' + this.time)
+      let now = this.moment()
+      
+      let diff_minutes = start.diff(now, 'minutes');
+      if (diff_minutes < 240) {
+        this.status.startDateOk = false;
+        this.error = this.$i18n.t('error_min_4_hour');
+        this.hasError = true;
+      } else {
+        this.status.startDateOk = true;
+      }
+    },
+
+    checkEndDate() {
+      let start = this.moment(this.date + ' ' + this.time);
+      let end = this.moment(this.dateEnd + ' ' + this.timeEnd);
+      
+      let diff_minutes = end.diff(start, 'minutes');
+      console.log(diff_minutes)
+      if (diff_minutes < 0) {
+        this.status.endPlaceOK = false;
+        this.error = this.$i18n.t('error_start_inf_end');
+        this.hasError = true;
+      }  else if (diff_minutes < 120) {
+        this.status.endPlaceOK = false;
+        this.error = this.$i18n.t('error_min_2h_consigne');
+        this.hasError = true;
+      } else {
+        this.status.endDateOk = true;
+      }
+    },
+
     // Méthode qui permet de récupérer les départements authorisés par l'application
     getDepartments() {
       let self = this;
@@ -971,6 +1007,7 @@ export default {
                 self.error = self.$i18n.t("date_voyage_vide");
               }
           }
+          self.hasError = true;
         });
       }
     },
@@ -1115,7 +1152,7 @@ export default {
     // On vérifie que les données saisies par le client sont correctes
     isFormOk() {
       return (
-        this.status.startPlaceOk && this.status.endPlaceOK && this.date != ""
+        this.status.startPlaceOk && this.status.endPlaceOK && this.startDateOk && this.endDateOk
       );
     },
 
@@ -1368,7 +1405,6 @@ export default {
 input {
   width: 100%;
   height: 40px;
-  border-bottom: 2px solid #59a34e;
   box-sizing: border-box;
 }
 
