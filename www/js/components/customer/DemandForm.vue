@@ -455,11 +455,9 @@ Désactivé si le form n'est pas valide
               class="text-xs-center subheading font-weight-bold green lighten-3"
             >{{$t('livraison_label')}}</v-flex>
             <v-flex xs12 class="text-xs-center">{{reponse.end_position.address}}</v-flex>
-            <v-flex
-              pt-1
-              xs12
+            <v-flex pt-1 xs12
               class="text-xs-center"
-              v-if="!reponse.delivery.livraisonDirecte"
+              v-if="reponse.delivery.time_consigne !== null"
             >Le {{moment(reponse.delivery.end_date).format('LL')}} {{$t('at')}} {{moment(reponse.delivery.end_date).format('LT')}}</v-flex>
             <v-flex pt-1 xs12 class="text-xs-center" v-else>{{$t('livraison_asap')}}</v-flex>
 
@@ -843,8 +841,8 @@ export default {
             comment: "Commentaire",
             start_date: this.dateStartToJson,
             end_date: this.dateEndToJson,
-            livraisonDirecte: this.livraisonDirecte,
-            no_train: this.numTrain
+            no_train: this.numTrain,
+            time_consigne: this.computeTimeConsign()
           },
           bagages: {
             "1": this.bagagesCabine,
@@ -882,12 +880,16 @@ export default {
       let diff_minutes = end.diff(start, 'minutes');
       console.log(diff_minutes)
       if (diff_minutes < 0) {
-        this.status.endPlaceOK = false;
+        this.status.endDateOK = false;
         this.error = this.$i18n.t('error_start_inf_end');
         this.hasError = true;
       }  else if (diff_minutes < 120) {
-        this.status.endPlaceOK = false;
+        this.status.endDateOK = false;
         this.error = this.$i18n.t('error_min_2h_consigne');
+        this.hasError = true;
+      } else if (diff_minutes > 1440) {
+        this.status.endDateOK = false;
+        this.error = this.$i18n.t('error_max_24h_consigne');
         this.hasError = true;
       } else {
         this.status.endDateOk = true;
@@ -954,6 +956,15 @@ export default {
           self.error = self.$i18n.t("unable_to_retrieve_data_from_server");
           self.hasError = true;
         });
+    },
+
+    computeTimeConsign() {
+      let start = this.moment(this.date + ' ' + this.time);
+      let end = this.moment(this.dateEnd + ' ' + this.timeEnd);
+      
+      let diff_minutes = end.diff(start, 'minutes');
+      if (this.livraisonDirecte) return null;
+      return diff_minutes;
     },
 
     // C'est la méthode qui est appelé lors de la saisie du numéro de train
@@ -1152,7 +1163,7 @@ export default {
     // On vérifie que les données saisies par le client sont correctes
     isFormOk() {
       return (
-        this.status.startPlaceOk && this.status.endPlaceOK && this.startDateOk && this.endDateOk
+        this.status.startPlaceOk && this.status.endPlaceOK && this.status.startDateOk && this.status.endDateOk
       );
     },
 

@@ -25,6 +25,7 @@ export default {
     "error_min_4_hour": "Pour toute demande inférieure à 4h, merci de prendre contact avec le service Deliverbag",
     "error_start_inf_end": "La date de récupération de vos bagages doit être postérieure à la date de prise en charge",
     "error_min_2h_consigne": "La consignation de vos bagages doit être au moins de deux heures. Vous pouvez demander une livraison immédiate en cochant la case correspondante",
+    "error_max_24h_consigne": "La consignation de vos bagages ne doit pas dépasser 24 heures. Pour une consignation plus importante, veuillez contacter Deliverbag",
 
     "address": "J'indique une adresse",
     "address_subt": "Définissez un lieu et une heure de prise en charge pour vos bagages",
