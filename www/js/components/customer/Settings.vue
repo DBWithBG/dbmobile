@@ -8,7 +8,7 @@
         <v-list class="margin" three-line>
           
 
-          <!--<v-list-tile to="/my-bags" avatar>
+          <v-list-tile to="/my-bags" avatar>
             <v-list-tile-avatar>
               <v-icon color="primary" large>work</v-icon>
             </v-list-tile-avatar>
@@ -17,7 +17,7 @@
 
               <v-list-tile-sub-title>{{$t("bagages_subt")}} </v-list-tile-sub-title>
             </v-list-tile-content>
-          </v-list-tile>-->
+          </v-list-tile>
 
           <!--<v-list-tile @click.native="getProfile()" avatar >
             <v-list-tile-avatar>

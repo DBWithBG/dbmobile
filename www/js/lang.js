@@ -19,6 +19,8 @@ export default {
     "min_phone_length": "Minimum 10 chiffres",
     "email_already_been_taken": "Cette adresse email est déjà utilisée",
     "error_while_registering": "Un problème a eu lieu pendant l'inscription, veuillez vérifier vos informations et réessayer",
+    "success": "Succès",
+    "bagages_updated": "La liste de vos bagages a été mise à jour !",
 
     "address": "J'indique une adresse",
     "address_subt": "Définissez un lieu et une heure de prise en charge pour vos bagages",
