@@ -123,7 +123,8 @@ export default {
                     'email': this.email, 
                     'password': this.password
                 }
-            ).then((response) => {
+            ).then(response => {
+                console.log(response)
                 let type = response.data.type
                 let jwt = response.data.token
 
@@ -140,7 +141,7 @@ export default {
                 }
             }).catch((error) => {
                 console.log(error)
-                self.error = self.$i18n.t("unable_to_retrieve_data_from_server");
+                self.error = self.$i18n.t("invalid_credentials");
                 self.hasError = true
             })
             
