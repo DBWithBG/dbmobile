@@ -137,7 +137,8 @@ export default {
                 else {
                     window.localStorage.setItem("jwt", jwt)
                     window.localStorage.setItem("type", type)
-                    this.$router.push({path: '/demand-choice'})
+                    if (type == 'customer') this.$router.push({path: '/demand-choice'})
+                    else if (type == 'driver') this.$router.push({path: '/demands-driver'})
                 }
             }).catch((error) => {
                 console.log(error)

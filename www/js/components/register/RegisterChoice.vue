@@ -21,16 +21,18 @@
           </v-card>
         </v-flex>
 
-        <!--<v-flex md12>
+        <v-flex md12>
           <v-card to="/register-driver" color="cyan darken-2" class="white--text">
             <v-card-title primary-title>
               <div>
-                <h3 class="headline mb-0">Chauffeur</h3>
-                <div>Vous voulez devenir chauffeur et transporter les bagages de nos clients</div>
+                <h3 class="headline mb-0">
+                  <v-icon class="icon" left>drive_eta</v-icon>{{$t('driver')}}
+                </h3>
+                <div>{{$t('driver_register_choice')}}</div>
               </div>
             </v-card-title>
           </v-card>
-        </v-flex>-->
+        </v-flex>
       </v-layout>
     </v-container>
   </div>

@@ -11,6 +11,7 @@ export default {
     "phone_number": "Numéro de téléphone",
     "customer": "Client",
     "customer_register_choice": "Vous êtes client et vous voulez que vos bagages soient pris en charge",
+    "driver_register_choice": "Vous voulez devenir chauffeur Deliverbag",
     "driver": "Chauffeur",
     "unable_to_retrieve_data_from_server": "Une erreur s'est produite lors de la communication avec le serveur. Veuillez réessayer plus tard. ",
     "invalid_credentials": "Les identifiants de connexion ne sont pas valides",
