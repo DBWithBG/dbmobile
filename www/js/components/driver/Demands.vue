@@ -298,7 +298,13 @@ export default {
               this.clearMarkers();
             }
 
-            axios.get("https://dev-deliverbag.supconception.fr/deliveries?status=1").then(response => {
+            let jwt = window.localStorage.getItem("jwt");
+
+            axios.get("https://dev-deliverbag.supconception.fr/deliveries?status=1", {
+              headers: {
+                Authorization: 'Bearer ' + jwt
+              }
+            }).then(response => {
               // On a récupéré les données, on effectue le traitement ici
                 var data = response.data;
                 self.deliveries = data;
