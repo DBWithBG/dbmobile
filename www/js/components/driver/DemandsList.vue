@@ -308,7 +308,7 @@ export default {
           self.getDistanceFromDriver();
         })
         .catch(error => {
-          console.log(error);
+          console.log(JSON.stringify(error));
           self.loading = false;
         });
     },
@@ -336,7 +336,7 @@ export default {
           self.$router.replace({ path: "/my-deliveries-driver" });
         })
         .catch(error => {
-          console.log(error);
+          console.log(JSON.stringify(error));
         });
     },
 
@@ -389,7 +389,13 @@ export default {
           //self.user_marker.setMap(self.map);
         },
         function(error) {
-          console.log(error);
+          self.$swal({
+            type: 'error',
+            title: 'Oups...',
+            text: 'Error in getUserPos'
+          });
+          console.log(JSON.stringify(error));
+          self.loading = false;
           //self.requestGps();
         }
       );
@@ -411,6 +417,7 @@ export default {
   },
 
   mounted() {
+    
     //console.log(self);
     /*
             cordova.plugins.locationAccuracy.request(function(){

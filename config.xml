@@ -90,6 +90,7 @@
     <plugin name="cordova-android-play-services-gradle-release" spec="^2.0.0">
         <variable name="PLAY_SERVICES_VERSION" value="15.+" />
     </plugin>
+    <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
     <engine name="browser" spec="^5.0.4" />
     <engine name="android" spec="^7.1.2" />
     <engine name="ios" spec="^4.5.5" />
