@@ -1267,7 +1267,7 @@ export default {
       ).then(response => {
           let data = response.data;
           console.log(data);
-          self.$router.push('/my-courses');
+          self.$router.push('/my-deliveries');
       }).catch(error => {
           console.log("An error occured in payer()");
           console.log(error);

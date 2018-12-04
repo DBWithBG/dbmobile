@@ -1,7 +1,7 @@
 <template>
 
   <v-bottom-nav class="test" color="primary" :value="true" :active.sync="element" app  >
-      <v-btn dark flat value="left" to="/my-courses">
+      <v-btn dark flat value="left" to="/my-deliveries">
         <span>{{$t("courses")}}</span>
         <v-icon>history</v-icon>
       </v-btn>

@@ -303,7 +303,7 @@ export default {
           }
         })
         .then(response => {
-          let data = response.data;
+          let data = JSON.parse(response.data);
           self.deliveries_list = data;
           self.getDistanceFromDriver();
         })

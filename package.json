@@ -11,6 +11,7 @@
   "author": "The Dev team",
   "license": "Apache-2.0",
   "dependencies": {
+    "@google/markerclusterer": "^1.0.3",
     "aliasify": "^2.1.0",
     "android-versions": "^1.4.0",
     "axios": "^0.18.0",

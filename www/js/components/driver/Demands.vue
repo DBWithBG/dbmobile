@@ -111,6 +111,7 @@
 import mapStyle from './mapStyle.js'
 import Menu from './Menu.vue'
 import axios from 'axios'
+import MarkerClusterer from '@google/markerclusterer'
 
 export default {
   components: {
@@ -306,7 +307,7 @@ export default {
               }
             }).then(response => {
               // On a récupéré les données, on effectue le traitement ici
-                var data = response.data;
+                var data = JSON.parse(response.data);
                 self.deliveries = data;
                 // on itère sur les donnée qu'on récupère
                 for (var i=0; i<data.length; i++){
