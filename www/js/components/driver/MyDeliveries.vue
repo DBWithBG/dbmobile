@@ -13,7 +13,7 @@
       left:swipeLeft
       }">
       <!-- Onglets -->
-      <v-tabs fixed-tabs slider-color="primary">
+      <v-tabs fixed-tabs slider-color="primary" id="tabs">
         <v-tab v-for="tab in tabs" :key="tab.id">{{ tab }}</v-tab>
         <v-tabs-items :v-model="tabs">
           <v-tab-item v-for="tab in demandes" :key="tab.id">
@@ -34,7 +34,7 @@
                         <v-flex xs4 class="text-xs-center">
                           {{ props.item.delivery.start_position.address }}
                           <v-divider></v-divider>
-                          {{moment(props.item.delivery.start_date).format('LLL')}}
+                          <b>{{moment(props.item.delivery.start_date).format('LLL')}}</b>
                         </v-flex>
 
                         <v-flex row xs1>
@@ -44,10 +44,12 @@
                         <v-flex xs4 class="text-xs-center">
                           {{ props.item.delivery.end_position.address }}
                           <v-divider></v-divider>
-                          <div
-                            v-if="props.item.delivery.time_consigne!=null"
-                          >{{moment(props.item.delivery.end_date).format('LLL')}}</div>
-                          <div v-else>{{$t('livraison_asap')}}</div>
+                          <div v-if="props.item.delivery.time_consigne!=null">
+                            <b>{{moment(props.item.delivery.end_date).format('LLL')}}</b>
+                          </div>
+                          <div v-else>
+                            <b>{{$t('livraison_asap')}}</b>
+                          </div>
                         </v-flex>
                       </v-layout>
 
@@ -135,36 +137,30 @@
 
             <v-dialog v-model="dialogDel" max-width="290">
               <v-card>
-                <v-card-title class="headline">{{$t('cancel_takeover')}}</v-card-title>
+                <v-card-title class="subheading">{{$t('cancel_takeover')}}</v-card-title>
 
                 <v-card-text>{{$t('cancel_takeover_confirm')}}</v-card-text>
                 <v-card-text>{{$t('cancel_takeover_info')}}</v-card-text>
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn
-                    color="secondary"
-                    flat
-                    @click.native.stop="dialogDel=false"
-                  >{{$t('cancel')}}</v-btn>
+                  <v-btn color="secondary" flat @click.native.stop="dialogDel=false">{{$t('no')}}</v-btn>
                   <v-btn
                     color="error"
                     flat
                     @click.native.stop="dialogDel=false,cancelTakeover(active)"
-                  >{{$t('delete')}}</v-btn>
+                  >{{$t('yes')}}</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
 
             <v-dialog v-model="detailBag" max-width="290">
               <v-card>
-                <v-card-title class="headline">{{$t('details_bag')}}</v-card-title>
-                <v-layout row>
-                  <v-flex xs10 offset-xs1>
-                    <div v-if="modelBag.details">{{modelBag.details}}</div>
-                    <div v-else>{{$t('descr_empty')}}</div>
-                  </v-flex>
-                </v-layout>
+                <v-card-title class="subheading">{{$t('details_bag')}}</v-card-title>
+                <v-card-text>
+                  <div v-if="modelBag.details">{{modelBag.details}}</div>
+                  <div v-else>{{$t('descr_empty')}}</div>
+                </v-card-text>
               </v-card>
             </v-dialog>
 
@@ -232,7 +228,6 @@
 
 
 <script>
-
 import Menu from "./Menu.vue";
 import axios from "axios";
 
@@ -391,6 +386,8 @@ export default {
     //  - origine = position actuelle
     // - destination = coordonnées passées
     route(lat, lng) {
+      alert("En cours de développement");
+      return;
       //window.open("google.navigation:q="+lat+","+lng+"&mode=d" , '_system');
       let addressLongLat = { lat, lng };
 
@@ -551,24 +548,14 @@ export default {
 
     swipeLeft() {
       this.$router.replace({ path: "demands" });
-    },
-    detailsCourse(id) {
-      var ref = window.open(
-        "http://dev-deliverbag.supconception.fr/mobile/deliveries/" +
-          id +
-          "?mobile_token=" +
-          localStorage.getItem("deviceId"),
-        "_blank",
-        "location=no,zoom=no"
-      );
     }
   }
 };
 </script>
 
-  <style>
-tbody li {
-  width: 100vw;
+<style scoped>
+#tabs {
+  padding-bottom: 4em;
 }
 </style>
 
