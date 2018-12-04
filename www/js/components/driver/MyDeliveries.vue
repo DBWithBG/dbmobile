@@ -164,10 +164,10 @@
               </v-card>
             </v-dialog>
 
-            <v-dialog v-model="dialogBag" max-width="290">
+            <v-dialog v-model="dialogBag">
               <v-card>
-                <v-layout column>
-                  <v-flex pt-2 pb-4 class="text-xs-center">{{$t('label_edl')}}</v-flex>
+                <v-card-title class="subheading">{{$t('label_edl')}}</v-card-title>
+                <v-card-text>
                   <v-flex v-for="bag in active.bags" :key="bag.id">
                     <div class="text-xs-center" v-if="bag.type_id===1">
                       <v-chip
@@ -179,7 +179,7 @@
                         {{bag.name}}
                         <v-icon right>work</v-icon>
                       </v-chip>
-                      <v-text-field box v-bind:label="$t('etat_bag')" v-model="bag.edl"></v-text-field>
+                      <v-text-field v-bind:label="label_bag(bag.name)" v-model="bag.edl"></v-text-field>
                     </div>
 
                     <div class="text-xs-center" v-if="bag.type_id===2">
@@ -191,7 +191,7 @@
                         {{bag.name}}
                         <v-icon right>work</v-icon>
                       </v-chip>
-                      <v-text-field box v-bind:label="$t('etat_bag')" v-model="bag.edl"></v-text-field>
+                      <v-text-field v-bind:label="label_bag(bag.name)" v-model="bag.edl"></v-text-field>
                     </div>
 
                     <div class="text-xs-center" v-if="bag.type_id===3">
@@ -203,16 +203,22 @@
                         {{bag.name}}
                         <v-icon right>work</v-icon>
                       </v-chip>
-                      <v-text-field box v-bind:label="$t('etat_bag')" v-model="bag.edl"></v-text-field>
+                      <v-text-field v-bind:label="label_bag(bag.name)" v-model="bag.edl"></v-text-field>
                     </div>
                   </v-flex>
+                </v-card-text>
+                <v-card-actions>
                   <v-btn
                     :disabled="!edlOk"
                     class="text-xs-center"
                     color="primary"
                     @click.native.stop="edlBags(active.bags)"
                   >Valider</v-btn>
-                </v-layout>
+                </v-card-actions>
+                
+                  
+                  
+                
               </v-card>
             </v-dialog>
 
@@ -373,13 +379,10 @@ export default {
         .then(response => {
           self.demandes = [[], [], []];
           self.getCourses();
-          self.snackbar = true;
-          self.snackbarText = self.$i18n.t("snackbar_cancel");
           self.$swal({
             type: 'success',
             title: self.$i18n.t('operation_successfull'),
-            text:  self.$i18n.t('snackbar_cancel'),
-            timer: 2000
+            text:  self.$i18n.t('snackbar_cancel')
           });
         }).catch(error => {
           console.log(error);
@@ -443,6 +446,10 @@ export default {
         });
     },
 
+    label_bag(bag_name) {
+      return this.$i18n.t('etat_bag') + ' ' + bag_name;
+    },
+
     takeBag() {
       let self = this;
       let jwt = window.localStorage.getItem("jwt");
@@ -465,8 +472,11 @@ export default {
           self.getCourses();
           // pour savoir quelle course ouvrir
           self.open = self.active.id;
-          self.snackbar = true;
-          self.snackbarText = self.$i18n.t("snackbar_bags");
+          self.$swal({
+            type: 'success',
+            title: self.$i18n.t("lets_go"),
+            text: self.$i18n.t("snackbar_bags")
+          });
           // on initialise un timer pour tracker le chauffeur
           window.getDriverPos = setInterval(function() {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -516,8 +526,11 @@ export default {
           self.demandes = [[], [], []];
           self.getCourses();
           self.open = delivery.id;
-          self.snackbar = true;
-          self.snackbarText = self.$i18n.t("snackbar_dest");
+          self.$swal({
+            type: 'success',
+            title: self.$i18n.t('thanks'),
+            text: self.$i18n.t('snackbar_dest')
+          });
         })
         .catch(error => {
           console.log(error);

@@ -30,6 +30,9 @@ export default {
     "yes": "Oui",
     "no": "Non",
     "operation_successfull": "L'opération a réussie",
+    "lets_go": "C'est parti !",
+    "thanks": "Merci !",
+
 
     "address": "J'indique une adresse",
     "address_subt": "Définissez un lieu et une heure de prise en charge pour vos bagages",
@@ -150,7 +153,7 @@ export default {
     "snackbar_bags_update": "Bagages mis à jours !",
     "call": "Appeler",
     "mail": "Envoyer un email",
-    "label_edl": "Indiquez l'état des bagages que vous prenez en charge",
+    "label_edl": "État des bagages",
     "etat_bag": "État du bagage",
     "confirmer": "Confirmer",
     "confirmer_course": "Confirmer votre engagement sur cette course?",
