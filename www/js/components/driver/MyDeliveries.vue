@@ -471,7 +471,7 @@ export default {
               console.log(position.coords.longitude);
               axios
                 .put(
-                  "https://dev-deliverbag.supconception.fr/mobile/drivers/setPosition",
+                  "https://dev-deliverbag.supconception.fr/drivers/setPosition",
                   {
                     current_lat: position.coords.latitude,
                     current_lng: position.coords.longitude

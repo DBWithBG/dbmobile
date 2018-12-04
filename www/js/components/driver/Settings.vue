@@ -3,7 +3,7 @@
     <v-flex xs12 sm6 offset-sm3>
       <v-card>
         <v-list>
-          <v-list-tile @click.native="getProfile()" avatar>
+          <v-list-tile @click="dev()" avatar>
             <v-list-tile-avatar>
               <v-icon large>person</v-icon>
             </v-list-tile-avatar>
@@ -25,7 +25,7 @@
               <v-icon large>euro_symbol</v-icon>
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title>{{$t("paiement")}}</v-list-tile-title>
+              <v-list-tile-title @click="dev()">{{$t("paiement")}}</v-list-tile-title>
               <v-list-tile-sub-title>{{$t("paiement_sbt")}}</v-list-tile-sub-title>
             </v-list-tile-content>
             <v-list-tile-action>
@@ -49,8 +49,8 @@
               <v-btn @click.native.stop="dialLangue=true" icon ripple>
                 <v-flex row xs12>
                   <v-dialog v-model="dialLangue" max-width="290">
-                    <v-card>
-                      <v-card-title class="headline">{{$t("choix_langue")}}</v-card-title>
+                    <v-card id="card-choix-langue">
+                      <v-card-title>{{$t("choix_langue")}}</v-card-title>
                       <v-layout row>
                         <v-flex xs10 offset-xs1>
                           <v-select
@@ -72,6 +72,8 @@
               </v-btn>
             </v-list-tile-action>
           </v-list-tile>
+
+          <v-divider></v-divider>
 
           <v-list-tile @click.native="disconnect()" logout>
             <v-list-tile-avatar>
@@ -112,16 +114,10 @@ export default {
     };
   },
   methods: {
-    getProfile() {
-      let url =
-        "http://dev-deliverbag.supconception.fr/customers/profile?mobile_token=" +
-        localStorage.getItem("deviceId");
-      let ref = window.open(url, "_blank", "location=no,zoom=no");
-      let tok = localStorage.getItem("deviceId");
-      let t = '$("#chk_mobile_token").val("' + tok + '")';
-      //  ref.executeScript( {code : t});
+    dev() {
+      alert("En cours de développement");
     },
-
+    
     disconnect() {
       localStorage.removeItem("jwt");
       localStorage.removeItem("type");
@@ -130,42 +126,9 @@ export default {
   }
 };
 </script>
-<style>
-</style>
 
-  
-
-<i18n>
-{
-  "fr": {
-    "bagages": "Mes bagages",
-    "bagages_subt":"Gérer mes bagages de voyage",
-    "profil" : "Mon profil",
-    "profil_sbt":"Accéder à mes informations personnelles",
-    "paiement" : "Paiement",
-    "paiement_sbt":"Consulter et modifier mes informations de paiement",
-    "langue" : "Langue",
-    "langue_sbt":"Modifier la langue de l'application",
-    "fr" : "Français",
-    "en" : "Anglais",
-    "choix_langue":"Choix de la langue",
-    "disconnect":"Se déconnecter",
-    "disconnect_sbt":"Se déconnecter de l'application et retourner à l'écran d'accueil"
-  },
-  "en": {
-    "bagages": "My bags",
-    "bagages_subt":"Manage my bags",
-    "profil" : "My profile",
-    "profil_sbt":"Get my personnal informations",
-    "paiement" : "Payment ",
-    "paiement_sbt":"Change my paiement method",
-    "langue" : "Language",
-    "langue_sbt":"Change the language of the app",
-    "fr" : "French",
-    "en" : "English",
-    "choix_langue" : "Choice of language",
-    "disconnect":"Log out",
-    "disconnect_sbt":"Log out and back to login page."
-  }
+<style scoped>
+#card-choix-langue {
+  padding-bottom: 1.5em;
 }
-</i18n>
+</style>
