@@ -1,10 +1,10 @@
 <template>
   <v-bottom-nav color="primary" :value="true" :active.sync="element" fixed>
-      <v-btn dark  value="left" to="/my-deliveries-driver">
-        <span> {{$t("courses")}}</span>
-        <v-icon>history</v-icon>
-      </v-btn>
-    <v-btn dark  value="main" to="/demands-driver">
+    <v-btn dark value="left" to="/my-deliveries-driver">
+      <span>{{$t("courses")}}</span>
+      <v-icon>history</v-icon>
+    </v-btn>
+    <v-btn dark value="main" to="/demands-driver">
       <span>{{$t("demandes")}}</span>
       <v-icon>map</v-icon>
     </v-btn>
@@ -16,22 +16,18 @@
 </template>
 
 <script>
-export default{
-  data(){
+export default {
+  data() {
     return {
-      element:'main',
-    }
-  },
-
-}
-
+      element: ""
+    };
+  }
+};
 </script>
 
 
 <style>
-
 body {
-  padding-bottom:56px;
+  padding-bottom: 56px;
 }
-
 </style>
