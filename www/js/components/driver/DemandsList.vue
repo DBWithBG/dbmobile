@@ -141,21 +141,19 @@
         </template>
       </v-data-table>
 
-      <v-dialog v-model="dialogBag" max-width="290">
+      <v-dialog v-model="dialogBag">
         <v-card>
-          <v-card-title class="headline">{{$t('bagage_descr')}}</v-card-title>
-          <v-layout row>
-            <v-flex xs10 offset-xs1>
-              <div v-if="modelBag.details">{{modelBag.details}}</div>
+          <v-card-title class="subheading">{{$t('bagage_descr')}}</v-card-title>
+          <v-card-text>
+            <div v-if="modelBag.details">{{modelBag.details}}</div>
               <div v-else>{{$t('descr_empty')}}</div>
-            </v-flex>
-          </v-layout>
+          </v-card-text>
         </v-card>
       </v-dialog>
 
       <v-dialog v-model="dialogTake" max-width="290">
         <v-card>
-          <v-card-title class="headline">{{$t('confirmer_course')}}</v-card-title>
+          <v-card-title class="subheading">{{$t('confirmer_course')}}</v-card-title>
           <v-layout row>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -258,6 +256,8 @@ export default {
     //  - origine = position actuelle
     // - destination = coordonnées passées
     route(lat, lng) {
+      alert('En cours de développement');
+      return;
       //window.open("google.navigation:q="+lat+","+lng+"&mode=d" , '_system');
       let addressLongLat = { lat, lng };
 
