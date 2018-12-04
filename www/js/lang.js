@@ -29,6 +29,7 @@ export default {
     "error_max_24h_consigne": "La consignation de vos bagages ne doit pas dépasser 24 heures. Pour une consignation plus importante, veuillez contacter Deliverbag",
     "yes": "Oui",
     "no": "Non",
+    "operation_successfull": "L'opération a réussie",
 
     "address": "J'indique une adresse",
     "address_subt": "Définissez un lieu et une heure de prise en charge pour vos bagages",

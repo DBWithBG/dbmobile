@@ -26,7 +26,7 @@
             >
               <template slot="items" slot-scope="props">
                 <v-expansion-panel>
-                  <v-expansion-panel-content :value="open == props.item.delivery.id">
+                  <v-expansion-panel-content>
                     <div slot="header">Le {{props.item.delivery.start_date_formatted.slice(0,18)}}</div>
 
                     <v-flex row xs12>
@@ -375,8 +375,13 @@ export default {
           self.getCourses();
           self.snackbar = true;
           self.snackbarText = self.$i18n.t("snackbar_cancel");
-        })
-        .catch(error => {
+          self.$swal({
+            type: 'success',
+            title: self.$i18n.t('operation_successfull'),
+            text:  self.$i18n.t('snackbar_cancel'),
+            timer: 2000
+          });
+        }).catch(error => {
           console.log(error);
         });
     },
