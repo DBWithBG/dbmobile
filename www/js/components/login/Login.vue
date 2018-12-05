@@ -91,7 +91,7 @@ export default {
                 this.$router.push({name: 'DemandChoice'})
             
             else if (type == 'driver')
-                this.$router.push({name: 'DemandChoice'})
+                this.$router.push({name: 'DemandsDriver'})
             
             else {
                 // Le type est invalide, on clean tout

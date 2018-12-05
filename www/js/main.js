@@ -59,7 +59,7 @@ const router = new VueRouter({ routes: routes });
 const i18n = new VueI18n({ locale: 'fr', messages: Lang })
 
 function bindVue() {
-  console.log("Binding vue app to #app")
+  console.log("Binding vue app to #app");
   new Vue({
     el: '#app',
     router,
@@ -67,9 +67,6 @@ function bindVue() {
   });
 }
 
-// L'event deviceready n'éxiste que dans cordova
-// Étant donné qu'on dev avec webpack/webpack-dev-server, on utilise l'event DOMContentLoaded
-// TODO : changer quand on build l'app android/ios :/
-// document.addEventListener('deviceready', bindVue);
+
 if (typeof (cordova) == 'undefined') document.addEventListener('DOMContentLoaded', bindVue);
 else document.addEventListener('deviceready', bindVue);

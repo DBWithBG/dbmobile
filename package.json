@@ -40,6 +40,7 @@
     "cordova-push-notifications": "^1.2.4",
     "cordova.plugins.diagnostic": "^4.0.10",
     "cordova.plugins.diagnostic.api-22": "^100.0.0-api-22",
+    "material-icons": "^0.2.3",
     "vue": "^2.5.16",
     "vue-datetime": "^0.7.1",
     "vue-datetime-picker": "^0.2.1",
