@@ -50,18 +50,22 @@
       <v-flex v-for="demand in active_demands" :key="demand.id">
         <v-flex mt-4>
           <v-card>
-            {{demand.time_consigne}}
-            <v-card-text>{{$t('takeover_label')}} : {{demand.start_position.address}}</v-card-text>
-            <v-card-text>Le {{moment(demand.start_date).format('LL')}} à {{moment(demand.start_date).format('LT')}}</v-card-text>
-            <v-divider></v-divider>
-            <v-card-text>{{$t('livraison_label')}} : {{demand.end_position.address}}</v-card-text>
-            <v-card-text
-              v-if="demand.time_consigne!=null"
-            >le {{moment(demand.end_date).format('LL')}} à {{moment(demand.end_date).format('LT')}}</v-card-text>
-            <v-card-text v-else>{{$t('livraison_asap')}}</v-card-text>
-          </v-card>
+            <v-card-title class="subheading">{{moment(demand.start_date).format('LLL')}}</v-card-title>
+            <v-card-text>
+              <v-flex row><b>{{$t('takeover_label')}} :</b> {{demand.start_position.address}}</v-flex>
+              <v-flex row>Le {{moment(demand.start_date).format('LL')}} à {{moment(demand.start_date).format('LT')}}</v-flex>
+              <v-divider class="divider_modal"></v-divider>
+              <v-flex row><b>{{$t('livraison_label')}} :</b> {{demand.end_position.address}}</v-flex>
+              <v-flex v-if="demand.time_consigne!=null">
+                le {{moment(demand.end_date).format('LL')}} à {{moment(demand.end_date).format('LT')}}
+              </v-flex>
+              <v-flex v-else>{{$t('livraison_asap')}}</v-flex>
+            
 
-          <v-list subheader>
+            <v-divider class="divider_modal"></v-divider>
+
+            <v-list subheader>
+              <b>Consigne :</b> {{demand.time_consigne}}
             <v-subheader>{{demand.bags.length}} {{$t('luggages')}}</v-subheader>
             <v-layout column>
               <div v-for="bag in demand.bags" :key="bag.id">
@@ -107,6 +111,13 @@
               </v-btn>
             </v-layout>
           </v-list>
+            
+            </v-card-text>
+            
+            
+          </v-card>
+
+          
           <v-divider></v-divider>
         </v-flex>
       </v-flex>
@@ -439,5 +450,10 @@ p {
 #google-map {
   height: 75vh;
   width: 100%;
+}
+
+.divider_modal {
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 </style>
