@@ -196,7 +196,7 @@ export default {
     /**
      * Pour prendre en charge une demande
      * POST /mobile/drivers/deliveries/edit-status
-     * Avec: 
+     * Avec:
      * status_id = 2
      * delivery_id = id
      */
@@ -260,11 +260,13 @@ export default {
       window.timer = setInterval(function() {
         navigator.geolocation.getCurrentPosition(
           function(position) {
-            (self.user_pos = {
+            console.log("GETTINGS POS");
+            self.user_pos = {
               lat: position.coords.latitude,
               lng: position.coords.longitude
-            }),
-              self.user_marker.setPosition(self.user_pos);
+            };
+            console.log('SUCCESS');
+            self.user_marker.setPosition(self.user_pos);
             if (!self.user_marker.getVisible())
               self.user_marker.setVisible(true);
           },

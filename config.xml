@@ -79,12 +79,9 @@
         <variable name="API_KEY_FOR_ANDROID" value=" AIzaSyA_lr5x_T8Y4poGVzW8RCqDGCOXBoC8waM" />
         <variable name="API_KEY_FOR_IOS" value="AIzaSyASmealsjtx8tJBRBuqq3g40GyiDCki3G0" />
     </plugin>
-    <plugin name="cordova-plugin-camera" spec="^4.0.2" />
     <plugin name="cordova-plugin-dialogs" spec="^2.0.1" />
     <plugin name="cordova.plugins.diagnostic" spec="^4.0.5" />
-    <plugin name="cordova-plugin-inappbrowser" spec="^3.0.0" />
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
-    <plugin name="cordova-plugin-datepicker" spec="^0.9.3" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-request-location-accuracy" spec="^2.2.3" />
     <plugin name="cordova-android-play-services-gradle-release" spec="^2.0.0">
@@ -92,6 +89,6 @@
     </plugin>
     <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
     <engine name="browser" spec="^5.0.4" />
-    <engine name="android" spec="^7.1.2" />
     <engine name="ios" spec="^4.5.5" />
+    <engine name="android" spec="^7.1.4" />
 </widget>

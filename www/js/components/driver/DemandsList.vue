@@ -296,6 +296,8 @@ export default {
       var self = this;
       let jwt = window.localStorage.getItem("jwt");
 
+      console.log('BEGIN GET DELIVERIES')
+
       axios
         .get("https://dev-deliverbag.supconception.fr/deliveries?status=1", {
           headers: {
@@ -376,19 +378,21 @@ export default {
     },
 
     getUserPos() {
+      console.log('BEGIN GET USER POS')
       var self = this;
       //let hard_gps = cordova.plugins.locationAccuracy;
       //    console.log('get user pos');
       navigator.geolocation.getCurrentPosition(
-        function(position) {
+        position => {
           self.user_pos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
+          console.log('SUCCESS GET USER POS')
           self.getDeliveries();
           //self.user_marker.setMap(self.map);
         },
-        function(error) {
+        error => {
           self.$swal({
             type: 'error',
             title: 'Oups...',
@@ -396,7 +400,12 @@ export default {
           });
           console.log(JSON.stringify(error));
           self.loading = false;
+          console.log('ERROR IN GET USER POS')
           //self.requestGps();
+        }, {
+          maximumAge: 3000,
+          timeout: 5000,
+          enableHighAccuracy: true
         }
       );
     },
@@ -418,20 +427,12 @@ export default {
 
   mounted() {
     
-    //console.log(self);
-    /*
-            cordova.plugins.locationAccuracy.request(function(){
-            self.getUserPos();
-          }, function(){
-          alert('Erreur - Tried to access GPS')} ,
-          cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
-
-          */
     let self = this;
     let now = this.moment();
     let end = this.moment().add(15, "days");
     var getDaysArray = function(s, e) {
       for (var a = [], d = s; d <= e; d.add(1, "days")) {
+        console.log('FORRRRRRRR')
         a.push(self.moment(d).format("L"));
       }
       return a;
