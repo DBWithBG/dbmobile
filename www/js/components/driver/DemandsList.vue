@@ -296,7 +296,7 @@ export default {
       var self = this;
       let jwt = window.localStorage.getItem("jwt");
 
-      console.log('BEGIN GET DELIVERIES')
+    
 
       axios
         .get("https://dev-deliverbag.supconception.fr/deliveries?status=1", {
@@ -432,7 +432,6 @@ export default {
     let end = this.moment().add(15, "days");
     var getDaysArray = function(s, e) {
       for (var a = [], d = s; d <= e; d.add(1, "days")) {
-        console.log('FORRRRRRRR')
         a.push(self.moment(d).format("L"));
       }
       return a;

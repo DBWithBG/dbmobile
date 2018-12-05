@@ -133,7 +133,7 @@
 import mapStyle from "./mapStyle.js";
 import Menu from "./Menu.vue";
 import axios from "axios";
-import MarkerClusterer from "@google/markerclusterer";
+import MarkerClustererPlus from "@google/markerclustererplus";
 
 export default {
   components: {
@@ -260,12 +260,10 @@ export default {
       window.timer = setInterval(function() {
         navigator.geolocation.getCurrentPosition(
           function(position) {
-            console.log("GETTINGS POS");
             self.user_pos = {
               lat: position.coords.latitude,
               lng: position.coords.longitude
             };
-            console.log('SUCCESS');
             self.user_marker.setPosition(self.user_pos);
             if (!self.user_marker.getVisible())
               self.user_marker.setVisible(true);
@@ -356,14 +354,13 @@ export default {
             }
           }
           // on crée le cluster qui englobe tous les marqueurs
-          self.markerCluster = new MarkerClusterer(self.map, self.markers, {
+          self.markerCluster = new MarkerClustererPlus(self.map, self.markers, {
             zoomOnClick: false,
             imagePath:
               "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m"
           });
-          // lorsque l'on click dessus, on reset les demandes actives
-          // on ajoute ensuite aux demandes actives les marqueurs présents dans le cluster
-          self.markerCluster.addListener("clusterclick", function(cluster) {
+          
+          self.markerCluster.addListener("click", function(cluster) {
             self.active_demands = [];
             cluster.getMarkers().forEach(function(marker) {
               self.active_demands.push(marker.infos);
