@@ -27,7 +27,7 @@
               <template slot="items" slot-scope="props">
                 <v-expansion-panel>
                   <v-expansion-panel-content>
-                    <div slot="header">Le {{props.item.delivery.start_date_formatted.slice(0,18)}}</div>
+                    <div slot="header">Le {{props.item.delivery.start_date_formatted}}</div>
 
                     <v-flex row xs12>
                       <v-layout align-center justify-space-around>
@@ -317,9 +317,9 @@ export default {
           let data = response.data;
           console.log(data);
           data.forEach(function(elem, index, array) {
-            elem.delivery.start_date_formatted = new Date(
+            elem.delivery.start_date_formatted = self.moment(new Date(
               elem.delivery.start_date
-            ).toLocaleString();
+            )).format('LLL');
             switch (elem.delivery.status) {
               case 2:
                 self.demandes[0].push(elem);
@@ -395,21 +395,12 @@ export default {
     //  - origine = position actuelle
     // - destination = coordonnées passées
     route(lat, lng) {
-      alert("En cours de développement");
-      return;
-      //window.open("google.navigation:q="+lat+","+lng+"&mode=d" , '_system');
       let addressLongLat = { lat, lng };
 
-      if (device.platform == "Android") {
-        window.open(
-          "google.navigation:q=" + lat + "," + lng + "&mode=d",
-          "_system"
-        );
-        //  window.open("geo:"+addressLongLat);
-      }
-      if (device.platform == "iOS") {
-        window.open("http://maps.apple.com/?q=" + addressLongLat, "_system");
-      }
+      window.open(
+        "https://maps.google.com?daddr=" + lat + "," + lng + "&mode=d&saddr=" + this.user_pos.lat + ',' + this.user_pos.lng,
+        "_system"
+      );
     },
 
     rateBag(bag) {},

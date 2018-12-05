@@ -253,21 +253,12 @@ export default {
     //  - origine = position actuelle
     // - destination = coordonnées passées
     route(lat, lng) {
-      alert('En cours de développement');
-      return;
-      //window.open("google.navigation:q="+lat+","+lng+"&mode=d" , '_system');
       let addressLongLat = { lat, lng };
 
-      if (device.platform == "Android") {
-        window.open(
-          "google.navigation:q=" + lat + "," + lng + "&mode=d",
-          "_system"
-        );
-        //  window.open("geo:"+addressLongLat);
-      }
-      if (device.platform == "iOS") {
-        window.open("http://maps.apple.com/?q=" + addressLongLat, "_system");
-      }
+      window.open(
+        "https://maps.google.com?daddr=" + lat + "," + lng + "&mode=d&saddr=" + this.user_pos.lat + ',' + this.user_pos.lng,
+        "_system"
+      );
     },
 
     customFilter(items, search, filter) {
@@ -401,10 +392,10 @@ export default {
             text: self.$i18n.t('error_getting_position')
           });
           console.log(JSON.stringify(error));
-          self.loading = false;
+          self.getUserPos();
           //self.requestGps();
         }, {
-          maximumAge: 3000,
+          maximumAge: 10000,
           timeout: 5000,
           enableHighAccuracy: true
         }
