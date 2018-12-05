@@ -14,9 +14,7 @@
     </v-container>
   </v-layout>
 
-  <div v-if="!loading" v-touch="{
-    left:swipeLeft
-    }">
+  <div v-if="!loading">
 
     <!--
     Définition des différents onglets
@@ -102,13 +100,13 @@
         Notation de la course SI elle a déjà été effectuée
       -->
 
-      <div v-if="props.item.status === 5 && props.item.rating != null && props.item.rating.details=='' ">
+      <div v-if="props.item.status === 5 && props.item.rating != null" >
         <v-layout row>
-          <v-flex xs10 offset-xs2>
+          <v-flex xs10 offset-xs1>
             <star-rating
             :star-size="40"
             v-model="props.item.rating.rating" :show-rating="false"
-            @click.native.stop="active=props.item,dialogRating = true,sendRating(props.item.id,props.item.rating.rating)" >
+            @click.native.stop="active=props.item,dialogRating = true" >
           </star-rating>
         </v-flex>
       </v-layout>
@@ -116,11 +114,11 @@
 
     <div v-if="props.item.status === 5 && props.item.rating == null">
       <v-layout row>
-        <v-flex xs10 offset-xs2>
+        <v-flex xs10 offset-xs1>
           <star-rating
           :star-size="40"
           v-model="props.item.rating2" :show-rating="false"
-          @click.native.stop="active=props.item,dialogRating = true,sendRating(props.item.id,props.item.rating2)" >
+          @click.native.stop="active=props.item,dialogRating = true" >
         </star-rating>
       </v-flex>
     </v-layout>
@@ -137,7 +135,7 @@
       </v-btn>
     </v-flex>
 
-    <v-flex row xs12 v-if="props.item.status === 5 && props.item.take_over_delivery.disputes.length <= 0">
+    <v-flex row xs12 v-if="props.item.status === 5">
       <v-btn flat color='error' @click.native.stop="active=props.item,dialogLitige = true">
         <span> {{$t('declarer_litige')}}</span>
       </v-btn>
@@ -167,7 +165,7 @@ Dialog popup concernant l'annulation d'une course
 
 <v-dialog v-model="dialogDel" max-width="290">
   <v-card>
-    <v-card-title class="headline">{{$t("cancel_course")}}</v-card-title>
+    <v-card-title class="subheading">{{$t("cancel_course")}}</v-card-title>
     <v-layout row>
       <v-flex xs10 offset-xs1>
         <v-card-text>
@@ -196,7 +194,7 @@ Dialog popup concernant la notation d'une course
 
 <v-dialog v-model="dialogRating" max-width="290">
   <v-card>
-    <v-card-title class="headline">{{$t("rating")}}</v-card-title>
+    <v-card-title class="subheading">{{$t("rating")}}</v-card-title>
     <v-layout row>
       <v-flex v-if="active.rating" xs10 offset-xs1>
         <v-textarea clearable rows="1" auto-grow v-bind:label="$t('rating_label')" v-model="active.rating.details"> </v-textarea>
@@ -221,7 +219,7 @@ Dialog popup concernant la déclaration d'un litige d'une course
 
 <v-dialog v-model="dialogLitige" max-width="290">
   <v-card>
-    <v-card-title class="headline">{{$t("declaration_litige")}}</v-card-title>
+    <v-card-title class="subheading">{{$t("declaration_litige")}}</v-card-title>
     <v-layout row>
       <v-flex xs10 offset-xs1>
         <v-textarea clearable rows="1" auto-grow v-bind:label="$t('litige_label')" v-model="litigeText"> </v-textarea>
@@ -244,7 +242,7 @@ Dialog popup concernant la déclaration d'un litige d'une course
 
 <v-dialog v-model="hasError">
       <v-card>
-        <v-card-title class="headline">Erreur</v-card-title>
+        <v-card-title class="subheading">Erreur</v-card-title>
 
         <v-card-text>
           {{error}}
@@ -266,12 +264,15 @@ Dialog popup concernant la déclaration d'un litige d'une course
 
 
 <script>
-import Menu from "./Menu.vue";
-import axios from "axios";
+import Menu from "./Menu.vue"
+import axios from "axios"
+import StarRating from 'vue-star-rating'
+
 
 export default {
   components: {
-    "db-menu": Menu
+    "db-menu": Menu,
+    "star-rating": StarRating
   },
 
   data() {
@@ -398,59 +399,53 @@ export default {
     // params : id de la delivery, mobile token du client, note attribuée et commentaire FACULTATIF
     sendRating(id, rating, com) {
       let self = this;
+      let jwt = window.localStorage.getItem("jwt");
 
       // si il y'a un commentaire, alors l'utilisateur ne peut pas à nouveau envoyer la notation
-
-      $.ajax({
-        url: "https://dev-deliverbag.supconception.fr/mobile/deliveries/ratings",
-        type: "POST",
-        data: {
-          delivery_id: id,
-          mobile_token: localStorage.getItem("deviceId"),
-          rating: rating,
-          details: com
-        },
-        success: function(data) {
-          self.snackbarRating = true;
-          if (com != undefined) {
-            self.getDeliveries();
-          }
-        },
-        error: function(e) {
-          console.log(e);
+      axios.post("https://dev-deliverbag.supconception.fr/mobile/deliveries/ratings", {
+        delivery_id: id,
+        rating: rating,
+        details: com
+      }, {
+        headers: {
+          Authorization: 'Bearer ' + jwt
         }
+      }).then(response => {
+        self.$swal({
+          type: 'success',
+          title: self.$i18n.t('thanks'),
+          text: self.$i18n.t('rating_successful')
+        });
+        if (com != undefined) {
+          self.getDeliveries();
+        }
+      }).catch(error => {
+        console.error(error);
       });
     },
 
     // méthode pour envoyer la notation d'une course
     // params : id de la delivery, mobile token du client, et commentaire OBLIGATOIRE
     sendLitige(id, com) {
-      console.log(com);
       let self = this;
+      let jwt = window.localStorage.getItem("jwt");
 
-      $.ajax({
-        url:
-          "https://dev-deliverbag.supconception.fr/mobile/deliveries/disputes",
-        type: "POST",
-        data: {
-          delivery_id: id,
-          mobile_token: localStorage.getItem("deviceId"),
-          reason: com
-        },
-        success: function(data) {
-          self.snackbarLitige = true;
-          self.litigeText = "";
-          self.getDeliveries();
-        },
-        error: function(e) {
-          console.log(e);
+      axios.post("https://dev-deliverbag.supconception.fr/mobile/deliveries/disputes", {
+        delivery_id: id,
+        reason: com
+      }, {
+        headers: {
+          Authorization: 'Bearer ' + jwt
         }
+      }).then(response => {
+        self.$swal({
+          type: 'success',
+          title: self.$i18n.t('thanks'),
+          text: self.$i18n.t('dispute_successful')
+        });
+      }).catch(error => {
+        console.error(error);
       });
-    },
-
-    // définition de l'action du swipe
-    swipeLeft() {
-      this.$router.replace({ path: "demand" });
     },
 
     // webview pour avoir le détail d'une course

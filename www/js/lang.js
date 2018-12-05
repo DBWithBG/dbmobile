@@ -124,6 +124,8 @@ export default {
     "details_bag": "Détails du bagage",
     "estimated_time": "Temps estimé",
     "consignes": "Consignes",
+    "rating_successful": "Votre commentaire a été pris en compte",
+    "dispute_successful": "Votre dispute a été enregistrée",
 
     "filter_demands": "Filtrer les demandes",
     "distance_client": "Distance du client",

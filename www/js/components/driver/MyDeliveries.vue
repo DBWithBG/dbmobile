@@ -9,9 +9,7 @@
       </v-container>
     </v-layout>
 
-    <div v-if="!loading" v-touch="{
-      left:swipeLeft
-      }">
+    <div v-if="!loading">
       <!-- Onglets -->
       <v-tabs fixed-tabs slider-color="primary" id="tabs">
         <v-tab v-for="tab in tabs" :key="tab.id">{{ tab }}</v-tab>
@@ -528,37 +526,6 @@ export default {
           console.log(error);
         });
     },
-
-    bagStateTake(id, rating, com) {
-      let jwt = window.localStorage.getItem("jwt");
-      console.log(com);
-
-      if (com != undefined) {
-        this.ratingSent = true;
-      }
-      axios
-        .post(
-          "https://dev-deliverbag.supconception.fr/mobile/deliveries/ratings",
-          {
-            delivery_id: id,
-            details: com,
-            rating: rating
-          },
-          {
-            headers: {
-              Authorization: "Bearer " + jwt
-            }
-          }
-        )
-        .then(response => {})
-        .catch(error => {
-          console.log(error);
-        });
-    },
-
-    swipeLeft() {
-      this.$router.replace({ path: "demands" });
-    }
   }
 };
 </script>
