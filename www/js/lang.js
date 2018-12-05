@@ -32,6 +32,7 @@ export default {
     "operation_successfull": "L'opération a réussie",
     "lets_go": "C'est parti !",
     "thanks": "Merci !",
+    "error_getting_position": "Impossible d'accéder à votre position",
 
 
     "address": "J'indique une adresse",
@@ -122,6 +123,7 @@ export default {
     "disconnect_sbt": "Vers l'écran de connexion",
     "details_bag": "Détails du bagage",
     "estimated_time": "Temps estimé",
+    "consignes": "Consignes",
 
     "filter_demands": "Filtrer les demandes",
     "distance_client": "Distance du client",

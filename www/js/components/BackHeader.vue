@@ -31,5 +31,6 @@ props:['message'],
 </script>
 
 
-<style>
+<style scoped>
+
 </style>

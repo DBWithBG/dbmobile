@@ -11,7 +11,7 @@
       </v-container>
     </v-layout>
 
-    <div v-if="!loading">
+    <div v-if="!loading" id="demands_list_main_content">
       <v-expansion-panel popout>
         <v-expansion-panel-content>
           <!-- Panel filtrage -->
@@ -36,10 +36,7 @@
           <!-- filtres sous forme de switchs, activés par défaut -->
           <v-layout row>
             <v-flex xs4 offset-xs1>
-              <v-switch label="Livraisons" color="primary" v-model="search[0].livraisons"></v-switch>
-            </v-flex>
-            <v-flex xs4 offset-xs1>
-              <v-switch label="Consignes" color="primary" v-model="search[0].consignes"></v-switch>
+              <v-switch :label="$t('consignes')" color="primary" v-model="search[0].consignes"></v-switch>
             </v-flex>
           </v-layout>
 
@@ -279,14 +276,16 @@ export default {
       //console.log(search[0].id);
       //  console.log(JSON.stringify(items));
       //return items;
-
+      
       return items.filter(
-        row =>
-          row["distance_from_driver"] <= search[0].distance &&
-          (self.moment(row["start_date"]).format("L") === search[0].date ||
-            //  new Date(row["start_date"]).toLocaleString().slice(0,10) === search[0].date
-            search[0].date == this.$i18n.t("any_date")) &&
-          row["bags"].length <= search[0].bags
+        row => {
+          console.log(row);
+          return row["distance_from_driver"] <= search[0].distance &&
+            (self.moment(row["start_date"]).format("L") === search[0].date ||
+            search[0].date == this.$i18n.t("any_date")) && 
+            row["bags"].length <= search[0].bags &&
+            (search[0].consignes == !(row["time_consigne"] == null))
+        }
       );
     },
 
@@ -338,7 +337,12 @@ export default {
           self.$router.replace({ path: "/my-deliveries-driver" });
         })
         .catch(error => {
-          console.log(JSON.stringify(error));
+          console.error(JSON.stringify(error));
+          this.$swal({
+            type: 'error',
+            title: 'oups',
+            text: 'Error in prendreEnCharge'
+          });
         });
     },
 
@@ -378,7 +382,6 @@ export default {
     },
 
     getUserPos() {
-      console.log('BEGIN GET USER POS')
       var self = this;
       //let hard_gps = cordova.plugins.locationAccuracy;
       //    console.log('get user pos');
@@ -388,7 +391,6 @@ export default {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
-          console.log('SUCCESS GET USER POS')
           self.getDeliveries();
           //self.user_marker.setMap(self.map);
         },
@@ -396,11 +398,10 @@ export default {
           self.$swal({
             type: 'error',
             title: 'Oups...',
-            text: 'Error in getUserPos'
+            text: self.$i18n.t('error_getting_position')
           });
           console.log(JSON.stringify(error));
           self.loading = false;
-          console.log('ERROR IN GET USER POS')
           //self.requestGps();
         }, {
           maximumAge: 3000,
@@ -451,5 +452,8 @@ td {
 }
 tr {
   height: 100px;
+}
+#demands_list_main_content {
+  padding-bottom: 4em;
 }
 </style>

@@ -298,6 +298,7 @@ export default {
   },
 
   methods: {
+    
     getCourses() {
       let self = this;
       let jwt = window.localStorage.getItem("jwt");
