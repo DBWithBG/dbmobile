@@ -119,8 +119,8 @@ export default {
     },
     
     disconnect() {
-      localStorage.removeItem("jwt");
-      localStorage.removeItem("type");
+      window.localStorage.removeItem("jwt");
+      window.localStorage.removeItem("type");
       this.$router.replace("/");
     }
   }
