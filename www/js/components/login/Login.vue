@@ -159,20 +159,24 @@ export default {
     },
 
     isCordovaSet() {
-      return false;
       return typeof cordova != "undefined";
     },
 
     sendFirebaseToken() {
       var self = this;
-      var tok = "";
+      var jwt = window.localStorage.getItem('jwt');
+
       cordova.plugins.firebase.messaging.getToken().then(token => {
         console.log("Sending firebase token : " + token);
         axios
-          .post(
+          .put(
             "https://dev-deliverbag.supconception.fr/mobile/users/refreshNotifyToken",
             {
               notify_token: token
+            }, {
+              headers: {
+                Authorization: 'Bearer ' + jwt
+              }
             }
           )
           .then(response => {})

@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:782571423011:android:f52ffe99dc638fdf",
         "android_client_info": {
-          "package_name": "io.cordova.hellocordova"
+          "package_name": "com.deliverbag.mobile"
         }
       },
       "oauth_client": [

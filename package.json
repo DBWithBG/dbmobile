@@ -68,7 +68,12 @@
       "cordova-android-play-services-gradle-release": {
         "PLAY_SERVICES_VERSION": "15.+"
       },
-      "cordova-plugin-geolocation": {}
+      "cordova-plugin-geolocation": {},
+      "cordova-plugin-firebase-messaging": {
+        "FIREBASE_CORE_VERSION": "16.0.+",
+        "FIREBASE_MESSAGING_VERSION": "17.3.+",
+        "ANDROID_SUPPORT_VERSION": "27.+"
+      }
     },
     "platforms": [
       "browser",
