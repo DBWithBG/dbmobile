@@ -10,10 +10,10 @@
           >
             <v-card-title primary-title>
               <div>
-                <h3 class="headline">
+                <h4 class="headline">
                   <v-icon left>add_location</v-icon>
                   {{$t("address")}}
-                </h3>
+                </h4>
                 <div class="card-text">{{$t("address_subt")}}</div>
               </div>
             </v-card-title>

@@ -16,6 +16,7 @@ import MyDeliveries from './components/customer/MyDeliveries.vue'
 import Settings from './components/customer/Settings.vue'
 import MyBags from './components/customer/MyBags.vue'
 import DemandForm from './components/customer/DemandForm.vue'
+import Profile from './components/customer/Profile.vue'
 
 import DemandsDriver from './components/driver/Demands.vue'
 import DemandsListDriver from './components/driver/DemandsList.vue'
@@ -46,6 +47,7 @@ const routes = [
   { name: 'Settings', path: '/settings', component: Settings },
   { name: 'MyBags', path: '/my-bags', component: MyBags },
   { name: 'DemandForm', path: '/demand-form', component: DemandForm, props: true },
+  { name: 'Profile', path: '/profile', component: Profile },
 
   // Driver
   { name: 'DemandsDriver', path: '/demands-driver', component: DemandsDriver },

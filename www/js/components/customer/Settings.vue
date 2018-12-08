@@ -16,7 +16,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile avatar @click="alert_dev">
+          <v-list-tile avatar @click="profile">
             <v-list-tile-avatar>
               <v-icon color="primary" large>person</v-icon>
             </v-list-tile-avatar>
@@ -96,7 +96,7 @@
 
     <v-dialog v-model="dialogContact" max-width="auto">
       <v-card>
-        <v-card-title class="headline">{{$t('contact_db')}}</v-card-title>
+        <v-card-title class="subheading">{{$t('contact_db')}}</v-card-title>
         <v-layout column>
           <v-card-text class="text-xs-center">
             <v-btn flat color="primary" :href="tel_string">
@@ -163,15 +163,8 @@ export default {
       window.open("tel:" + tel, "_system");
     },
 
-    // webview du profil détaillé de l'utilisateur
-    getProfile() {
-      let url =
-        "https://dev-deliverbag.supconception.fr/customers/profile?mobile_token=" +
-        localStorage.getItem("deviceId");
-      let ref = window.open(url, "_blank", "location=no,zoom=no");
-      let tok = localStorage.getItem("deviceId");
-      let t = '$("#chk_mobile_token").val("' + tok + '")';
-      //  ref.executeScript( {code : t});
+    profile() {
+      this.$router.push({name: 'Profile'})
     },
 
     // On clean le localStorage
