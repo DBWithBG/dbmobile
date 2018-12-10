@@ -2,6 +2,7 @@
   <div class="profile">
     <!-- Loading spinner -->
     <div v-if="loading">
+      <back-header :message="$t('profil')"></back-header>
       <v-layout row justify-center>
         <v-container fill-height>
           <v-layout row justify-center align-center>
@@ -21,14 +22,15 @@
           <v-card>
             <v-card-title primary-title>
               <h3 class="headline">
-                <v-icon left>perm_identity</v-icon>
+                <v-icon v-if="type == 'customer'" left>perm_identity</v-icon>
+                <v-icon v-if="type == 'driver'" left>drive_eta</v-icon>
                 <span>{{first_name}} {{last_name}}</span>
               </h3>
             </v-card-title>
             <v-card-text>
-              <span v-if="!emailIsConfirmed" class="red-dot"></span>
+              <span v-if="!accountIsConfirmed" class="red-dot"></span>
               <span v-else class="green-dot"></span>
-              {{emailStatus}}
+              {{accountStatus}}
             </v-card-text>
           </v-card>
         </v-flex>
@@ -60,6 +62,14 @@
                   v-model="phone"
                   prepend-icon="phone"
                   :label="$t('phone_number')"
+                ></v-text-field>
+                <v-text-field
+                  v-if="type == 'driver'"
+                  type="number"
+                  :rules="[rules.required]"
+                  v-model="max_bags"
+                  prepend-icon="card_travel"
+                  :label="$t('max_bags')"
                 ></v-text-field>
               </v-form>
             </v-card-text>
@@ -96,7 +106,12 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn @click="updateEmail" :disabled="!emailFormValid" flat color="success">{{$t('save')}}</v-btn>
+              <v-btn
+                @click="updateEmail"
+                :disabled="!emailFormValid"
+                flat
+                color="success"
+              >{{$t('save')}}</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -133,7 +148,13 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn @click="updatePassword" :disabled="!passwordFormValid" right flat color="success">{{$t('save')}}</v-btn>
+              <v-btn
+                @click="updatePassword"
+                :disabled="!passwordFormValid"
+                right
+                flat
+                color="success"
+              >{{$t('save')}}</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -156,11 +177,14 @@ export default {
 
   data() {
     return {
+      // Custo ou driver
+      type: "",
+
       // Api object
       api: new Api(),
 
       // Loading while fetching data from server
-      loading: false,
+      loading: true,
 
       // Are forms valid ?
       infosFormValid: true,
@@ -175,28 +199,49 @@ export default {
       last_name: "",
       email: "",
       phone: "",
-      emailIsConfirmed: false,
       current_password: "",
       new_password: "",
+      max_bags: 10,
+      emailIsConfirmed: false,
+      driverIsOp: false,
 
       // Validation rules
       rules: {
         required: value => !!value || this.$i18n.t("required"),
         min_password: value =>
-          value.length >= 6 || this.$i18n.t("min_password_length"),
+          typeof(value) != 'undefined' || value.length >= 6 || this.$i18n.t("min_password_length"),
         min_phone: value =>
-          value.length >= 10 || this.$i18n.t("min_phone_length"),
+          typeof(value) != 'undefined' || value.length >= 10 || this.$i18n.t("min_phone_length"),
         email_valid: v => /.+@.+/.test(v) || this.$i18n.t("email_not_valid")
       }
     };
   },
 
   computed: {
-    emailStatus() {
-      if (!this.emailIsConfirmed) {
-        return this.$i18n.t("email_not_confirmed");
+    accountStatus() {
+      if (this.type == "customer") {
+        if (!this.emailIsConfirmed) {
+          return this.$i18n.t("email_not_confirmed");
+        } else return this.$i18n.t("account_confirmed");
+      } 
+      
+      else if (this.type == "driver") {
+        if (!this.emailIsConfirmed) {
+          return this.$i18n.t("email_not_confirmed");
+        } 
+        else if (!this.driverIsOp) {
+          return this.$i18n.t("pjs_not_provided");
+        }
+        else return this.$i18n.t("account_confirmed");
       }
-      return this.$i18n.t("account_confirmed");
+    },
+
+    accountIsConfirmed() {
+      if (this.type == "customer") {
+        return this.emailIsConfirmed;
+      } else if (this.type == "driver") {
+        return this.emailIsConfirmed && this.driverIsOp;
+      }
     }
   },
 
@@ -204,25 +249,21 @@ export default {
     updateInfos() {
       let self = this;
 
+      if (this.type == "customer") this.updateCustomerInfos();
+      else if (this.type == "driver") this.updateDriverInfos();
+    },
+
+    updateCustomerInfos() {
+      let self = this;
+
       this.api
         .updateCustomerInfos(this.first_name, this.last_name, this.phone)
         .then(response => {
           this.$swal({
             type: "success",
-            text: self.$i18n.t('informations_updated')
-          })
-        })
-        .catch(error => {
-          this.$swal({
-            type: "error",
-            title: self.$i18n.t("oups"),
-            text: self.$i18n.t("unable_to_retrieve_data_from_server")
+            text: self.$i18n.t("informations_updated")
           });
-        });
-    }, 
-
-    updateEmail() {
-      this.api.updateEmail(this.email).then(response => {})
+        })
         .catch(error => {
           this.$swal({
             type: "error",
@@ -232,9 +273,117 @@ export default {
         });
     },
 
-    updatePassword() {
-      this.api.updatePassword(this.current_password, this.new_password).then(response => {})
+    updateDriverInfos() {
+      let self = this;
+
+      this.api
+        .updateDriverInfos(
+          this.first_name,
+          this.last_name,
+          this.phone,
+          this.max_bags
+        )
+        .then(response => {
+          this.$swal({
+            type: "success",
+            text: self.$i18n.t("informations_updated")
+          });
+        })
         .catch(error => {
+          this.$swal({
+            type: "error",
+            title: self.$i18n.t("oups"),
+            text: self.$i18n.t("unable_to_retrieve_data_from_server")
+          });
+        });
+    },
+
+    updateEmail() {
+      let self = this;
+
+      this.api
+        .updateEmail(this.email)
+        .then(response => {
+          this.$swal({
+            type: "success",
+            text: self.$i18n.t("email_updated")
+          });
+        })
+        .catch(error => {
+          console.log(JSON.stringify(error.response.data));
+          this.$swal({
+            type: "error",
+            title: self.$i18n.t("oups"),
+            text: self.$i18n.t(error.response.data.error.email[0])
+          });
+        });
+    },
+
+    updatePassword() {
+      let self = this;
+
+      this.api
+        .updatePassword(this.current_password, this.new_password)
+        .then(response => {
+          this.$swal({
+            type: "success",
+            text: self.$i18n.t("password_updated")
+          });
+        })
+        .catch(error => {
+          this.$swal({
+            type: "error",
+            title: self.$i18n.t("oups"),
+            text: self.$i18n.t(error.response.data.error)
+          });
+        });
+    },
+
+    fetchCustomerData() {
+      let self = this;
+
+      // Fetch user's data from server
+      this.api
+        .readCustomer()
+        .then(response => {
+          self.loading = false;
+          let customer = JSON.parse(response.data)[0];
+          self.first_name = customer.surname;
+          self.last_name = customer.name;
+          self.phone = customer.phone;
+          self.email = customer.user.email;
+          self.emailIsConfirmed = customer.user.is_confirmed == 1;
+        })
+        .catch(error => {
+          self.loading = false;
+          this.$swal({
+            type: "error",
+            title: self.$i18n.t("oups"),
+            text: self.$i18n.t("unable_to_retrieve_data_from_server")
+          });
+        });
+    },
+
+    fetchDriverData() {
+      let self = this;
+
+      // Fetch user's data from server
+      this.api
+        .readDriver()
+        .then(response => {
+          self.loading = false;
+          let driver = JSON.parse(response.data)[0];
+          console.log(driver);
+          self.first_name = driver.surname;
+          self.last_name = driver.name;
+          self.phone = driver.phone;
+          self.email = driver.user.email;
+          self.max_bags = driver.max_bags;
+          self.emailIsConfirmed = driver.user.is_confirmed == 1;
+          self.driverIsOp = driver.is_op == 1;
+        })
+        .catch(error => {
+          self.loading = false;
           this.$swal({
             type: "error",
             title: self.$i18n.t("oups"),
@@ -246,28 +395,10 @@ export default {
 
   // Call when component is mounted
   mounted() {
-    let self = this;
+    this.type = window.localStorage.getItem("type");
 
-    // Fetch user's data from server
-    this.api
-      .readCustomer()
-      .then(response => {
-        self.loading = false;
-        let driver = JSON.parse(response.data)[0];
-        self.first_name = driver.surname;
-        self.last_name = driver.name;
-        self.phone = driver.phone;
-        self.email = driver.user.email;
-        self.email_is_confirmed = driver.user.is_confirmed == 1;
-      })
-      .catch(error => {
-        self.loading = false;
-        this.$swal({
-          type: "error",
-          title: self.$i18n.t("oups"),
-          text: self.$i18n.t("unable_to_retrieve_data_from_server")
-        });
-      });
+    if (this.type == "customer") this.fetchCustomerData();
+    else if (this.type == "driver") this.fetchDriverData();
   }
 };
 </script>

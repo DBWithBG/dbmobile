@@ -71,6 +71,23 @@ class Api {
             new_password_again: new_password
         }, this.header);
     }
+
+    refreshNotifyToken(token) {
+        return axios
+            .put(
+                BASE_URL + "/mobile/users/refreshNotifyToken",
+                {
+                    notify_token: token
+                }, this.headers
+            );
+    }
+
+    static login(email, password) {
+        return axios.post(BASE_URL + "/mobile/login", {
+          email,
+          password
+        })
+    }
 }
 
 export default Api;

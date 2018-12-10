@@ -3,7 +3,7 @@
     <v-flex xs12 sm6 offset-sm3>
       <v-card>
         <v-list>
-          <v-list-tile @click="dev()" avatar>
+          <v-list-tile avatar>
             <v-list-tile-avatar>
               <v-icon large>person</v-icon>
             </v-list-tile-avatar>
@@ -12,7 +12,7 @@
               <v-list-tile-sub-title>{{$t("profil_sbt")}}</v-list-tile-sub-title>
             </v-list-tile-content>
             <v-list-tile-action>
-              <v-btn @click.native="getProfile()" icon ripple>
+              <v-btn @click.native="profile()" icon ripple>
                 <v-icon x-large>navigate_next</v-icon>
               </v-btn>
             </v-list-tile-action>
@@ -116,6 +116,10 @@ export default {
   methods: {
     dev() {
       alert("En cours de développement");
+    },
+
+    profile() {
+      this.$router.push("/profile")
     },
     
     disconnect() {

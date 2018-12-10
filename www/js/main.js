@@ -40,6 +40,7 @@ const routes = [
   { name: 'RegisterChoice', path: '/register-choice', component: RegisterChoice },
   { name: 'RegisterCustomer', path: '/register-customer', component: RegisterCustomer },
   { name: 'RegisterDriver', path: '/register-driver', component: RegisterDriver },
+  { name: 'Profile', path: '/profile', component: Profile },
 
   // Customer
   { name: 'DemandChoice', path: '/demand-choice', component: DemandChoice },
@@ -47,7 +48,6 @@ const routes = [
   { name: 'Settings', path: '/settings', component: Settings },
   { name: 'MyBags', path: '/my-bags', component: MyBags },
   { name: 'DemandForm', path: '/demand-form', component: DemandForm, props: true },
-  { name: 'Profile', path: '/profile', component: Profile },
 
   // Driver
   { name: 'DemandsDriver', path: '/demands-driver', component: DemandsDriver },

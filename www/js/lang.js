@@ -43,6 +43,12 @@ export default {
     "oups": "Oups...",
     "account_confirmed": "Compte vérifié",
     "informations_updated": "Informations mises à jour",
+    "email_updated": "Adresse email mise à jour",
+    "password_updated": "Mot de passe mis à jour",
+    "actual_password_invalid": "Mot de passe actuel invalide",
+    "pjs_not_provided": "Pièces justificatives non fournies",
+    "email_already_used": "Adresse email déjà utilisée",
+    "email_invalid": "Adresse email invalide",
 
 
     "address": "J'indique une adresse",

@@ -13,7 +13,9 @@
             <v-text-field
               :rules="[otherRules.required]"
               v-model="password"
-              type="password"
+              :append-icon="showPassword ? 'visibility_off' : 'visibility'"
+              :type="showPassword ? 'text' : 'password'"
+              @click:append="showPassword = !showPassword"
               :label="$t('password')"
             ></v-text-field>
           </v-flex>
@@ -61,16 +63,20 @@
 
 <script>
 import axios from "axios";
+import Api from "../../api.js";
 
 export default {
   data() {
     return {
+      api: null,
+
       hasError: false,
       error: "",
 
       // Form data
       email: "",
       password: "",
+      showPassword: false,
 
       // Is the form valid ?
       valid: false,
@@ -88,6 +94,7 @@ export default {
   },
 
   mounted() {
+
     if (this.checkIfUserIsLoggedIn) {
       let type = window.localStorage.getItem("type");
 
@@ -116,11 +123,7 @@ export default {
     login() {
       let self = this;
 
-      axios
-        .post("https://dev-deliverbag.supconception.fr/mobile/login", {
-          email: this.email,
-          password: this.password
-        })
+      Api.login(this.email, this.password)
         .then(response => {
           let type = response.data.type;
           let jwt = response.data.token;
@@ -137,6 +140,8 @@ export default {
           else {
             window.localStorage.setItem("jwt", jwt);
             window.localStorage.setItem("type", type);
+
+            self.api = new Api(jwt);
 
             if (self.isCordovaSet()) {
               self.sendFirebaseToken();
@@ -163,25 +168,15 @@ export default {
     },
 
     sendFirebaseToken() {
-      var self = this;
-      var jwt = window.localStorage.getItem('jwt');
+      let self = this;
+      let jwt = window.localStorage.getItem("jwt");
 
       cordova.plugins.firebase.messaging.getToken().then(token => {
         console.log("Sending firebase token : " + token);
-        axios
-          .put(
-            "https://dev-deliverbag.supconception.fr/mobile/users/refreshNotifyToken",
-            {
-              notify_token: token
-            }, {
-              headers: {
-                Authorization: 'Bearer ' + jwt
-              }
-            }
-          )
+        self.api.refreshNotifyToken(token)
           .then(response => {})
           .catch(error => {
-            console.log(error);
+            console.log(JSON.stringify(error));
           });
       });
     }
