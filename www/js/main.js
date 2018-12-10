@@ -23,6 +23,8 @@ import DemandsListDriver from './components/driver/DemandsList.vue'
 import MyDeliveriesDriver from './components/driver/MyDeliveries.vue'
 import SettingsDriver from './components/driver/Settings.vue'
 
+import ConfirmEmail from './components/ConfirmEmail.vue'
+
 Vue.use(VueRouter);
 Vue.use(VueI18n);
 Vue.use(Vuetify, { theme: { primary: '#3EB93A' } });
@@ -41,6 +43,7 @@ const routes = [
   { name: 'RegisterCustomer', path: '/register-customer', component: RegisterCustomer },
   { name: 'RegisterDriver', path: '/register-driver', component: RegisterDriver },
   { name: 'Profile', path: '/profile', component: Profile },
+  { name: 'ConfirmEmail', path: '/confirm-email', component: ConfirmEmail },
 
   // Customer
   { name: 'DemandChoice', path: '/demand-choice', component: DemandChoice },

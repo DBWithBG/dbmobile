@@ -49,6 +49,8 @@ export default {
     "pjs_not_provided": "Pièces justificatives non fournies",
     "email_already_used": "Adresse email déjà utilisée",
     "email_invalid": "Adresse email invalide",
+    "welcome_on_deliverbag": "Bienvenue sur Deliverbag",
+    "confirm_your_email": "Pour continuer, merci de confirmer votre adresse email grâce au lien qui vous a été envoyé",
 
 
     "address": "J'indique une adresse",

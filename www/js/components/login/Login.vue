@@ -94,21 +94,68 @@ export default {
   },
 
   mounted() {
-
     if (this.checkIfUserIsLoggedIn) {
-      let type = window.localStorage.getItem("type");
-
-      if (type == "customer") this.$router.push({ name: "DemandChoice" });
-      else if (type == "driver") this.$router.push({ name: "DemandsDriver" });
-      else {
-        // Le type est invalide, on clean tout
-        window.localStorage.removeItem("type");
-        window.localStorage.removeItem("jwt");
-      }
+      this.redirectLoggedUser();
     }
   },
 
   methods: {
+    redirectLoggedUser() {
+      let self = this;
+      let type = window.localStorage.getItem("type");
+      let jwt = window.localStorage.getItem("jwt");
+
+      this.api = new Api();
+
+      // if (type == "customer") this.$router.push({ name: "DemandChoice" });
+      // else if (type == "driver") this.$router.push({ name: "DemandsDriver" });
+
+      if (type == "customer") {
+        this.api
+          .readCustomer()
+          .then(response => {
+            let customer = JSON.parse(response.data)[0];
+            let emailIsConfirmed = customer.user.is_confirmed == 1;
+            if (emailIsConfirmed) {
+              this.$router.push({ name: "DemandChoice" });
+            } else {
+              this.$router.push({ name: "ConfirmEmail" });
+            }
+          })
+          .catch(_ => {
+            this.$swal({
+              type: "error",
+              title: self.$i18n.t("oups"),
+              text: self.$i18n.t("unable_to_retrieve_data_from_server")
+            });
+          });
+      } else if (type == "driver") {
+        this.api
+          .readDriver()
+          .then(response => {
+            let driver = JSON.parse(response.data)[0];
+            let emailIsConfirmed = driver.user.is_confirmed == 1;
+            if (emailIsConfirmed) {
+              this.$router.push({ name: "DemandChoice" });
+            } else {
+              this.$router.push({ name: "ConfirmEmail" });
+            }
+          })
+          .catch(_ => {
+            this.$swal({
+              type: "error",
+              title: self.$i18n.t("oups"),
+              text: self.$i18n.t("unable_to_retrieve_data_from_server")
+            });
+          });
+      } else {
+        // Le type est invalide, on clean tout
+        window.localStorage.removeItem("type");
+        window.localStorage.removeItem("jwt");
+        this.$router.push({ name: "Login" });
+      }
+    },
+
     checkIfUserIsLoggedIn() {
       let jwt = window.localStorage.getItem("jwt");
       let type = window.localStorage.getItem("type");
@@ -146,10 +193,7 @@ export default {
               self.sendFirebaseToken();
             }
 
-            if (type == "customer")
-              this.$router.push({ path: "/demand-choice" });
-            else if (type == "driver")
-              this.$router.push({ path: "/demands-driver" });
+            self.redirectLoggedUser();
           }
         })
         .catch(error => {
@@ -171,10 +215,13 @@ export default {
       let jwt = window.localStorage.getItem("jwt");
 
       cordova.plugins.firebase.messaging.getToken().then(token => {
-        self.api.refreshNotifyToken(token)
+        self.api
+          .refreshNotifyToken(token)
           .then(response => {})
           .catch(error => {
-            console.log('Error in sendFirebasetoken : ' + JSON.stringify(error));
+            console.log(
+              "Error in sendFirebasetoken : " + JSON.stringify(error)
+            );
           });
       });
     }
