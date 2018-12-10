@@ -141,9 +141,8 @@ export default {
             window.localStorage.setItem("jwt", jwt);
             window.localStorage.setItem("type", type);
 
-            self.api = new Api(jwt);
-
             if (self.isCordovaSet()) {
+              self.api = new Api();
               self.sendFirebaseToken();
             }
 
@@ -172,11 +171,10 @@ export default {
       let jwt = window.localStorage.getItem("jwt");
 
       cordova.plugins.firebase.messaging.getToken().then(token => {
-        console.log("Sending firebase token : " + token);
         self.api.refreshNotifyToken(token)
           .then(response => {})
           .catch(error => {
-            console.log(JSON.stringify(error));
+            console.log('Error in sendFirebasetoken : ' + JSON.stringify(error));
           });
       });
     }

@@ -396,7 +396,6 @@ export default {
   // Call when component is mounted
   mounted() {
     this.type = window.localStorage.getItem("type");
-
     if (this.type == "customer") this.fetchCustomerData();
     else if (this.type == "driver") this.fetchDriverData();
   }

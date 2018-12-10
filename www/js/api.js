@@ -73,13 +73,8 @@ class Api {
     }
 
     refreshNotifyToken(token) {
-        return axios
-            .put(
-                BASE_URL + "/mobile/users/refreshNotifyToken",
-                {
-                    notify_token: token
-                }, this.headers
-            );
+        return axios.put(BASE_URL + "/mobile/users/refreshNotifyToken",
+                { notify_token: token }, this.header);
     }
 
     static login(email, password) {

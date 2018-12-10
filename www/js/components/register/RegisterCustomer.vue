@@ -99,89 +99,122 @@
 
 
 <script>
-
-import BackHeader from '../BackHeader.vue'
-import axios from 'axios'
+import BackHeader from "../BackHeader.vue";
+import axios from "axios";
+import Api from "../../api.js";
 
 export default {
+  components: {
+    "back-header": BackHeader
+  },
 
-    components: {
-        'back-header': BackHeader
-    },
+  data: function() {
+    return {
+      hasError: false,
+      error: "",
+      showPassword: false,
+      api: null,
 
-    data: function () {
-      return {
+      // Form value
+      first_name: "",
+      last_name: "",
+      phone_number: "",
+      email: "",
+      password: "",
 
-            hasError: false,
-            error: '',
-            showPassword: false,
+      // Is the form valid ?
+      valid: false,
 
-            // Form value
-            first_name: "",
-            last_name: "",
-            phone_number: "",
-            email: "",
-            password: "",
+      // Rules
+      emailRules: [
+        v => !!v || this.$i18n.t("email_required"),
+        v => /.+@.+/.test(v) || this.$i18n.t("email_not_valid")
+      ],
 
-            // Is the form valid ?
-            valid: false,
-
-            // Rules
-            emailRules: [
-                v => !!v || this.$i18n.t('email_required'),
-                v => /.+@.+/.test(v) || this.$i18n.t('email_not_valid')
-            ],
-
-            otherRules: {
-                required: value => !!value || this.$i18n.t('required'),
-                min_password: value => value.length >= 6 || this.$i18n.t('min_password_length'),
-                min_phone: value => value.length >= 10 || this.$i18n.t('min_phone_length')
-            }
+      otherRules: {
+        required: value => !!value || this.$i18n.t("required"),
+        min_password: value =>
+          value.length >= 6 || this.$i18n.t("min_password_length"),
+        min_phone: value =>
+          value.length >= 10 || this.$i18n.t("min_phone_length")
       }
+    };
   },
 
   methods: {
-    register() {
-        let self = this
-
-        axios.post('https://dev-deliverbag.supconception.fr/mobile/register',
-        {
-            email: self.email,
-            password: self.password,
-            surname: self.first_name,
-            name: self.last_name,
-            phone: self.phone_number,
-            type: 'customer'
-        }).then(response => {
-            let type = response.data.type
-            let jwt = response.data.token
-
-            // L'inscription a échouée
-            if (!type || !jwt) {
-                console.log(response.data)
-                if (response.data.email && response.data.email[0].includes('The email has already been taken')) {
-                    // L'email est déjà utilisée
-                    self.error = self.$i18n.t('email_already_been_taken')
-                } else {
-                    // Message générique
-                    self.error = self.$i18n.t('error_while_registering')
-                }
-
-                
-                self.hasError = true
-            } 
-            // L'inscription a réussi
-            else {
-                window.localStorage.setItem("jwt", jwt)
-                window.localStorage.setItem("type", type)
-                self.$router.push({path: '/demand-choice'})
-            }
-        }).catch(error => {
-            console.log(error)
-            self.error = self.$i18n.t("unable_to_retrieve_data_from_server");
-            self.hasError = true
-        })
+    isCordovaSet() {
+      return typeof cordova != "undefined";
     },
+
+    sendFirebaseToken() {
+      let self = this;
+      let jwt = window.localStorage.getItem("jwt");
+
+      cordova.plugins.firebase.messaging.getToken().then(token => {
+        self.api
+          .refreshNotifyToken(token)
+          .then(response => {})
+          .catch(error => {
+            console.log(
+              "Error in sendFirebasetoken : " + JSON.stringify(error)
+            );
+          });
+      });
+    },
+
+    register() {
+      let self = this;
+
+      axios
+        .post("https://dev-deliverbag.supconception.fr/mobile/register", {
+          email: self.email,
+          password: self.password,
+          surname: self.first_name,
+          name: self.last_name,
+          phone: self.phone_number,
+          type: "customer"
+        })
+        .then(response => {
+          let type = response.data.type;
+          let jwt = response.data.token;
+
+          // L'inscription a échouée
+          if (!type || !jwt) {
+            console.log(response.data);
+            if (
+              response.data.email &&
+              response.data.email[0].includes(
+                "The email has already been taken"
+              )
+            ) {
+              // L'email est déjà utilisée
+              self.error = self.$i18n.t("email_already_been_taken");
+            } else {
+              // Message générique
+              self.error = self.$i18n.t("error_while_registering");
+            }
+
+            self.hasError = true;
+          }
+          // L'inscription a réussi
+          else {
+            window.localStorage.setItem("jwt", jwt);
+            window.localStorage.setItem("type", type);
+
+            if (self.isCordovaSet()) {
+              self.api = new Api();
+              self.sendFirebaseToken();
+            }
+
+            self.$router.push({ path: "/demand-choice" });
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          self.error = self.$i18n.t("unable_to_retrieve_data_from_server");
+          self.hasError = true;
+        });
+    }
   }
 };
 </script>
