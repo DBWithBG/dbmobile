@@ -1,14 +1,29 @@
 <template>
-  <div id="confirm-email">
+  <div id="confirm-driver">
     <v-layout justify-center column fill-height>
       <v-flex class="text-xs-center">
         <span xs12 class="headline">{{$t('welcome_on_deliverbag')}}</span>
       </v-flex>
-      <v-flex class="padding-top-3em text-xs-center">
+      <v-flex xs8 class="padding-top-3em">
+        <v-divider></v-divider>
+      </v-flex>
+      <v-flex class="padding-top-3em">
         <span xs12 class="subheading">{{$t('confirm_your_email')}}</span>
       </v-flex>
-      <v-flex class="padding-top-1em text-xs-center">
-        <v-btn  color="info" block>{{$t('resend_email')}}</v-btn>
+      <v-flex class="padding-top-3em">
+        <span xs12 class="subheading">
+          {{$t('go_on')}}
+          <a href="http://deliverbag.com">deliverbag.com</a>
+          {{$t('pour')}} :
+        </span>
+        <ul>
+          <li class="body-1">{{$t('rib')}}</li>
+          <li class="body-1">{{$t('siret')}}</li>
+          <li class="body-1">{{$t('cni')}}</li>
+        </ul>
+      </v-flex>
+      <v-flex class="padding-top-3em text-xs-center">
+        <v-btn color="info" block>{{$t('resend_email')}}</v-btn>
       </v-flex>
       <v-flex class="padding-top-1em text-xs-center">
         <v-btn @click="next" color="success" block>{{$t('continue')}}</v-btn>
@@ -26,26 +41,32 @@ import Api from "../api.js";
 export default {
   methods: {
     next() {
-      this.checkEmailConfirmed();
+      this.checkDriverConfirmed();
     },
 
-    checkEmailConfirmed() {
+    checkDriverConfirmed() {
       let self = this;
       let type = window.localStorage.getItem("type");
 
       let api = new Api();
-      if (type == "customer") {
-        api.readCustomer()
+      if (type == "driver") {
+        api
+          .readDriver()
           .then(response => {
-            let customer = JSON.parse(response.data)[0];
-            let emailIsConfirmed = customer.user.is_confirmed == 1;
-            if (emailIsConfirmed) {
-              self.$router.push({ name: "DemandChoice" });
-            } else {
-                
+            let driver = JSON.parse(response.data)[0];
+            let emailIsConfirmed = driver.user.is_confirmed == 1;
+            let driverIsOp = driver.is_op == 1;
+            if (emailIsConfirmed && driverIsOp) {
+              self.$router.push({ name: "DemandsDriver" });
+            } else if (!emailIsConfirmed) {
               self.$swal({
                 type: "info",
                 text: self.$i18n.t("email_not_confirmed")
+              });
+            } else {
+              self.$swal({
+                type: "info",
+                text: self.$i18n.t("driver_infos_not_provided")
               });
             }
           })
@@ -74,9 +95,10 @@ export default {
 </script>
 
 <style scoped>
-#confirm-email {
-  padding-top: 7em;
+#confirm-driver {
+  padding-top: 6em;
 }
+
 .padding-top-1em {
   padding-top: 1em;
 }

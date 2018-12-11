@@ -51,6 +51,14 @@ export default {
     "email_invalid": "Adresse email invalide",
     "welcome_on_deliverbag": "Bienvenue sur Deliverbag",
     "confirm_your_email": "Pour continuer, merci de confirmer votre adresse email grâce au lien qui vous a été envoyé",
+    "resend_email": "Renvoyer le mail",
+    "continue": "Continuer",
+    "go_on": "Rendez-vous ensuite sur ",
+    "rib": "Nous fournir un relevé d'identité bancaire",
+    "siret": "Nous fournir votre numéro de SIRET",
+    "cni": "Nous fournir une copie de votre carte nationale d'identité",
+    "pour": "pour",
+    "driver_infos_not_provided": "Vos pièces justificatives ne sont pas encore validées",
 
 
     "address": "J'indique une adresse",

@@ -100,49 +100,53 @@ export default {
   },
 
   methods: {
+    checkIfUserIsLoggedIn() {
+      let jwt = window.localStorage.getItem("jwt");
+      let type = window.localStorage.getItem("type");
+
+      return !jwt || !type;
+    },
+
     redirectLoggedUser() {
       let self = this;
       let type = window.localStorage.getItem("type");
-      let jwt = window.localStorage.getItem("jwt");
 
-      this.api = new Api();
-
-      // if (type == "customer") this.$router.push({ name: "DemandChoice" });
-      // else if (type == "driver") this.$router.push({ name: "DemandsDriver" });
+      self.api = new Api();
 
       if (type == "customer") {
-        this.api
+        self.api
           .readCustomer()
           .then(response => {
             let customer = JSON.parse(response.data)[0];
             let emailIsConfirmed = customer.user.is_confirmed == 1;
             if (emailIsConfirmed) {
-              this.$router.push({ name: "DemandChoice" });
+              self.$router.push({ name: "DemandChoice" });
             } else {
-              this.$router.push({ name: "ConfirmEmail" });
+              self.$router.push({ name: "ConfirmEmail" });
             }
           })
           .catch(_ => {
-            this.$swal({
+            self.$swal({
               type: "error",
               title: self.$i18n.t("oups"),
               text: self.$i18n.t("unable_to_retrieve_data_from_server")
             });
           });
       } else if (type == "driver") {
-        this.api
+        self.api
           .readDriver()
           .then(response => {
             let driver = JSON.parse(response.data)[0];
             let emailIsConfirmed = driver.user.is_confirmed == 1;
-            if (emailIsConfirmed) {
-              this.$router.push({ name: "DemandChoice" });
+            let driverIsOp = driver.is_op == 1;
+            if (emailIsConfirmed && driverIsOp) {
+              self.$router.push({ name: "DemandsDriver" });
             } else {
-              this.$router.push({ name: "ConfirmEmail" });
+              self.$router.push({ name: "ConfirmDriver" });
             }
           })
           .catch(_ => {
-            this.$swal({
+            self.$swal({
               type: "error",
               title: self.$i18n.t("oups"),
               text: self.$i18n.t("unable_to_retrieve_data_from_server")
@@ -152,15 +156,8 @@ export default {
         // Le type est invalide, on clean tout
         window.localStorage.removeItem("type");
         window.localStorage.removeItem("jwt");
-        this.$router.push({ name: "Login" });
+        self.$router.push({ name: "Login" });
       }
-    },
-
-    checkIfUserIsLoggedIn() {
-      let jwt = window.localStorage.getItem("jwt");
-      let type = window.localStorage.getItem("type");
-
-      return !jwt || !type;
     },
 
     register() {
@@ -179,7 +176,7 @@ export default {
           if (!type || !jwt) {
             self.$swal({
               type: "error",
-              title: self.$i18n.t("fail"),
+              title: self.$i18n.t("oups"),
               text: self.$i18n.t("invalid_credentials")
             });
           }

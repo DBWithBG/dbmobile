@@ -206,7 +206,7 @@ export default {
               self.sendFirebaseToken();
             }
 
-            self.$router.push({ path: "/demand-choice" });
+            self.$router.push({ name: "Login" });
           }
         })
         .catch(error => {

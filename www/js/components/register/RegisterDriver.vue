@@ -203,7 +203,7 @@ export default {
               self.sendFirebaseToken();
             }
 
-            self.$router.push({ path: "/demands-driver" });
+            self.$router.push({ name: "Login" });
           }
         })
         .catch(error => {

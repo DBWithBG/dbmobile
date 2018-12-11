@@ -17,13 +17,14 @@ import Settings from './components/customer/Settings.vue'
 import MyBags from './components/customer/MyBags.vue'
 import DemandForm from './components/customer/DemandForm.vue'
 import Profile from './components/customer/Profile.vue'
+import ConfirmEmail from './components/ConfirmEmail.vue'
 
 import DemandsDriver from './components/driver/Demands.vue'
 import DemandsListDriver from './components/driver/DemandsList.vue'
 import MyDeliveriesDriver from './components/driver/MyDeliveries.vue'
 import SettingsDriver from './components/driver/Settings.vue'
+import ConfirmDriver from './components/ConfirmDriver.vue'
 
-import ConfirmEmail from './components/ConfirmEmail.vue'
 
 Vue.use(VueRouter);
 Vue.use(VueI18n);
@@ -43,7 +44,6 @@ const routes = [
   { name: 'RegisterCustomer', path: '/register-customer', component: RegisterCustomer },
   { name: 'RegisterDriver', path: '/register-driver', component: RegisterDriver },
   { name: 'Profile', path: '/profile', component: Profile },
-  { name: 'ConfirmEmail', path: '/confirm-email', component: ConfirmEmail },
 
   // Customer
   { name: 'DemandChoice', path: '/demand-choice', component: DemandChoice },
@@ -51,12 +51,14 @@ const routes = [
   { name: 'Settings', path: '/settings', component: Settings },
   { name: 'MyBags', path: '/my-bags', component: MyBags },
   { name: 'DemandForm', path: '/demand-form', component: DemandForm, props: true },
+  { name: 'ConfirmEmail', path: '/confirm-email', component: ConfirmEmail },
 
   // Driver
   { name: 'DemandsDriver', path: '/demands-driver', component: DemandsDriver },
   { name: 'DemandsListDriver', path: '/demands-list-driver', component: DemandsListDriver },
   { name: 'MyDeliveriesDriver', path: '/my-deliveries-driver', component: MyDeliveriesDriver },
-  { name: 'SettingsDriver', path: '/settings-driver', component: SettingsDriver }
+  { name: 'SettingsDriver', path: '/settings-driver', component: SettingsDriver },
+  { name: 'ConfirmDriver', path: '/confirm-driver', component: ConfirmDriver }
 ];
 
 const router = new VueRouter({ routes: routes });
