@@ -308,6 +308,9 @@ export default {
             type: "success",
             text: self.$i18n.t("email_updated")
           });
+          window.setTimeout(() => {
+            this.$router.replace({name: 'Root'})
+          }, 2000);
         })
         .catch(error => {
           console.log(JSON.stringify(error.response.data));

@@ -13,7 +13,7 @@
       <v-flex class="padding-top-3em">
         <span xs12 class="subheading">
           {{$t('go_on')}}
-          <a href="http://deliverbag.com">deliverbag.com</a>
+          <a href="https://dev-deliverbag.supconception.fr/">deliverbag.com</a>
           {{$t('pour')}} :
         </span>
         <ul>
@@ -47,9 +47,6 @@ export default {
 
   methods: {
     next() {
-      // Pour le dev
-      self.$router.push({ name: "DemandsDriver" });
-      return;
       this.checkDriverConfirmed();
     },
 
@@ -104,7 +101,6 @@ export default {
         await this.api.resendConfirmationEmail();
         this.$swal({
           type: "success",
-          title: this.$i18n.t("oups"),
           text: this.$i18n.t("confirmation_email_sent")
         });
       } catch (error) {

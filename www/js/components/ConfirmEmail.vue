@@ -25,30 +25,29 @@ import Api from "../api.js";
 
 export default {
   data: () => {
-    api: new Api()
+    return {
+      api: new Api()
+    };
   },
 
   methods: {
     next() {
-      // Pour le dev
-      self.$router.push({ name: "DemandChoice" });
-      return;
       this.checkEmailConfirmed();
     },
 
     checkEmailConfirmed() {
       let self = this;
       let type = window.localStorage.getItem("type");
-  
+
       if (type == "customer") {
-        this.api.readCustomer()
+        this.api
+          .readCustomer()
           .then(response => {
             let customer = JSON.parse(response.data)[0];
             let emailIsConfirmed = customer.user.is_confirmed == 1;
             if (emailIsConfirmed) {
               self.$router.push({ name: "DemandChoice" });
             } else {
-                
               self.$swal({
                 type: "info",
                 text: self.$i18n.t("email_not_confirmed")
@@ -81,7 +80,6 @@ export default {
         await this.api.resendConfirmationEmail();
         this.$swal({
           type: "success",
-          title: this.$i18n.t("oups"),
           text: this.$i18n.t("confirmation_email_sent")
         });
       } catch (error) {
@@ -98,7 +96,6 @@ export default {
 </script>
 
 <style scoped>
-
 .padding-top-1em {
   padding-top: 1em;
 }
