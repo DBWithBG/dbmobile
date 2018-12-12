@@ -59,6 +59,7 @@ export default {
     "cni": "Nous fournir une copie de votre carte nationale d'identité",
     "pour": "pour",
     "driver_infos_not_provided": "Vos pièces justificatives ne sont pas encore validées",
+    "confirmation_email_sent": "Email de confirmation envoyé",
 
 
     "address": "J'indique une adresse",

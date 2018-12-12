@@ -1,5 +1,5 @@
 <template>
-  <div id="confirm-driver">
+  <div class="padding-top-3em">
     <v-layout justify-center column fill-height>
       <v-flex class="text-xs-center">
         <span xs12 class="headline">{{$t('welcome_on_deliverbag')}}</span>
@@ -23,7 +23,7 @@
         </ul>
       </v-flex>
       <v-flex class="padding-top-3em text-xs-center">
-        <v-btn color="info" block>{{$t('resend_email')}}</v-btn>
+        <v-btn @click="resendConfirmationEmail" color="info" block>{{$t('resend_email')}}</v-btn>
       </v-flex>
       <v-flex class="padding-top-1em text-xs-center">
         <v-btn @click="next" color="success" block>{{$t('continue')}}</v-btn>
@@ -39,8 +39,17 @@
 import Api from "../api.js";
 
 export default {
+  data() {
+    return {
+      api: new Api()
+    };
+  },
+
   methods: {
     next() {
+      // Pour le dev
+      self.$router.push({ name: "DemandsDriver" });
+      return;
       this.checkDriverConfirmed();
     },
 
@@ -48,9 +57,8 @@ export default {
       let self = this;
       let type = window.localStorage.getItem("type");
 
-      let api = new Api();
       if (type == "driver") {
-        api
+        this.api
           .readDriver()
           .then(response => {
             let driver = JSON.parse(response.data)[0];
@@ -89,16 +97,30 @@ export default {
       window.localStorage.removeItem("jwt");
       window.localStorage.removeItem("type");
       this.$router.replace("/");
+    },
+
+    async resendConfirmationEmail() {
+      try {
+        await this.api.resendConfirmationEmail();
+        this.$swal({
+          type: "success",
+          title: this.$i18n.t("oups"),
+          text: this.$i18n.t("confirmation_email_sent")
+        });
+      } catch (error) {
+        console.log(error);
+        this.$swal({
+          type: "error",
+          title: this.$i18n.t("oups"),
+          text: this.$i18n.t("unable_to_retrieve_data_from_server")
+        });
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-#confirm-driver {
-  padding-top: 6em;
-}
-
 .padding-top-1em {
   padding-top: 1em;
 }

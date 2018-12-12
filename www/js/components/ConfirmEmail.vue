@@ -1,5 +1,5 @@
 <template>
-  <div id="confirm-email">
+  <div class="padding-top-3em">
     <v-layout justify-center column fill-height>
       <v-flex class="text-xs-center">
         <span xs12 class="headline">{{$t('welcome_on_deliverbag')}}</span>
@@ -8,7 +8,7 @@
         <span xs12 class="subheading">{{$t('confirm_your_email')}}</span>
       </v-flex>
       <v-flex class="padding-top-1em text-xs-center">
-        <v-btn  color="info" block>{{$t('resend_email')}}</v-btn>
+        <v-btn @click="resendConfirmationEmail" color="info" block>{{$t('resend_email')}}</v-btn>
       </v-flex>
       <v-flex class="padding-top-1em text-xs-center">
         <v-btn @click="next" color="success" block>{{$t('continue')}}</v-btn>
@@ -24,18 +24,24 @@
 import Api from "../api.js";
 
 export default {
+  data: () => {
+    api: new Api()
+  },
+
   methods: {
     next() {
+      // Pour le dev
+      self.$router.push({ name: "DemandChoice" });
+      return;
       this.checkEmailConfirmed();
     },
 
     checkEmailConfirmed() {
       let self = this;
       let type = window.localStorage.getItem("type");
-
-      let api = new Api();
+  
       if (type == "customer") {
-        api.readCustomer()
+        this.api.readCustomer()
           .then(response => {
             let customer = JSON.parse(response.data)[0];
             let emailIsConfirmed = customer.user.is_confirmed == 1;
@@ -68,15 +74,31 @@ export default {
       window.localStorage.removeItem("jwt");
       window.localStorage.removeItem("type");
       this.$router.replace("/");
+    },
+
+    async resendConfirmationEmail() {
+      try {
+        await this.api.resendConfirmationEmail();
+        this.$swal({
+          type: "success",
+          title: this.$i18n.t("oups"),
+          text: this.$i18n.t("confirmation_email_sent")
+        });
+      } catch (error) {
+        console.log(error);
+        this.$swal({
+          type: "error",
+          title: this.$i18n.t("oups"),
+          text: this.$i18n.t("unable_to_retrieve_data_from_server")
+        });
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-#confirm-email {
-  padding-top: 7em;
-}
+
 .padding-top-1em {
   padding-top: 1em;
 }

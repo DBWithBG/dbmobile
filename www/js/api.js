@@ -5,15 +5,13 @@ const BASE_URL = "https://dev-deliverbag.supconception.fr"
 class Api {
 
     constructor() {
-        this.jwt = window.localStorage.getItem("jwt");
+        let jwt = window.localStorage.getItem("jwt");
         this.header = {
             headers: {
-                Authorization: 'Bearer ' + this.jwt
+                Authorization: 'Bearer ' + jwt
             }
         };
     }
-
-    /****************************** PROFIL CUSTOMER ET DRIVER ******************************/
 
     /**
      * Fetch current driver informations
@@ -75,6 +73,10 @@ class Api {
     refreshNotifyToken(token) {
         return axios.put(BASE_URL + "/mobile/users/refreshNotifyToken",
                 { notify_token: token }, this.header);
+    }
+
+    resendConfirmationEmail() {
+        return axios.get(BASE_URL + "/mobile/resend-confirmation-email", this.header);
     }
 
     static login(email, password) {
