@@ -428,6 +428,19 @@ export default {
     this.initUserMarker();
     this.initUserPos();
     this.getDeliveries();
+
+    if (typeof cordova.plugins != "undefined") {
+      console.log("Registering onMessage callback");
+      cordova.plugins.firebase.messaging.onMessage(function(payload) {
+        let title = payload.gcm.title;
+        let body = payload.gcm.body;
+        self.$swal({
+          type: "info",
+          title: title,
+          text: body
+        });
+      });
+    }
   },
 
   destroyed() {

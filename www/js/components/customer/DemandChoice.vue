@@ -70,30 +70,27 @@
 
 
 <script>
-import Menu from './Menu.vue'
+import Menu from "./Menu.vue";
 
 export default {
-
   components: {
-    'db-menu':  Menu
+    "db-menu": Menu
   },
 
-  methods: {
-    webviewConnexion() {
-      var view = cordova.InAppBrowser.open(
-        "https://dev-deliverbag.supconception.fr/connexion",
-        "_self",
-        "location=no,zoom=no"
-      );
-      console.log(view);
-      view.close();
-      view.executeScript({ code: '(console.log("test"))' });
-    },
-    swipeRight() {
-      this.$router.replace({ path: "courses" });
-    },
-    swipeLeft() {
-      this.$router.replace({ path: "demands" });
+  mounted() {
+    let self = this;
+
+    if (typeof cordova.plugins != "undefined") {
+      console.log("Registering onMessage callback");
+      cordova.plugins.firebase.messaging.onMessage(function(payload) {
+        let title = payload.gcm.title;
+        let body = payload.gcm.body;
+        self.$swal({
+          type: "info",
+          title: title,
+          text: body
+        });
+      });
     }
   }
 };

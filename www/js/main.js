@@ -75,5 +75,4 @@ function bindVue() {
 }
 
 
-if (typeof (cordova) == 'undefined') document.addEventListener('DOMContentLoaded', bindVue);
-else document.addEventListener('deviceready', bindVue);
+document.addEventListener('deviceready', bindVue);

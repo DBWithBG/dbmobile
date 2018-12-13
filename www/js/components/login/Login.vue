@@ -180,8 +180,7 @@ export default {
           window.localStorage.setItem("type", type);
 
           if (self.isCordovaSet()) {
-            self.api = new Api();
-            self.sendFirebaseToken();
+            this.sendFirebaseToken();
           }
 
           self.redirectLoggedUser();
@@ -202,10 +201,11 @@ export default {
 
     async sendFirebaseToken() {
       let jwt = window.localStorage.getItem("jwt");
+      let api = new Api();
 
       try {
         let token = await cordova.plugins.firebase.messaging.getToken();
-        await this.api.refreshNotifyToken(token);
+        await api.refreshNotifyToken(token);
       } catch (error) {
         // On utilise stringify sur l'erreur pour pouvoir debug via les logs android
         console.log("Error in sendFirebaseToken : " + JSON.stringify(error));
