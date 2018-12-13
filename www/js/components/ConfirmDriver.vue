@@ -1,17 +1,17 @@
 <template>
-  <div class="padding-top-3em">
+  <div class="padding-top-2em">
     <v-layout justify-center column fill-height>
       <v-flex class="text-xs-center">
         <span xs12 class="headline">{{$t('welcome_on_deliverbag')}}</span>
       </v-flex>
-      <v-flex xs8 class="padding-top-3em">
+      <v-flex xs8 class="padding-top-2em">
         <v-divider></v-divider>
       </v-flex>
-      <v-flex class="padding-top-3em">
-        <span xs12 class="subheading">{{$t('confirm_your_email')}}</span>
+      <v-flex class="padding-top-2em">
+        <span xs12 class="body-1">{{$t('confirm_your_email')}}</span>
       </v-flex>
-      <v-flex class="padding-top-3em">
-        <span xs12 class="subheading">
+      <v-flex class="padding-top-2em">
+        <span xs12 class="body-1">
           {{$t('go_on')}}
           <a href="https://dev-deliverbag.supconception.fr/">deliverbag.com</a>
           {{$t('pour')}} :
@@ -22,7 +22,7 @@
           <li class="body-1">{{$t('cni')}}</li>
         </ul>
       </v-flex>
-      <v-flex class="padding-top-3em text-xs-center">
+      <v-flex class="padding-top-2em text-xs-center">
         <v-btn @click="resendConfirmationEmail" color="info" block>{{$t('resend_email')}}</v-btn>
       </v-flex>
       <v-flex class="padding-top-1em text-xs-center">
@@ -39,23 +39,21 @@
 import Api from "../api.js";
 
 export default {
-  data() {
-    return {
-      api: new Api()
-    };
-  },
-
   methods: {
     next() {
+      // Dev
+      this.$router.push({ name: "DemandsDriver" });
+      return;
       this.checkDriverConfirmed();
     },
 
     checkDriverConfirmed() {
       let self = this;
       let type = window.localStorage.getItem("type");
+      let api = new Api();
 
       if (type == "driver") {
-        this.api
+        api
           .readDriver()
           .then(response => {
             let driver = JSON.parse(response.data)[0];
@@ -97,8 +95,9 @@ export default {
     },
 
     async resendConfirmationEmail() {
+      let api = new Api();
       try {
-        await this.api.resendConfirmationEmail();
+        await api.resendConfirmationEmail();
         this.$swal({
           type: "success",
           text: this.$i18n.t("confirmation_email_sent")
@@ -121,8 +120,8 @@ export default {
   padding-top: 1em;
 }
 
-.padding-top-3em {
-  padding-top: 3em;
+.padding-top-2em {
+  padding-top: 2em;
 }
 </style>
 
