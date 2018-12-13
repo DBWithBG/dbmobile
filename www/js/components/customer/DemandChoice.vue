@@ -80,7 +80,7 @@ export default {
   mounted() {
     let self = this;
 
-    if (typeof cordova.plugins != "undefined") {
+    if (typeof cordova != "undefined" && typeof cordova.plugins != "undefined") {
       console.log("Registering onMessage callback");
       cordova.plugins.firebase.messaging.onMessage(function(payload) {
         let title = payload.gcm.title;

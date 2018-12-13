@@ -81,7 +81,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile @click.native="disconnect()">
+          <v-list-tile @click.native="logout()">
             <v-list-tile-avatar>
               <v-icon color="primary" large>exit_to_app</v-icon>
             </v-list-tile-avatar>
@@ -120,6 +120,7 @@
 
 <script>
 import Menu from "./Menu.vue";
+import Api from "../../api.js";
 
 export default {
   components: {
@@ -169,10 +170,16 @@ export default {
 
     // On clean le localStorage
     // On redirige l'utilisateur sur l'écran de connexion
-    disconnect() {
-      localStorage.removeItem("jwt");
-      localStorage.removeItem("type");
-      this.$router.replace("/");
+    async logout() {
+      let api = new Api();
+      try {
+        await api.logout();
+      } catch (error) {
+      } finally {
+        window.localStorage.removeItem("jwt");
+        window.localStorage.removeItem("type");
+        this.$router.replace("/");
+      }
     },
 
     swipeRight() {

@@ -75,7 +75,7 @@
 
           <v-divider></v-divider>
 
-          <v-list-tile @click.native="disconnect()" logout>
+          <v-list-tile logout>
             <v-list-tile-avatar>
               <v-icon large>logout</v-icon>
             </v-list-tile-avatar>
@@ -84,7 +84,7 @@
               <v-list-tile-sub-title>{{$t("disconnect_sbt")}}</v-list-tile-sub-title>
             </v-list-tile-content>
             <v-list-tile-action>
-              <v-btn @click.native="disconnect()" icon ripple>
+              <v-btn @click.native="logout()" icon ripple>
                 <v-icon x-large>navigate_next</v-icon>
               </v-btn>
             </v-list-tile-action>
@@ -98,6 +98,7 @@
 
 <script>
 import Menu from "./Menu.vue";
+import Api from "../../api";
 
 export default {
   components: {
@@ -119,13 +120,19 @@ export default {
     },
 
     profile() {
-      this.$router.push("/profile")
+      this.$router.push("/profile");
     },
-    
-    disconnect() {
-      window.localStorage.removeItem("jwt");
-      window.localStorage.removeItem("type");
-      this.$router.replace("/");
+
+    async logout() {
+      let api = new Api();
+      try {
+        await api.logout();
+      } catch (error) {
+      } finally {
+        window.localStorage.removeItem("jwt");
+        window.localStorage.removeItem("type");
+        this.$router.replace("/");
+      }
     }
   }
 };

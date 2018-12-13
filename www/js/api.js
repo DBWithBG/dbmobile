@@ -5,10 +5,10 @@ const BASE_URL = "https://dev-deliverbag.supconception.fr"
 class Api {
 
     constructor() {
-        let jwt = window.localStorage.getItem("jwt");
+        this.jwt = window.localStorage.getItem("jwt");
         this.header = {
             headers: {
-                Authorization: 'Bearer ' + jwt
+                Authorization: 'Bearer ' + this.jwt
             }
         };
     }
@@ -84,6 +84,12 @@ class Api {
           email,
           password
         })
+    }
+
+    logout() {
+        axios.post(BASE_URL + "/mobile/logout", {
+            token: this.jwt
+        }, this.header);
     }
 }
 
