@@ -68,8 +68,6 @@ import Api from "../../api.js";
 export default {
   data() {
     return {
-      api: null,
-
       hasError: false,
       error: "",
 
@@ -107,51 +105,47 @@ export default {
       return !jwt || !type;
     },
 
-    redirectLoggedUser() {
+    async redirectLoggedUser() {
       let self = this;
       let type = window.localStorage.getItem("type");
 
-      self.api = new Api();
+      let api = new Api();
 
       if (type == "customer") {
-        self.api
-          .readCustomer()
-          .then(response => {
-            let customer = JSON.parse(response.data)[0];
-            let emailIsConfirmed = customer.user.is_confirmed == 1;
-            if (emailIsConfirmed) {
-              self.$router.push({ name: "DemandChoice" });
-            } else {
-              self.$router.push({ name: "ConfirmEmail" });
-            }
-          })
-          .catch(_ => {
-            self.$swal({
-              type: "error",
-              title: self.$i18n.t("oups"),
-              text: self.$i18n.t("unable_to_retrieve_data_from_server")
-            });
+        try {
+          let response = await api.readCustomer();
+          let customer = JSON.parse(response.data)[0];
+          let emailIsConfirmed = customer.user.is_confirmed == 1;
+          if (emailIsConfirmed) {
+            self.$router.push({ name: "DemandChoice" });
+          } else {
+            self.$router.push({ name: "ConfirmEmail" });
+          }
+        } catch (error) {
+          self.$swal({
+            type: "error",
+            title: self.$i18n.t("oups"),
+            text: self.$i18n.t("unable_to_retrieve_data_from_server")
           });
+        }
       } else if (type == "driver") {
-        self.api
-          .readDriver()
-          .then(response => {
-            let driver = JSON.parse(response.data)[0];
-            let emailIsConfirmed = driver.user.is_confirmed == 1;
-            let driverIsOp = driver.is_op == 1;
-            if (emailIsConfirmed && driverIsOp) {
-              self.$router.push({ name: "DemandsDriver" });
-            } else {
-              self.$router.push({ name: "ConfirmDriver" });
-            }
-          })
-          .catch(_ => {
-            self.$swal({
-              type: "error",
-              title: self.$i18n.t("oups"),
-              text: self.$i18n.t("unable_to_retrieve_data_from_server")
-            });
+        try {
+          let response = await api.readDriver();
+          let driver = JSON.parse(response.data)[0];
+          let emailIsConfirmed = driver.user.is_confirmed == 1;
+          let driverIsOp = driver.is_op == 1;
+          if (emailIsConfirmed && driverIsOp) {
+            self.$router.push({ name: "DemandsDriver" });
+          } else {
+            self.$router.push({ name: "ConfirmDriver" });
+          }
+        } catch (error) {
+          self.$swal({
+            type: "error",
+            title: self.$i18n.t("oups"),
+            text: self.$i18n.t("unable_to_retrieve_data_from_server")
           });
+        }
       } else {
         // Le type est invalide, on clean tout
         window.localStorage.removeItem("type");
@@ -164,63 +158,58 @@ export default {
       this.$router.push({ path: "/register-choice" });
     },
 
-    login() {
+    async login() {
       let self = this;
 
-      Api.login(this.email, this.password)
-        .then(response => {
-          let type = response.data.type;
-          let jwt = response.data.token;
+      try {
+        let response = await Api.login(this.email, this.password);
+        let type = response.data.type;
+        let jwt = response.data.token;
 
-          // L'authentification a échouée
-          if (!type || !jwt) {
-            self.$swal({
-              type: "error",
-              title: self.$i18n.t("oups"),
-              text: self.$i18n.t("invalid_credentials")
-            });
-          }
-          // L'authentification a réussi
-          else {
-            window.localStorage.setItem("jwt", jwt);
-            window.localStorage.setItem("type", type);
-
-            if (self.isCordovaSet()) {
-              self.api = new Api();
-              self.sendFirebaseToken();
-            }
-
-            self.redirectLoggedUser();
-          }
-        })
-        .catch(error => {
-          console.log(error);
+        // L'authentification a échouée
+        if (!type || !jwt) {
           self.$swal({
             type: "error",
-            title: self.$i18n.t("fail"),
+            title: self.$i18n.t("oups"),
             text: self.$i18n.t("invalid_credentials")
           });
+        }
+        // L'authentification a réussi
+        else {
+          window.localStorage.setItem("jwt", jwt);
+          window.localStorage.setItem("type", type);
+
+          if (self.isCordovaSet()) {
+            self.api = new Api();
+            self.sendFirebaseToken();
+          }
+
+          self.redirectLoggedUser();
+        }
+      } catch (error) {
+        console.log(error);
+        self.$swal({
+          type: "error",
+          title: self.$i18n.t("oups"),
+          text: self.$i18n.t("invalid_credentials")
         });
+      }
     },
 
     isCordovaSet() {
       return typeof cordova != "undefined";
     },
 
-    sendFirebaseToken() {
-      let self = this;
+    async sendFirebaseToken() {
       let jwt = window.localStorage.getItem("jwt");
 
-      cordova.plugins.firebase.messaging.getToken().then(token => {
-        self.api
-          .refreshNotifyToken(token)
-          .then(response => {})
-          .catch(error => {
-            console.log(
-              "Error in sendFirebasetoken : " + JSON.stringify(error)
-            );
-          });
-      });
+      try {
+        let token = await cordova.plugins.firebase.messaging.getToken();
+        await this.api.refreshNotifyToken(token);
+      } catch (error) {
+        // On utilise stringify sur l'erreur pour pouvoir debug via les logs android
+        console.log("Error in sendFirebaseToken : " + JSON.stringify(error));
+      }
     }
   }
 };
