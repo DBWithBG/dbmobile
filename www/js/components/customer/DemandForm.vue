@@ -506,7 +506,7 @@ Désactivé si le form n'est pas valide
           <v-btn icon large color="orange lighten-1" @click.native="step=2,deliveryPrice = null" dark>
             <v-icon x-large>navigate_before</v-icon>
           </v-btn>
-          <v-btn color="primary" @click.native="createDelivery()" dark>{{$t('payer') + (deliveryPrice === null ? '' : (deliveryPrice + ' €'))}}</v-btn>
+          <v-btn color="primary" @click.native="createDelivery()" dark>{{$t('payer') + ' ' + (deliveryPrice === null ? '' : (deliveryPrice + ' €'))}}</v-btn>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
@@ -868,6 +868,7 @@ export default {
       console.log(window.localStorage.getItem('jwt'))
       try {
         let response = await api.getDeliveryPrice(this.reponse);
+        this.deliveryPrice = JSON.parse(data).price;
         console.log(response);
       } catch(error) {
         console.log(error);
