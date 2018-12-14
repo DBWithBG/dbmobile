@@ -52,6 +52,8 @@
           <v-card>
             <v-card-title class="subheading">{{moment(demand.start_date).format('LLL')}}</v-card-title>
             <v-card-text>
+              <v-flex v-if="demand.remuneration_driver" row><b>{{$t('remuneration')}} :</b> {{demand.remuneration_driver + ' €'}}</v-flex>
+              <v-divider v-if="demand.remuneration_driver" class="divider_modal"></v-divider>
               <v-flex row><b>{{$t('takeover_label')}} :</b> {{demand.start_position.address}}</v-flex>
               <v-flex row>Le {{moment(demand.start_date).format('LL')}} à {{moment(demand.start_date).format('LT')}}</v-flex>
               <v-divider class="divider_modal"></v-divider>

@@ -93,7 +93,7 @@ class Api {
     }
 
     getDeliveryPrice(delivery) {
-        axios.post(BASE_URL + "/mobile/deliveries/computePrice", delivery, this.header);
+        return axios.post(BASE_URL + "/mobile/deliveries/computePrice", delivery, this.header);
     }
 }
 
