@@ -868,8 +868,7 @@ export default {
       console.log(window.localStorage.getItem('jwt'))
       try {
         let response = await api.getDeliveryPrice(this.reponse);
-        this.deliveryPrice = JSON.parse(data).price;
-        console.log(response);
+        this.deliveryPrice = JSON.parse(response.data).price;
       } catch(error) {
         console.log(error);
       }
