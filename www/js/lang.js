@@ -60,6 +60,7 @@ export default {
     "pour": "pour",
     "driver_infos_not_provided": "Vos pièces justificatives ne sont pas encore validées",
     "confirmation_email_sent": "Email de confirmation envoyé",
+    "remuneration": "Rémunération",
 
 
     "address": "J'indique une adresse",

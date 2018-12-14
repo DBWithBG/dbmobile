@@ -3,13 +3,16 @@
     <back-header message="Liste des demandes"></back-header>
 
     <!-- Ecran de chargement en attendant le chargement des données -->
-    <v-layout v-if="loading" row justify-center>
+    <div v-if="loading">
+      <v-layout row justify-center>
       <v-container fill-height>
         <v-layout row justify-center align-center>
           <v-progress-circular indeterminate :size="70" :width="5" color="primary"></v-progress-circular>
         </v-layout>
       </v-container>
     </v-layout>
+    </div>
+    
 
     <div v-if="!loading" id="demands_list_main_content">
       <v-expansion-panel popout>
@@ -88,6 +91,7 @@
               v-if="!props.item.livraisonDirecte"
             >Le {{props.item.end_date_moment.format('LL')}} à {{props.item.end_date_moment.format('LT')}}</v-card-text>
             <v-card-text v-else>{{$t('livraison_asap')}}</v-card-text>
+            <v-card-text>{{$t('remuneration')}} : <span class="text--success body-2">{{props.item.remuneration_driver === null ? '' : props.item.remuneration_driver + ' €'}}</span></v-card-text>
           </v-card>
           <v-list subheader>
             <v-subheader>{{props.item.bags.length}} {{$t('luggages')}}</v-subheader>
@@ -374,17 +378,19 @@ export default {
 
     getUserPos() {
       var self = this;
-      //let hard_gps = cordova.plugins.locationAccuracy;
-      //    console.log('get user pos');
+      
       navigator.geolocation.getCurrentPosition(
+        
+        // Success callback
         position => {
           self.user_pos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
           self.getDeliveries();
-          //self.user_marker.setMap(self.map);
         },
+
+        // Error callback
         error => {
           self.$swal({
             type: 'error',
@@ -393,7 +399,6 @@ export default {
           });
           console.log(JSON.stringify(error));
           self.getUserPos();
-          //self.requestGps();
         }, {
           maximumAge: 10000,
           timeout: 5000,
@@ -430,14 +435,14 @@ export default {
     };
     this.listDate = getDaysArray(now, end);
     this.listDate.unshift(this.$i18n.t("any_date"));
-    self.getUserPos();
+    this.getUserPos();
   }
 };
 </script>
 
       
 
-      <style scoped>
+<style scoped>
 td {
   border-bottom: 2px solid #ddd;
 }

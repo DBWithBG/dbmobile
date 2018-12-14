@@ -412,7 +412,7 @@ Désactivé si le form n'est pas valide
                 large
                 :disabled="!verifBagage()"
                 color="primary"
-                @click.native="step=3"
+                @click.native="step=3,getDeliveryPrice()"
                 dark
               >
                 <v-icon x-large>navigate_next</v-icon>
@@ -503,10 +503,10 @@ Désactivé si le form n'est pas valide
             >{{compteurBagagesAutre}} {{$t('bagages_autre')}}</v-flex>
           </v-card>
 
-          <v-btn icon large color="orange lighten-1" @click.native="step=2" dark>
+          <v-btn icon large color="orange lighten-1" @click.native="step=2,deliveryPrice = null" dark>
             <v-icon x-large>navigate_before</v-icon>
           </v-btn>
-          <v-btn color="primary" @click.native="createDelivery()" dark>{{$t('payer')}}</v-btn>
+          <v-btn color="primary" @click.native="createDelivery()" dark>{{$t('payer') + (deliveryPrice === null ? '' : (deliveryPrice + ' €'))}}</v-btn>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
@@ -532,6 +532,7 @@ Désactivé si le form n'est pas valide
 import BackHeader from "../BackHeader.vue";
 import Menu from "./Menu.vue";
 import axios from "axios";
+import Api from "../../api";
 
 export default {
   components: {
@@ -542,6 +543,9 @@ export default {
 
   data() {
     return {
+      // Prix de la course
+      deliveryPrice: null,
+
       // Déclencheur de la modal d'erreur
       hasError: false,
 
@@ -858,6 +862,19 @@ export default {
 
   methods: {
 
+    async getDeliveryPrice() {
+      console.log('Getting delivery price');
+      let api = new Api();
+      console.log(window.localStorage.getItem('jwt'))
+      try {
+        let response = await api.getDeliveryPrice(this.reponse);
+        console.log(response);
+      } catch(error) {
+        console.log(error);
+      }
+      
+    },
+
     // La date de début doit être au moins 4 après après now
     checkStartDate() {
       let start = this.moment(this.date + ' ' + this.time)
@@ -1158,6 +1175,7 @@ export default {
       this.numTrain = "";
       this.gares = [];
       this.error = "";
+      this.deliveryPrice = null;
     },
 
     // On vérifie que les données saisies par le client sont correctes

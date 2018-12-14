@@ -91,6 +91,10 @@ class Api {
             token: this.jwt
         }, this.header);
     }
+
+    getDeliveryPrice(delivery) {
+        axios.post(BASE_URL + "/mobile/deliveries/computePrice", delivery, this.header);
+    }
 }
 
 export default Api;
