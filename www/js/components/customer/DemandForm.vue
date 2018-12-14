@@ -869,7 +869,13 @@ export default {
       try {
         let response = await api.getDeliveryPrice(this.reponse);
         console.log(response);
-        this.deliveryPrice = response.data.price;
+        let price = response.data.price;
+        // On arrondi...
+        price = price * 100;
+        price = Math.round(price);
+        price = price / 100;
+        this.deliveryPrice = price;
+        
       } catch(error) {
         console.log(error);
       }
