@@ -1,7 +1,5 @@
 <template>
-  <div v-touch="{
-    right:swipeRight
-    }">
+  <div>
     <v-flex xs12>
       <v-card>
         <v-list class="margin" three-line>
@@ -46,10 +44,8 @@
               <v-btn @click.native.stop="dialLangue=true" icon ripple>
                 <v-flex row xs12>
                   <v-dialog v-model="dialLangue" max-width="290">
-                    <v-card>
-                      <v-card color="primary">
-                        <v-card-title color="primary" class="white--text">{{$t("choix_langue")}}</v-card-title>
-                      </v-card>
+                    <v-card id="card-choix-langue">
+                      <v-card-title>{{$t("choix_langue")}}</v-card-title>
                       <v-layout row>
                         <v-flex xs10 offset-xs1>
                           <v-select
@@ -150,19 +146,6 @@ export default {
     alert_dev() {
       alert('En cours de développement ou en attente de précision');
     },
-    // redirection sur l'appli de messagerie selectionnée par le client
-    openMail() {
-      window.open("mailto:" + this.$i18n.t("db_email"), "_system");
-    },
-
-    // redirection sur l'écran d'appel
-    openTel() {
-      let tel = this.$i18n
-        .t("db_tel")
-        .split(" ")
-        .join("");
-      window.open("tel:" + tel, "_system");
-    },
 
     profile() {
       this.$router.push({name: 'Profile'})
@@ -180,10 +163,6 @@ export default {
         window.localStorage.removeItem("type");
         this.$router.replace("/");
       }
-    },
-
-    swipeRight() {
-      this.$router.replace({ path: "demand" });
     }
   }
 };
@@ -191,5 +170,9 @@ export default {
 <style scoped>
 .margin {
   margin-bottom: 56px;
+}
+
+#card-choix-langue {
+  padding-bottom: 1.5em;
 }
 </style>
