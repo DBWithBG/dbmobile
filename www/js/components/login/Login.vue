@@ -86,6 +86,23 @@ export default {
 
   mounted() {
     if (this.checkIfUserIsLoggedIn) {
+      let self = this;
+
+      if (
+        typeof cordova != "undefined" &&
+        typeof cordova.plugins != "undefined"
+      ) {
+        console.log("Registering onMessage callback");
+        cordova.plugins.firebase.messaging.onMessage(function(payload) {
+          let title = payload.gcm.title;
+          let body = payload.gcm.body;
+          self.$swal({
+            type: "info",
+            title: title,
+            text: body
+          });
+        });
+      }
       this.redirectLoggedUser();
     }
   },
@@ -94,7 +111,8 @@ export default {
     googleLogin() {
       window.plugins.googleplus.login(
         {
-          webClientId: "782571423011-if229b9mkrlqc3sfjpgip03232mtl0mq.apps.googleusercontent.com", // optional clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
+          webClientId:
+            "782571423011-if229b9mkrlqc3sfjpgip03232mtl0mq.apps.googleusercontent.com", // optional clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
           offline: true // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
         },
         function(obj) {

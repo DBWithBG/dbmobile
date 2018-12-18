@@ -77,22 +77,6 @@ export default {
     "db-menu": Menu
   },
 
-  mounted() {
-    let self = this;
-
-    if (typeof cordova != "undefined" && typeof cordova.plugins != "undefined") {
-      console.log("Registering onMessage callback");
-      cordova.plugins.firebase.messaging.onMessage(function(payload) {
-        let title = payload.gcm.title;
-        let body = payload.gcm.body;
-        self.$swal({
-          type: "info",
-          title: title,
-          text: body
-        });
-      });
-    }
-  }
 };
 </script>
 
