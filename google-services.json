@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "782571423011",
-    "firebase_url": "https://dbag-202408.firebaseio.com",
-    "project_id": "dbag-202408",
-    "storage_bucket": "dbag-202408.appspot.com"
+    "project_number": "607137533381",
+    "firebase_url": "https://dev-deliverbag.firebaseio.com",
+    "project_id": "dev-deliverbag",
+    "storage_bucket": "dev-deliverbag.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:782571423011:android:f52ffe99dc638fdf",
+        "mobilesdk_app_id": "1:607137533381:android:10b972825354c31a",
         "android_client_info": {
           "package_name": "com.deliverbag.mobile"
         }
       },
       "oauth_client": [
         {
-          "client_id": "782571423011-if229b9mkrlqc3sfjpgip03232mtl0mq.apps.googleusercontent.com",
+          "client_id": "607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAyr9vfMCcGoOvttwh7YaXirwao2UWA-uQ"
+          "current_key": "AIzaSyCTjpjMsXrQ6Y5wKL1VA1fiQTM33z1XPLg"
         }
       ],
       "services": {

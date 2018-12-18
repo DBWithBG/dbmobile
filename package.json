@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "./node_modules/.bin/webpack-dev-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "emulate-browser": "webpack && cordova emulate browser",
+    "emulate-android": "webpack && cordova emulate android",
+    "build-android": "webpack && cordova build android"
   },
   "author": "The Dev team",
   "license": "Apache-2.0",
