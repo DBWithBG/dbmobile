@@ -27,17 +27,10 @@
             <v-divider></v-divider>
           </v-flex>
 
-          <!--<v-flex xs12>
-            <v-layout row wrap>
-              <v-flex xs6>
-                <v-btn block>Google</v-btn>
-              </v-flex>
+          <v-flex xs6>
+            <v-btn @click="googleLogin" color="white" block>Google</v-btn>
+          </v-flex>
 
-              <v-flex xs6>
-                <v-btn block>Facebook</v-btn>
-              </v-flex>
-            </v-layout>
-          </v-flex>-->
           <v-flex xs12 mt-4 class="text-xs-center">
             <v-btn @click="register" flat small>{{$t('to_create_an_account')}}</v-btn>
           </v-flex>
@@ -98,6 +91,23 @@ export default {
   },
 
   methods: {
+    googleLogin() {
+      window.plugins.googleplus.login(
+        {
+          webClientId: "782571423011-if229b9mkrlqc3sfjpgip03232mtl0mq.apps.googleusercontent.com", // optional clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
+          offline: true // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
+        },
+        function(obj) {
+          console.log("Success");
+          alert(JSON.stringify(obj)); // do something useful instead of alerting
+        },
+        function(msg) {
+          console.log("Error");
+          alert("error: " + msg);
+        }
+      );
+    },
+
     checkIfUserIsLoggedIn() {
       let jwt = window.localStorage.getItem("jwt");
       let type = window.localStorage.getItem("type");
