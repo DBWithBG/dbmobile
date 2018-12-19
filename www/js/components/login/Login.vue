@@ -109,12 +109,9 @@ export default {
 
   methods: {
     googleLogin() {
-      window.plugins.googleplus.login(
-        {
-          webClientId:
-            "782571423011-if229b9mkrlqc3sfjpgip03232mtl0mq.apps.googleusercontent.com", // optional clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
-          offline: true // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
-        },
+      window.plugins.googleplus.login({
+        'webClientId': '607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com'
+      },
         function(obj) {
           console.log("Success");
           alert(JSON.stringify(obj)); // do something useful instead of alerting

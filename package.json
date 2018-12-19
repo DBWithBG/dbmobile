@@ -8,7 +8,8 @@
     "dev": "./node_modules/.bin/webpack-dev-server",
     "emulate-browser": "webpack && cordova emulate browser",
     "emulate-android": "webpack && cordova emulate android",
-    "build-android": "webpack && cordova build android"
+    "build-android": "webpack && cordova build android",
+    "emulate-g": "webpack && cordova emulate android --target=6e273ea5"
   },
   "author": "The Dev team",
   "license": "Apache-2.0",
@@ -79,14 +80,14 @@
         "ANDROID_SUPPORT_VERSION": "27.+"
       },
       "cordova-plugin-googleplus": {
-        "WEB_APPLICATION_CLIENT_ID": "782571423011-if229b9mkrlqc3sfjpgip03232mtl0mq.apps.googleusercontent.com",
-        "REVERSED_CLIENT_ID": "reversed"
+        "REVERSED_CLIENT_ID": "reversed",
+        "WEB_APPLICATION_CLIENT_ID": "607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com"
       }
     },
     "platforms": [
       "browser",
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   },
   "devDependencies": {
