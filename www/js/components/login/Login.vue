@@ -110,11 +110,17 @@ export default {
   methods: {
     googleLogin() {
       window.plugins.googleplus.login({
-        'webClientId': '607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com'
+        'webClientId': '607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com',
+        'offline': true
       },
         function(obj) {
           console.log("Success");
           alert(JSON.stringify(obj)); // do something useful instead of alerting
+          console.log(obj.accessToken);
+          console.log('------------');
+          console.log(obj.idToken);
+          console.log('------------');
+          console.log(obj.serverAuthCode);
         },
         function(msg) {
           console.log("Error");
