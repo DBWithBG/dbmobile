@@ -90,13 +90,16 @@ export default {
 
   mounted() {
     if (this.checkIfUserIsLoggedIn) {
-      let self = this;
+      this.registerOnMessageCallback();
+      this.redirectLoggedUser();
+    }
+  },
 
-      if (
-        typeof cordova != "undefined" &&
-        typeof cordova.plugins != "undefined"
-      ) {
-        console.log("Registering onMessage callback");
+  methods: {
+
+    registerOnMessageCallback() {
+      let self = this;
+      console.log("Registering onMessage callback");
         cordova.plugins.firebase.messaging.onMessage(function(payload) {
           let title = payload.gcm.title;
           let body = payload.gcm.body;
@@ -106,12 +109,8 @@ export default {
             text: body
           });
         });
-      }
-      this.redirectLoggedUser();
-    }
-  },
+    },
 
-  methods: {
     googleLogin() {
       window.plugins.googleplus.login({
         'webClientId': '607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com',

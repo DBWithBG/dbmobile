@@ -7,6 +7,7 @@ import moment from 'moment'
 import VueSweetAlert from 'vue-sweetalert'
 
 import Root from './components/Root.vue'
+import Landing from './components/Landing.vue'
 import Login from './components/login/Login.vue'
 import RegisterChoice from './components/register/RegisterChoice.vue'
 import RegisterCustomer from './components/register/RegisterCustomer.vue'
@@ -39,6 +40,7 @@ Vue.prototype.moment = moment;
 const routes = [
   // Général
   { name: 'Root', path: '/', component: Root },
+  { name: 'Landing', path: '/landing', component: Landing },
   { name: 'Login', path: '/login', component: Login },
   { name: 'RegisterChoice', path: '/register-choice', component: RegisterChoice },
   { name: 'RegisterCustomer', path: '/register-customer', component: RegisterCustomer },
@@ -75,5 +77,4 @@ function bindVue() {
 }
 
 
-// document.addEventListener('DOMContentLoaded', bindVue);
 document.addEventListener('deviceready', bindVue);
