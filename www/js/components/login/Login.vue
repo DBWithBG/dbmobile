@@ -31,6 +31,10 @@
             <v-btn @click="googleLogin" color="white" block>Google</v-btn>
           </v-flex>
 
+          <v-flex xs6>
+            <v-btn @click="facebookLogin" color="white" block>Facebook</v-btn>
+          </v-flex>
+
           <v-flex xs12 mt-4 class="text-xs-center">
             <v-btn @click="register" flat small>{{$t('to_create_an_account')}}</v-btn>
           </v-flex>
@@ -127,6 +131,18 @@ export default {
           alert("error: " + msg);
         }
       );
+    },
+
+    facebookLogin() {
+      facebookConnectPlugin.login(["public_profile", "email"], userData => {
+        console.log('-----FACEBOOK-------');
+        console.log("UserInfo: " + JSON.stringify(userData));
+        facebookConnectPlugin.getAccessToken(token => {
+          console.log("Token: " + token);
+        });
+      }, error => {
+        console.log("Error : " + JSON.stringify(error));
+      });
     },
 
     checkIfUserIsLoggedIn() {

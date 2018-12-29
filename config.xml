@@ -93,6 +93,12 @@
         <variable name="REVERSED_CLIENT_ID" value="reversed" />
         <variable name="WEB_APPLICATION_CLIENT_ID" value="607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com" />
     </plugin>
+    <plugin name="cordova-plugin-facebook4" spec="4.0.0">
+        <variable name="APP_ID" value="320707318542573" />
+        <variable name="APP_NAME" value="deliverbag" />
+        <variable name="FACEBOOK_ANDROID_SDK_VERSION" value="4.38.1" />
+    </plugin>
+    <plugin name="cordova-plugin-inappbrowser" spec="^3.0.0" />
     <engine name="browser" spec="^5.0.4" />
     <engine name="ios" spec="^4.5.5" />
     <engine name="android" spec="^7.1.1" />
