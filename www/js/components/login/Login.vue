@@ -1,5 +1,6 @@
 <template>
   <div id="register">
+    <!--
     <v-container>
       <v-form v-model="valid">
         <v-layout row wrap>
@@ -54,6 +55,124 @@
         </v-card>
       </v-dialog>
     </v-container>
+    -->
+    <template>
+      <v-tabs centered color="primary" dark icons-and-text>
+        <v-tabs-slider color="primary"></v-tabs-slider>
+
+        <v-tab href="#tab-1">Client
+          <v-icon>perm_identity</v-icon>
+        </v-tab>
+
+        <v-tab href="#tab-2">Chauffeur
+          <v-icon>drive_eta</v-icon>
+        </v-tab>
+
+        <v-tab-item v-for="i in 2" :id="'tab-' + i" :key="i">
+          <!--  ========== Customer ========== -->
+          <v-card v-if="i === 1" flat>
+            <v-card-text>
+              <v-form v-model="valid">
+                <v-layout row wrap>
+                  <v-flex xs12 mt-4 mb-4 text-xs-center>
+                    <span class="subheading">Se connecter comme client</span>
+                  </v-flex>
+                  <v-flex xs12>
+                    <v-text-field :rules="emailRules" v-model="email" type="email" label="Email"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12>
+                    <v-text-field
+                      :rules="[otherRules.required]"
+                      v-model="password"
+                      :append-icon="showPassword ? 'visibility_off' : 'visibility'"
+                      :type="showPassword ? 'text' : 'password'"
+                      @click:append="showPassword = !showPassword"
+                      :label="$t('password')"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 class="text-xs-center">
+                    <v-btn
+                      :disabled="!valid"
+                      flat
+                      color="success"
+                      @click="login"
+                    >{{$t('to_log_in')}}</v-btn>
+                  </v-flex>
+
+                  <v-flex xs12 mt-3 mb-3>
+                    <v-divider></v-divider>
+                  </v-flex>
+
+                  <v-flex class="google-button-container" xs6>
+                    <v-btn @click="googleLogin" color="white" block>Google</v-btn>
+                  </v-flex>
+
+                  <v-flex class="facebook-button-container" xs6>
+                    <v-btn @click="facebookLogin" color="white" block>Facebook</v-btn>
+                  </v-flex>
+
+                  <v-flex xs12 mt-4 class="text-xs-center">
+                    <v-btn @click="register" flat small>{{$t('to_create_an_account')}}</v-btn>
+                  </v-flex>
+                </v-layout>
+              </v-form>
+            </v-card-text>
+          </v-card>
+
+          <!-- ========== Driver ========== -->
+          <v-card v-if="i === 2" flat>
+            <v-card-text>
+              <v-form v-model="valid">
+                <v-layout row wrap>
+                  <v-flex xs12 mt-4 mb-4 text-xs-center>
+                    <span class="subheading">Se connecter comme chauffeur</span>
+                  </v-flex>
+                  <v-flex xs12>
+                    <v-text-field :rules="emailRules" v-model="email" type="email" label="Email"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12>
+                    <v-text-field
+                      :rules="[otherRules.required]"
+                      v-model="password"
+                      :append-icon="showPassword ? 'visibility_off' : 'visibility'"
+                      :type="showPassword ? 'text' : 'password'"
+                      @click:append="showPassword = !showPassword"
+                      :label="$t('password')"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 class="text-xs-center">
+                    <v-btn
+                      :disabled="!valid"
+                      flat
+                      color="success"
+                      @click="login"
+                    >{{$t('to_log_in')}}</v-btn>
+                  </v-flex>
+
+                  <v-flex xs12 mt-3 mb-3>
+                    <v-divider></v-divider>
+                  </v-flex>
+
+                  <v-flex class="google-button-container" xs6>
+                    <v-btn @click="googleLogin" color="white" block>Google</v-btn>
+                  </v-flex>
+
+                  <v-flex class="facebook-button-container" xs6>
+                    <v-btn @click="facebookLogin" color="white" block>Facebook</v-btn>
+                  </v-flex>
+
+                  <v-flex xs12 mt-4 class="text-xs-center">
+                    <v-btn @click="register" flat small>{{$t('to_create_an_account')}}</v-btn>
+                  </v-flex>
+                </v-layout>
+              </v-form>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs>
+    </template>
+  </div>
+</template>
   </div>
 </template>
 
@@ -96,33 +215,34 @@ export default {
   },
 
   methods: {
-
     registerOnMessageCallback() {
       let self = this;
       console.log("Registering onMessage callback");
-        cordova.plugins.firebase.messaging.onMessage(function(payload) {
-          let title = payload.gcm.title;
-          let body = payload.gcm.body;
-          self.$swal({
-            type: "info",
-            title: title,
-            text: body
-          });
+      cordova.plugins.firebase.messaging.onMessage(function(payload) {
+        let title = payload.gcm.title;
+        let body = payload.gcm.body;
+        self.$swal({
+          type: "info",
+          title: title,
+          text: body
         });
+      });
     },
 
     googleLogin() {
-      window.plugins.googleplus.login({
-        'webClientId': '607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com',
-        'offline': true
-      },
+      window.plugins.googleplus.login(
+        {
+          webClientId:
+            "607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com",
+          offline: true
+        },
         function(obj) {
           console.log("Success");
           alert(JSON.stringify(obj)); // do something useful instead of alerting
           console.log(obj.accessToken);
-          console.log('------------');
+          console.log("------------");
           console.log(obj.idToken);
-          console.log('------------');
+          console.log("------------");
           console.log(obj.serverAuthCode);
         },
         function(msg) {
@@ -133,15 +253,19 @@ export default {
     },
 
     facebookLogin() {
-      facebookConnectPlugin.login(["public_profile", "email"], userData => {
-        console.log('-----FACEBOOK-------');
-        console.log("UserInfo: " + JSON.stringify(userData));
-        facebookConnectPlugin.getAccessToken(token => {
-          console.log("Token: " + token);
-        });
-      }, error => {
-        console.log("Error : " + JSON.stringify(error));
-      });
+      facebookConnectPlugin.login(
+        ["public_profile", "email"],
+        userData => {
+          console.log("-----FACEBOOK-------");
+          console.log("UserInfo: " + JSON.stringify(userData));
+          facebookConnectPlugin.getAccessToken(token => {
+            console.log("Token: " + token);
+          });
+        },
+        error => {
+          console.log("Error : " + JSON.stringify(error));
+        }
+      );
     },
 
     checkIfUserIsLoggedIn() {
@@ -262,5 +386,12 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+.google-button-container {
+  padding: 4px;
+}
+
+.facebook-button-container {
+  padding: 4px;
+}
 </style>
