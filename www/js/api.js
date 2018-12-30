@@ -99,6 +99,10 @@ class Api {
     static sendFacebookToken(type, token) {
         return axios.get(BASE_URL + `/mobile/checkLoginFacebook?type=${type}&input_token=${token}`);
     }
+
+    static sendGoogleToken(type, token) {
+        return axios.get(BASE_URL + `/google/callback?type=${type}&code=${token}&from_type=mobile`);
+    }
 }
 
 export default Api;

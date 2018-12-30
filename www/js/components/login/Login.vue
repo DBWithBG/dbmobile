@@ -104,7 +104,7 @@
                   </v-flex>
 
                   <v-flex class="google-button-container" xs6>
-                    <v-btn @click="googleLogin" color="#E46F62" dark block>Google</v-btn>
+                    <v-btn @click="googleLogin('customer')" color="#E46F62" dark block>Google</v-btn>
                   </v-flex>
 
                   <v-flex class="facebook-button-container" xs6>
@@ -154,7 +154,7 @@
                   </v-flex>
 
                   <v-flex class="google-button-container" xs6>
-                    <v-btn @click="googleLogin" color="#E46F62" dark block>Google</v-btn>
+                    <v-btn @click="googleLogin('driver')" color="#E46F62" dark block>Google</v-btn>
                   </v-flex>
 
                   <v-flex class="facebook-button-container" xs6>
@@ -229,21 +229,36 @@ export default {
       });
     },
 
-    googleLogin() {
+    async googleLogin(type) {
+      let self = this;
+      
       window.plugins.googleplus.login(
         {
           webClientId:
             "607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com",
           offline: true
         },
-        function(obj) {
-          console.log("Success");
-          alert(JSON.stringify(obj)); // do something useful instead of alerting
-          console.log(obj.accessToken);
-          console.log("------------");
-          console.log(obj.idToken);
-          console.log("------------");
-          console.log(obj.serverAuthCode);
+        async function(obj) {
+          let serverAuthToken = obj.serverAuthCode;
+          try {
+              let response = await Api.sendGoogleToken(type, serverAuthToken);
+              let jwt = response.data.token;
+              let backendType = response.data.type;
+              
+              console.log("Setting jwt in localStorage : " + jwt);
+              window.localStorage.setItem('jwt', jwt);
+              window.localStorage.setItem('type', backendType);
+              self.redirectLoggedUser();
+            
+            } catch(error) {
+              console.log('Error in googleLogin : ' + error);
+              self.$swal({
+                type: 'error',
+                title: self.$i18n.t('error'),
+                text: error
+              });
+            }
+          
         },
         function(msg) {
           console.log("Error");
