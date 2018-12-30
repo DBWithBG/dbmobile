@@ -95,6 +95,10 @@ class Api {
     getDeliveryPrice(delivery) {
         return axios.post(BASE_URL + "/mobile/deliveries/computePrice", delivery, this.header);
     }
+
+    static sendFacebookToken(type, token) {
+        return axios.get(BASE_URL + `/mobile/checkLoginFacebook?type=${type}&input_token=${token}`);
+    }
 }
 
 export default Api;

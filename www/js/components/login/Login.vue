@@ -60,11 +60,11 @@
       <v-tabs centered color="primary" dark icons-and-text>
         <v-tabs-slider color="primary"></v-tabs-slider>
 
-        <v-tab href="#tab-1">Client
+        <v-tab href="#tab-1">{{$t('customer')}}
           <v-icon>perm_identity</v-icon>
         </v-tab>
 
-        <v-tab href="#tab-2">Chauffeur
+        <v-tab href="#tab-2">{{$t('driver')}}
           <v-icon>drive_eta</v-icon>
         </v-tab>
 
@@ -75,7 +75,7 @@
               <v-form v-model="valid">
                 <v-layout row wrap>
                   <v-flex xs12 mt-4 mb-4 text-xs-center>
-                    <span class="subheading">Se connecter comme client</span>
+                    <span class="subheading">{{$t('log_in_as_customer')}}</span>
                   </v-flex>
                   <v-flex xs12>
                     <v-text-field :rules="emailRules" v-model="email" type="email" label="Email"></v-text-field>
@@ -93,8 +93,8 @@
                   <v-flex xs12 class="text-xs-center">
                     <v-btn
                       :disabled="!valid"
-                      flat
-                      color="success"
+                      block
+                      color="primary"
                       @click="login"
                     >{{$t('to_log_in')}}</v-btn>
                   </v-flex>
@@ -104,15 +104,15 @@
                   </v-flex>
 
                   <v-flex class="google-button-container" xs6>
-                    <v-btn @click="googleLogin" color="white" block>Google</v-btn>
+                    <v-btn @click="googleLogin" color="#E46F62" dark block>Google</v-btn>
                   </v-flex>
 
                   <v-flex class="facebook-button-container" xs6>
-                    <v-btn @click="facebookLogin" color="white" block>Facebook</v-btn>
+                    <v-btn @click="facebookLogin('customer')" color="#3B5998" dark block>Facebook</v-btn>
                   </v-flex>
 
                   <v-flex xs12 mt-4 class="text-xs-center">
-                    <v-btn @click="register" flat small>{{$t('to_create_an_account')}}</v-btn>
+                    <v-btn @click="register('customer')" flat small>{{$t('create_an_account')}}</v-btn>
                   </v-flex>
                 </v-layout>
               </v-form>
@@ -125,7 +125,7 @@
               <v-form v-model="valid">
                 <v-layout row wrap>
                   <v-flex xs12 mt-4 mb-4 text-xs-center>
-                    <span class="subheading">Se connecter comme chauffeur</span>
+                    <span class="subheading">{{$t('log_in_as_driver')}}</span>
                   </v-flex>
                   <v-flex xs12>
                     <v-text-field :rules="emailRules" v-model="email" type="email" label="Email"></v-text-field>
@@ -143,8 +143,8 @@
                   <v-flex xs12 class="text-xs-center">
                     <v-btn
                       :disabled="!valid"
-                      flat
-                      color="success"
+                      block
+                      color="primary"
                       @click="login"
                     >{{$t('to_log_in')}}</v-btn>
                   </v-flex>
@@ -154,15 +154,15 @@
                   </v-flex>
 
                   <v-flex class="google-button-container" xs6>
-                    <v-btn @click="googleLogin" color="white" block>Google</v-btn>
+                    <v-btn @click="googleLogin" color="#E46F62" dark block>Google</v-btn>
                   </v-flex>
 
                   <v-flex class="facebook-button-container" xs6>
-                    <v-btn @click="facebookLogin" color="white" block>Facebook</v-btn>
+                    <v-btn @click="facebookLogin('driver')" color="#3B5998" dark block>Facebook</v-btn>
                   </v-flex>
 
                   <v-flex xs12 mt-4 class="text-xs-center">
-                    <v-btn @click="register" flat small>{{$t('to_create_an_account')}}</v-btn>
+                    <v-btn @click="register('driver')" flat small>{{$t('create_an_account')}}</v-btn>
                   </v-flex>
                 </v-layout>
               </v-form>
@@ -252,14 +252,34 @@ export default {
       );
     },
 
-    facebookLogin() {
+    async facebookLogin(type) {
+      let self = this;
+
       facebookConnectPlugin.login(
         ["public_profile", "email"],
         userData => {
           console.log("-----FACEBOOK-------");
           console.log("UserInfo: " + JSON.stringify(userData));
-          facebookConnectPlugin.getAccessToken(token => {
+          facebookConnectPlugin.getAccessToken(async token => {
             console.log("Token: " + token);
+            try {
+              let response = await Api.sendFacebookToken(type, token);
+              let jwt = response.data.token;
+              let backendType = response.data.type;
+              
+              console.log("Setting jwt in localStorage : " + jwt);
+              window.localStorage.setItem('jwt', jwt);
+              window.localStorage.setItem('type', backendType);
+              self.redirectLoggedUser();
+            
+            } catch(error) {
+              console.log('Error in facebookConnectPlugin.getAccessToken : ' + error);
+              self.$swal({
+                type: 'error',
+                title: self.$i18n.t('error'),
+                text: error
+              });
+            }
           });
         },
         error => {
@@ -292,6 +312,7 @@ export default {
             self.$router.push({ name: "ConfirmEmail" });
           }
         } catch (error) {
+          console.log('Error in Login::redirectLoggedUser : ' + error);
           self.$swal({
             type: "error",
             title: self.$i18n.t("oups"),
@@ -324,8 +345,13 @@ export default {
       }
     },
 
-    register() {
-      this.$router.push({ path: "/register-choice" });
+    register(type) {
+      if (type === 'customer') {
+        this.$router.push({ path: "/register-customer" });
+      } else {
+        this.$router.push({ path: "/register-driver" });
+      }
+      
     },
 
     async login() {

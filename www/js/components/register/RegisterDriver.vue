@@ -3,8 +3,13 @@
     <back-header :message="$t('to_register')"></back-header>
 
     <v-container>
-      <v-form v-model="valid" lazy-validation>
+      <v-form v-model="valid">
         <v-layout row wrap>
+
+          <v-flex xs12 mt-4 mb-4>
+            <v-icon class="chevron-right">chevron_right</v-icon><span class="subheading">{{$t('create_a_driver_account')}}</span>
+          </v-flex>
+
           <v-flex xs12>
             <v-text-field
               prepend-icon="perm_identity"
@@ -57,9 +62,9 @@
           <v-flex xs12 class="text-xs-center">
             <v-btn
               :disabled="!valid"
-              flat
+              block
               large
-              color="success"
+              color="primary"
               @click="register"
             >{{$t('to_register')}}</v-btn>
           </v-flex>
@@ -217,5 +222,9 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+.chevron-right {
+  line-height: 19px;
+  color: #3EB93A !important;
+}
 </style>

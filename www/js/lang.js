@@ -2,7 +2,7 @@ export default {
   "fr": {
     "to_register": "S'inscrire",
     "to_log_in": "Se connecter",
-    "to_create_an_account": "Créer un compte",
+    "create_an_account": "Créer un compte",
     "password": "Mot de passe",
     "email_required": "L'adresse email est requise",
     "email_not_valid": "L'adresse email doit être valide",
@@ -61,6 +61,11 @@ export default {
     "driver_infos_not_provided": "Vos pièces justificatives ne sont pas encore validées",
     "confirmation_email_sent": "Email de confirmation envoyé",
     "remuneration": "Rémunération",
+    "log_in_as_driver": "Se connecter comme chauffeur",
+    "log_in_as_customer": "Se connecter comme client",
+    "error": "Erreur",
+    "create_a_customer_account": "Créer un compte client",
+    "create_a_driver_account": "Créer un compte chauffeur",
 
 
     "address": "J'indique une adresse",
