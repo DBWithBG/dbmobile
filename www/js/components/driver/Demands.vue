@@ -32,7 +32,7 @@
         <v-card-title class="subheading">{{$t('confirmer_course')}}</v-card-title>
         <v-layout row>
           <v-card-actions>
-            <v-btn color="action" flat @click.native.stop="dialogTake=false">{{$t('cancel')}}</v-btn>
+            <v-btn color="error" flat @click.native.stop="dialogTake=false">{{$t('cancel')}}</v-btn>
             <v-btn
               color="primary"
               flat
@@ -224,16 +224,12 @@ export default {
       let self = this;
       let jwt = window.localStorage.getItem("jwt");
 
-      var req = {
-        status_id: "2",
-        delivery_id: id
-      };
-
       axios
         .post(
           "https://dev-deliverbag.supconception.fr/mobile/drivers/deliveries/edit-status",
           {
-            req
+            delivery_id: id,
+            status_id: 2
           },
           {
             headers: {
