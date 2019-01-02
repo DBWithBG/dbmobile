@@ -29,7 +29,7 @@
 
     <v-dialog v-model="dialogTake" max-width="290">
       <v-card>
-        <v-card-title class="headline">{{$t('confirmer_course')}}</v-card-title>
+        <v-card-title class="subheading">{{$t('confirmer_course')}}</v-card-title>
         <v-layout row>
           <v-card-actions>
             <v-btn color="action" flat @click.native.stop="dialogTake=false">{{$t('cancel')}}</v-btn>

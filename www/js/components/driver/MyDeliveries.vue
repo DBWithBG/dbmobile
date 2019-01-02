@@ -29,6 +29,7 @@
 
                     <v-flex row xs12>
                       <v-layout align-center justify-space-around>
+
                         <v-flex xs4 class="text-xs-center">
                           {{ props.item.delivery.start_position.address }}
                           <v-divider></v-divider>
@@ -50,6 +51,10 @@
                           </div>
                         </v-flex>
                       </v-layout>
+
+                      <v-flex class="remuneration-flex" xs12 mt-4>
+                        <b>{{$t('remuneration')}} : </b>{{props.item.delivery.remuneration_driver}} €
+                      </v-flex>
 
                       <v-list class="mt-4" subheader>
                         <v-subheader>{{props.item.delivery.bags.length}} {{$t('luggages')}}</v-subheader>
@@ -534,6 +539,11 @@ export default {
 #tabs {
   padding-bottom: 4em;
 }
+
+.remuneration-flex {
+  padding: 16px;
+}
+
 </style>
 
   
