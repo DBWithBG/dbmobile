@@ -59,6 +59,7 @@
     "vueify": "^9.4.1",
     "vuetify": "^1.2.1",
     "vuetify-google-autocomplete": "^2.0.0-Beta.2",
+    "vuetify-upload-button": "^1.2.2",
     "weekstart": "^1.0.0"
   },
   "cordova": {

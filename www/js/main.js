@@ -25,6 +25,7 @@ import DemandsListDriver from './components/driver/DemandsList.vue'
 import MyDeliveriesDriver from './components/driver/MyDeliveries.vue'
 import SettingsDriver from './components/driver/Settings.vue'
 import ConfirmDriver from './components/ConfirmDriver.vue'
+import DriverDocuments from './components/driver/DriverDocuments.vue'
 
 
 Vue.use(VueRouter);
@@ -60,7 +61,8 @@ const routes = [
   { name: 'DemandsListDriver', path: '/demands-list-driver', component: DemandsListDriver },
   { name: 'MyDeliveriesDriver', path: '/my-deliveries-driver', component: MyDeliveriesDriver },
   { name: 'SettingsDriver', path: '/settings-driver', component: SettingsDriver },
-  { name: 'ConfirmDriver', path: '/confirm-driver', component: ConfirmDriver }
+  { name: 'ConfirmDriver', path: '/confirm-driver', component: ConfirmDriver },
+  { name: 'DriverDocuments', path: '/driver-documents', component: DriverDocuments }
 ];
 
 const router = new VueRouter({ routes: routes });
@@ -77,5 +79,5 @@ function bindVue() {
 }
 
 
-document.addEventListener('deviceready', bindVue);
-// document.addEventListener('DOMContentLoaded', bindVue);
+// document.addEventListener('deviceready', bindVue);
+document.addEventListener('DOMContentLoaded', bindVue);

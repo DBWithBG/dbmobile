@@ -1,6 +1,7 @@
 <template>
   <div class="padding-top-3em">
-    <v-layout justify-center column fill-height>
+    <v-container>
+      <v-layout justify-center column fill-height>
       <v-flex class="text-xs-center">
         <span xs12 class="headline">{{$t('welcome_on_deliverbag')}}</span>
       </v-flex>
@@ -17,6 +18,8 @@
         <v-btn @click="logout" color="error" block>{{$t('disconnect')}}</v-btn>
       </v-flex>
     </v-layout>
+    </v-container>
+    
   </div>
 </template>
 
@@ -102,6 +105,10 @@ export default {
 
 .padding-top-3em {
   padding-top: 3em;
+}
+
+.body-1 {
+  text-transform: none !important;
 }
 </style>
 

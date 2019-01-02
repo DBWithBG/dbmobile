@@ -50,14 +50,13 @@ export default {
     "email_already_used": "Adresse email déjà utilisée",
     "email_invalid": "Adresse email invalide",
     "welcome_on_deliverbag": "Bienvenue sur Deliverbag",
-    "confirm_your_email": "Pour continuer, merci de confirmer votre adresse email grâce au lien qui vous a été envoyé",
+    "confirm_your_email": "Dans un premier temps, merci de confirmer votre adresse email grâce au lien qui vous a été envoyé.",
     "resend_email": "Renvoyer le mail",
     "continue": "Continuer",
-    "go_on": "Rendez-vous ensuite sur ",
-    "rib": "Nous fournir un relevé d'identité bancaire",
-    "siret": "Nous fournir votre numéro de SIRET",
-    "cni": "Nous fournir une copie de votre carte nationale d'identité",
-    "pour": "pour",
+    "go_on": "Ensuite, nous aurions besoin de votre numéro de SIRET ainsi que de certaines pièces justificatives :",
+    "rib": "Un relevé d'identité bancaire",
+    "cni": "Une copie de votre carte nationale d'identité",
+    "driving_license": "Une copie de votre permis de conduire",
     "driver_infos_not_provided": "Vos pièces justificatives ne sont pas encore validées",
     "confirmation_email_sent": "Email de confirmation envoyé",
     "remuneration": "Rémunération",
@@ -66,7 +65,24 @@ export default {
     "error": "Erreur",
     "create_a_customer_account": "Créer un compte client",
     "create_a_driver_account": "Créer un compte chauffeur",
+    "our_team_will_check": "Pour finir, notre équipe validera vos pièces justificatives.",
+    "my_documents": "Mes pièces justificatives",
+    "documents": "Pièces justificatives",
+    "siret_number": "Numéro de SIRET",
+    "add_document": "Ajouter une pièce justificative",
+    "your_documents": "Liste de vos pièces justificatives",
+    "documents_name": "Nom de la pièce justificative",
+    "add": "Ajouter",
+    "no_document": "Aucune pièce justificative",
+    "see": "Voir",
+    "delete": "Supprimer",
+    "documents_sbt": "Voir et ajouter des pièces justificatives",
 
+
+
+
+
+    
 
     "address": "J'indique une adresse",
     "address_subt": "Définissez un lieu et une heure de prise en charge pour vos bagages",

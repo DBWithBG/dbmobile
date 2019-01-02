@@ -83,3 +83,14 @@ h1 {
 .container.main-container {
   padding: 0 !important;
 }
+
+.chevron-right {
+  line-height: 19px !important;
+  height: 19px;
+  color: #3EB93A !important;
+}
+
+/* Fix... */
+label#labeluploadFile {
+  margin: 0px;
+}
