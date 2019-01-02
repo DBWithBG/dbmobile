@@ -4,14 +4,14 @@
       <span>Accéder à la liste des demandes</span>
     </v-btn>
 
-    <v-layout row>
-      <v-flex xs2>
-        <v-btn :disabled="retour" color="primary" @click.native="reset()">
+    <v-layout row class="top-row">
+      <v-flex xs4>
+        <v-btn class="btn-retour" :disabled="retour" color="primary" @click.native="reset()">
           <v-icon>navigate_before</v-icon>
           {{$t('retour')}}
         </v-btn>
       </v-flex>
-      <v-flex xs6 offset-xs3>
+      <v-flex xs6 offset-xs2>
         <v-select
           append-icon="event"
           outline
@@ -52,74 +52,81 @@
           <v-card>
             <v-card-title class="subheading">{{moment(demand.start_date).format('LLL')}}</v-card-title>
             <v-card-text>
-              <v-flex v-if="demand.remuneration_driver" row><b>{{$t('remuneration')}} :</b> {{demand.remuneration_driver + ' €'}}</v-flex>
-              <v-divider v-if="demand.remuneration_driver" class="divider_modal"></v-divider>
-              <v-flex row><b>{{$t('takeover_label')}} :</b> {{demand.start_position.address}}</v-flex>
-              <v-flex row>Le {{moment(demand.start_date).format('LL')}} à {{moment(demand.start_date).format('LT')}}</v-flex>
-              <v-divider class="divider_modal"></v-divider>
-              <v-flex row><b>{{$t('livraison_label')}} :</b> {{demand.end_position.address}}</v-flex>
-              <v-flex v-if="demand.time_consigne!=null">
-                le {{moment(demand.end_date).format('LL')}} à {{moment(demand.end_date).format('LT')}}
+              <v-flex v-if="demand.remuneration_driver" row>
+                <b>{{$t('remuneration')}} :</b>
+                {{demand.remuneration_driver + ' €'}}
               </v-flex>
+              <v-divider v-if="demand.remuneration_driver" class="divider_modal"></v-divider>
+              <v-flex row>
+                <b>{{$t('takeover_label')}} :</b>
+                {{demand.start_position.address}}
+              </v-flex>
+              <v-flex
+                row
+              >Le {{moment(demand.start_date).format('LL')}} à {{moment(demand.start_date).format('LT')}}</v-flex>
+              <v-divider class="divider_modal"></v-divider>
+              <v-flex row>
+                <b>{{$t('livraison_label')}} :</b>
+                {{demand.end_position.address}}
+              </v-flex>
+              <v-flex
+                v-if="demand.time_consigne!=null"
+              >le {{moment(demand.end_date).format('LL')}} à {{moment(demand.end_date).format('LT')}}</v-flex>
               <v-flex v-else>{{$t('livraison_asap')}}</v-flex>
-            
 
-            <v-divider class="divider_modal"></v-divider>
+              <v-divider class="divider_modal"></v-divider>
 
-            <v-list subheader>
-              <b>Consigne :</b> {{demand.time_consigne}}
-            <v-subheader>{{demand.bags.length}} {{$t('luggages')}}</v-subheader>
-            <v-layout column>
-              <div v-for="bag in demand.bags" :key="bag.id">
-                <v-chip
-                  xs6
-                  v-if="bag.type_id===1"
-                  color="teal lighten-2"
-                  text-color="white"
-                  @click.native.stop="dialogBag=true,modelBag=bag"
-                >
-                  {{bag.name}}
-                  <v-icon right>work</v-icon>
-                </v-chip>
+              <v-list subheader>
+                <b>Consigne :</b>
+                {{demand.time_consigne}}
+                <v-subheader>{{demand.bags.length}} {{$t('luggages')}}</v-subheader>
+                <v-layout column>
+                  <div v-for="bag in demand.bags" :key="bag.id">
+                    <v-chip
+                      xs6
+                      v-if="bag.type_id===1"
+                      color="teal lighten-2"
+                      text-color="white"
+                      @click.native.stop="dialogBag=true,modelBag=bag"
+                    >
+                      {{bag.name}}
+                      <v-icon right>work</v-icon>
+                    </v-chip>
 
-                <v-chip
-                  v-if="bag.type_id===2"
-                  color="teal darken-1"
-                  text-color="white"
-                  @click.native.stop="dialogBag=true,modelBag=bag"
-                >
-                  {{bag.name}}
-                  <v-icon right>work</v-icon>
-                </v-chip>
+                    <v-chip
+                      v-if="bag.type_id===2"
+                      color="teal darken-1"
+                      text-color="white"
+                      @click.native.stop="dialogBag=true,modelBag=bag"
+                    >
+                      {{bag.name}}
+                      <v-icon right>work</v-icon>
+                    </v-chip>
 
-                <v-chip
-                  v-if="bag.type_id===3"
-                  color="teal darken-4"
-                  text-color="white"
-                  @click.native.stop="dialogBag=true,modelBag=bag"
-                >
-                  {{bag.name}}
-                  <v-icon right>work</v-icon>
-                </v-chip>
-              </div>
-              <v-btn
-                color="primary"
-                @click.native="seeOnMap(demand.start_position.lat,demand.start_position.lng,demand.end_position.lat,demand.end_position.lng)"
-              >
-                <span>Voir sur la carte</span>
-              </v-btn>
-              <v-btn color="primary" @click.native="dialogTake=true,demandId=demand.id">
-                <span>{{$t('confirm_demand')}}</span>
-              </v-btn>
-            </v-layout>
-          </v-list>
-            
+                    <v-chip
+                      v-if="bag.type_id===3"
+                      color="teal darken-4"
+                      text-color="white"
+                      @click.native.stop="dialogBag=true,modelBag=bag"
+                    >
+                      {{bag.name}}
+                      <v-icon right>work</v-icon>
+                    </v-chip>
+                  </div>
+                  <v-btn
+                    color="primary"
+                    @click.native="seeOnMap(demand.start_position.lat,demand.start_position.lng,demand.end_position.lat,demand.end_position.lng)"
+                  >
+                    <span>Voir sur la carte</span>
+                  </v-btn>
+                  <v-btn color="primary" @click.native="dialogTake=true,demandId=demand.id">
+                    <span>{{$t('confirm_demand')}}</span>
+                  </v-btn>
+                </v-layout>
+              </v-list>
             </v-card-text>
-            
-            
           </v-card>
 
-          
           <v-divider></v-divider>
         </v-flex>
       </v-flex>
@@ -373,7 +380,7 @@ export default {
             imagePath:
               "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m"
           });
-          
+
           self.markerCluster.addListener("click", function(cluster) {
             self.active_demands = [];
             cluster.getMarkers().forEach(function(marker) {
@@ -431,7 +438,6 @@ export default {
     this.initUserMarker();
     this.initUserPos();
     this.getDeliveries();
-
   },
 
   destroyed() {
@@ -441,7 +447,7 @@ export default {
 </script>
 
 
-        <style scoped>
+<style scoped>
 .cross {
   z-index: 9999;
 }
@@ -460,4 +466,15 @@ p {
   margin-top: 1em;
   margin-bottom: 1em;
 }
+
+.btn-retour {
+  height: 50px;
+}
+
+.top-row {
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+
 </style>
