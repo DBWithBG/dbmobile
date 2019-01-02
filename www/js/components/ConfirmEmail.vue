@@ -6,7 +6,7 @@
         <span xs12 class="headline">{{$t('welcome_on_deliverbag')}}</span>
       </v-flex>
       <v-flex class="padding-top-3em text-xs-center">
-        <span xs12 class="subheading">{{$t('confirm_your_email')}}</span>
+        <span xs12 class="subheading text">{{$t('confirm_your_email')}}</span>
       </v-flex>
       <v-flex class="padding-top-1em text-xs-center">
         <v-btn @click="resendConfirmationEmail" color="info" block>{{$t('resend_email')}}</v-btn>
@@ -109,6 +109,10 @@ export default {
 
 .body-1 {
   text-transform: none !important;
+}
+
+.subheading.text {
+  text-transform: none;
 }
 </style>
 
