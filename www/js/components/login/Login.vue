@@ -60,11 +60,13 @@
       <v-tabs centered color="primary" dark icons-and-text>
         <v-tabs-slider color="primary"></v-tabs-slider>
 
-        <v-tab href="#tab-1">{{$t('customer')}}
+        <v-tab href="#tab-1">
+          {{$t('customer')}}
           <v-icon>perm_identity</v-icon>
         </v-tab>
 
-        <v-tab href="#tab-2">{{$t('driver')}}
+        <v-tab href="#tab-2">
+          {{$t('driver')}}
           <v-icon>drive_eta</v-icon>
         </v-tab>
 
@@ -173,8 +175,7 @@
     </template>
   </div>
 </template>
-  </div>
-</template>
+ 
 
 
 <script>
@@ -208,9 +209,12 @@ export default {
   },
 
   mounted() {
-    if (this.checkIfUserIsLoggedIn) {
+    if (this.checkIfUserIsLoggedIn()) {
+      console.log("User already logged in");
       this.registerOnMessageCallback();
       this.redirectLoggedUser();
+    } else {
+      console.log("User not logged in");
     }
   },
 
@@ -231,7 +235,7 @@ export default {
 
     async googleLogin(type) {
       let self = this;
-      
+
       window.plugins.googleplus.login(
         {
           webClientId:
@@ -241,24 +245,26 @@ export default {
         async function(obj) {
           let serverAuthToken = obj.serverAuthCode;
           try {
-              let response = await Api.sendGoogleToken(type, serverAuthToken);
-              let jwt = response.data.token;
-              let backendType = response.data.type;
-              
-              console.log("Setting jwt in localStorage : " + jwt);
-              window.localStorage.setItem('jwt', jwt);
-              window.localStorage.setItem('type', backendType);
-              self.redirectLoggedUser();
-            
-            } catch(error) {
-              console.log('Error in googleLogin : ' + error);
-              self.$swal({
-                type: 'error',
-                title: self.$i18n.t('error'),
-                text: error
-              });
+            let response = await Api.sendGoogleToken(type, serverAuthToken);
+            let jwt = response.data.token;
+            let backendType = response.data.type;
+
+            console.log("Setting jwt in localStorage : " + jwt);
+            window.localStorage.setItem("jwt", jwt);
+            window.localStorage.setItem("type", backendType);
+            if (self.isCordovaSet()) {
+              self.sendFirebaseToken();
+              self.registerOnMessageCallback();
             }
-          
+            self.redirectLoggedUser();
+          } catch (error) {
+            console.log("Error in googleLogin : " + error);
+            self.$swal({
+              type: "error",
+              title: self.$i18n.t("error"),
+              text: error
+            });
+          }
         },
         function(msg) {
           console.log("Error");
@@ -281,17 +287,24 @@ export default {
               let response = await Api.sendFacebookToken(type, token);
               let jwt = response.data.token;
               let backendType = response.data.type;
-              
+
               console.log("Setting jwt in localStorage : " + jwt);
-              window.localStorage.setItem('jwt', jwt);
-              window.localStorage.setItem('type', backendType);
+              window.localStorage.setItem("jwt", jwt);
+              window.localStorage.setItem("type", backendType);
+
+              if (self.isCordovaSet()) {
+                self.sendFirebaseToken();
+                self.registerOnMessageCallback();
+              }
+
               self.redirectLoggedUser();
-            
-            } catch(error) {
-              console.log('Error in facebookConnectPlugin.getAccessToken : ' + error);
+            } catch (error) {
+              console.log(
+                "Error in facebookConnectPlugin.getAccessToken : " + error
+              );
               self.$swal({
-                type: 'error',
-                title: self.$i18n.t('error'),
+                type: "error",
+                title: self.$i18n.t("error"),
                 text: error
               });
             }
@@ -304,15 +317,17 @@ export default {
     },
 
     checkIfUserIsLoggedIn() {
+      console.log("Check if user is logged in");
       let jwt = window.localStorage.getItem("jwt");
       let type = window.localStorage.getItem("type");
-
       return !jwt || !type;
     },
 
     async redirectLoggedUser() {
       let self = this;
       let type = window.localStorage.getItem("type");
+
+      console.log("Redirecting logged user");
 
       let api = new Api();
 
@@ -327,7 +342,7 @@ export default {
             self.$router.push({ name: "ConfirmEmail" });
           }
         } catch (error) {
-          console.log('Error in Login::redirectLoggedUser : ' + error);
+          console.log("Error in Login::redirectLoggedUser : " + error);
           self.$swal({
             type: "error",
             title: self.$i18n.t("oups"),
@@ -361,12 +376,11 @@ export default {
     },
 
     register(type) {
-      if (type === 'customer') {
+      if (type === "customer") {
         this.$router.push({ path: "/register-customer" });
       } else {
         this.$router.push({ path: "/register-driver" });
       }
-      
     },
 
     async login() {
@@ -392,6 +406,7 @@ export default {
 
           if (self.isCordovaSet()) {
             this.sendFirebaseToken();
+            this.registerOnMessageCallback();
           }
 
           self.redirectLoggedUser();
