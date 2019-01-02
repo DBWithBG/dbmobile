@@ -212,9 +212,9 @@ export default {
       rules: {
         required: value => !!value || this.$i18n.t("required"),
         min_password: value =>
-          typeof(value) != 'undefined' || value.length >= 6 || this.$i18n.t("min_password_length"),
+          value.length >= 6 || this.$i18n.t("min_password_length"),
         min_phone: value =>
-          typeof(value) != 'undefined' || value.length >= 10 || this.$i18n.t("min_phone_length"),
+          value.length >= 10 || this.$i18n.t("min_phone_length"),
         email_valid: v => /.+@.+/.test(v) || this.$i18n.t("email_not_valid")
       }
     };
