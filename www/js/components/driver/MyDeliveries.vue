@@ -250,6 +250,7 @@ export default {
       open: -1,
       snackbar: "",
       snackbarText: "",
+      user_pos: null,
       headers: [
         { text: this.$i18n.t("distance"), value: "distance" },
         { text: this.$i18n.t("prix"), value: "price" },
@@ -293,6 +294,14 @@ export default {
     if (localStorage.getItem("driver_course_to_open") != null) {
       this.open = localStorage.getItem("driver_course_to_open");
     }
+
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.user_pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      }
+    });
+
     this.getCourses();
   },
 
@@ -399,6 +408,8 @@ export default {
     // - destination = coordonnées passées
     route(lat, lng) {
       let addressLongLat = { lat, lng };
+      
+      console.log(this.user_pos);
 
       window.open(
         "https://maps.google.com?daddr=" + lat + "," + lng + "&mode=d&saddr=" + this.user_pos.lat + ',' + this.user_pos.lng,
