@@ -188,8 +188,8 @@ export default {
       error: "",
 
       // Form data
-      email: "",
-      password: "",
+      email: "driver@driver.fr",
+      password: "password",
       showPassword: false,
 
       // Is the form valid ?

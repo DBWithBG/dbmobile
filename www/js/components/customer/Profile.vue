@@ -160,19 +160,22 @@
         </v-flex>
       </v-layout>
     </div>
-    <db-menu></db-menu>
+    <db-menu-customer v-if="type == 'customer'"></db-menu-customer>
+    <db-menu-driver v-if="type == 'driver'"></db-menu-driver>
   </div>
 </template>
 
 <script>
 import BackHeader from "../BackHeader.vue";
-import Menu from "./Menu.vue";
+import MenuCustomer from "./Menu.vue";
+import MenuDriver from "../driver/Menu.vue";
 import Api from "../../api.js";
 
 export default {
   components: {
     "back-header": BackHeader,
-    "db-menu": Menu
+    "db-menu-customer": MenuCustomer,
+    "db-menu-driver": MenuDriver
   },
 
   data() {

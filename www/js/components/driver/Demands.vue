@@ -333,7 +333,8 @@ export default {
         })
         .then(response => {
           // On a récupéré les données, on effectue le traitement ici
-          var data = JSON.parse(response.data);
+          console.log(JSON.stringify(response));
+          var data = response.data;
           self.deliveries = data;
           // on itère sur les donnée qu'on récupère
           for (var i = 0; i < data.length; i++) {

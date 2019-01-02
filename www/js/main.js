@@ -79,5 +79,5 @@ function bindVue() {
 }
 
 
-// document.addEventListener('deviceready', bindVue);
-document.addEventListener('DOMContentLoaded', bindVue);
+document.addEventListener('deviceready', bindVue);
+// document.addEventListener('DOMContentLoaded', bindVue);
