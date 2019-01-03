@@ -14,9 +14,16 @@
             v-model="siret"
             label="SIRET"
             :rules="[otherRules.required]"
+            mask="### ### ### #####"
           ></v-text-field>
 
-          <v-btn :disabled="!siret_valid" outline block color="primary">{{$t('save')}}</v-btn>
+          <v-btn
+            @click="updateSiret"
+            :disabled="!siret_valid"
+            outline
+            block
+            color="primary"
+          >{{$t('save')}}</v-btn>
         </v-form>
 
         <v-flex xs12 class="mt-7" mb-2>
@@ -27,7 +34,7 @@
         <v-form v-model="document_valid">
           <v-text-field
             prepend-icon="attachment"
-            v-model="siret"
+            v-model="documentName"
             :label="$t('documents_name')"
             :rules="[otherRules.required]"
           ></v-text-field>
@@ -36,13 +43,13 @@
             :fileChangedCallback="fileChanged"
             outline
             title="Choisir un fichier"
-            accept="image/x-png,image/gif,image/jpeg"
+            accept="image/x-png, image/gif, image/jpeg"
           ></upload-btn>
 
-          <span class="file-name">{{this.fileName}}</span>
+          <span class="file-name">{{file.name}}</span>
 
           <v-flex xs12 class="text-xs-center">
-            <v-btn :disabled="!document_valid" outline block color="primary">{{$t('add')}}</v-btn>
+            <v-btn @click="addDocument" :disabled="!document_valid" outline block color="primary">{{$t('add')}}</v-btn>
           </v-flex>
         </v-form>
 
@@ -79,8 +86,8 @@
 </template>
 <script>
 import BackHeader from "../BackHeader.vue";
-import UploadButton from 'vuetify-upload-button';
-
+import UploadButton from "vuetify-upload-button";
+import Api from "../../api.js";
 
 export default {
   components: {
@@ -92,7 +99,10 @@ export default {
     let self = this;
     return {
       siret: "",
-      fileName: "",
+      documentName: "",
+      file: {
+        name: ""
+      },
       siret_valid: false,
       document_valid: true,
       documents: [
@@ -114,8 +124,75 @@ export default {
   },
 
   methods: {
+    async updateSiret() {
+      let self = this;
+      let api = new Api();
+
+      try {
+        await api.updateSiret(this.siret);
+      } catch (error) {
+        this.$swal({
+          type: "error",
+          title: "oups",
+          text: error
+        });
+      }
+    },
+
+    async addDocument() {
+      let self = this;
+      let api = new Api();
+
+      console.log("Adding " + this.file.name);
+      console.log("File : ");
+      console.log(this.file);
+
+      try {
+        await api.addDocument(this.documentName, this.file);
+      } catch (error) {
+        this.$swal({
+          type: "error",
+          title: "oups",
+          text: error
+        });
+      }
+    },
+
+    async deleteDocument(id) {
+      let self = this;
+      let api = new Api();
+
+      console.log("Deleting doc " + id);
+
+      try {
+        await api.deleteDocument(id);
+      } catch (error) {
+        this.$swal({
+          type: "error",
+          title: "oups",
+          text: error
+        });
+      }
+    },
+
+    fetchDocument() {
+      let self = this;
+      let api = new Api();
+
+      try {
+        api.getDocuments();
+      } catch (error) {
+        this.$swal({
+          type: "error",
+          title: "oups",
+          text: error
+        });
+      }
+    },
+
     fileChanged(file) {
-      this.fileName = file.name;
+      this.file = file;
+      console.log(file);
     }
   }
 };
@@ -158,9 +235,8 @@ export default {
 .file-name {
   display: inline-block;
   line-height: 34px;
-  padding-left: 10px; 
+  padding-left: 10px;
 }
-
 </style>
 
 

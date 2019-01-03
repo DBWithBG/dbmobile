@@ -50,6 +50,29 @@ class Api {
         }, this.header);
     }
 
+    updateSiretDriver(siret) {
+        return axios.put(BASE_URL + "/mobile/driver/siret", {
+            siret
+        }, this.header);
+    }
+
+    addDocument(documentName, file) {
+        let formData = new FormData();
+
+        formData.append('file', file);
+        formData.append('name', documentName);
+
+        return axios.post(BASE_URL + "/mobile/driver/justificatif", formData, this.header);
+    }
+
+    deleteDocument(id) {
+        return axios.delete(BASE_URL + "/driver/justificatif/" + id, {}, this.header);
+    }
+
+    getDocuments() {
+        return axios.get(BASE_URL + "/driver/justificatif", this.header);
+    }
+
     /**
      * Update email address for customer and driver
      */

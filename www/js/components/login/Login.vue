@@ -320,7 +320,7 @@ export default {
       console.log("Check if user is logged in");
       let jwt = window.localStorage.getItem("jwt");
       let type = window.localStorage.getItem("type");
-      return !jwt || !type;
+      return jwt && type;
     },
 
     async redirectLoggedUser() {
