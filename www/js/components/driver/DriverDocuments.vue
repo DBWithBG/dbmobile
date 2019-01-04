@@ -46,10 +46,16 @@
             accept="image/x-png, image/gif, image/jpeg"
           ></upload-btn>
 
-          <span class="file-name">{{file.name}}</span>
+          <span class="file-name">{{file != null ? file.name: ''}}</span>
 
           <v-flex xs12 class="text-xs-center">
-            <v-btn @click="addDocument" :disabled="!document_valid" outline block color="primary">{{$t('add')}}</v-btn>
+            <v-btn
+              @click="addDocument"
+              :disabled="!document_valid"
+              outline
+              block
+              color="primary"
+            >{{$t('add')}}</v-btn>
           </v-flex>
         </v-form>
 
@@ -63,16 +69,16 @@
             <v-card-title>
               <div>
                 <div class="subheading documents-name">
-                  <span class="green-dot"></span>
-                  <span>{{document.status}}</span>
+                  <span :class="document.is_valide === 1 ? 'green-dot' : 'red-dot'"></span>
+                  <span>{{textFromStatus(document.is_valide)}}</span>
                   &emsp;
-                  <span>{{document.name}}</span>
+                  <b>{{document.name}}</b>
                 </div>
               </div>
             </v-card-title>
             <v-card-actions>
-              <v-btn flat color="primary">{{$t('see')}}</v-btn>
-              <v-btn flat color="error">{{$t('delete')}}</v-btn>
+              <v-btn flat @click="viewDocument(document.id)" color="primary">{{$t('see')}}</v-btn>
+              <v-btn flat @click="deleteDocument(document.id)" color="error">{{$t('delete')}}</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -100,27 +106,27 @@ export default {
     return {
       siret: "",
       documentName: "",
-      file: {
-        name: ""
-      },
+      file: null,
       siret_valid: false,
       document_valid: true,
-      documents: [
-        {
-          id: 1,
-          name: "Carte identité recto",
-          status: "Validée"
-        },
-        {
-          id: 2,
-          name: "Carte identité verso",
-          status: "Validée"
-        }
-      ],
+      documents: [],
       otherRules: {
         required: value => !!value || self.$i18n.t("required")
       }
     };
+  },
+
+  async mounted() {
+    try {
+      await this.fetchDriverInfos();
+      await this.fetchDocument();
+    } catch (error) {
+      this.$swal({
+          type: "error",
+          title: "Oups",
+          text: error
+        });
+    }
   },
 
   methods: {
@@ -129,7 +135,11 @@ export default {
       let api = new Api();
 
       try {
-        await api.updateSiret(this.siret);
+        await api.updateSiretDriver(this.siret);
+        this.$swal({
+          type: "success",
+          text: this.$i18n.t('siret_updated')
+        });
       } catch (error) {
         this.$swal({
           type: "error",
@@ -143,12 +153,22 @@ export default {
       let self = this;
       let api = new Api();
 
-      console.log("Adding " + this.file.name);
-      console.log("File : ");
-      console.log(this.file);
+      if (this.file == null) {
+        this.$swal({
+          type: "error",
+          title: "Oups",
+          text: this.$i18n.t('no_document_choosen')
+        });
+        return;
+      }
 
       try {
         await api.addDocument(this.documentName, this.file);
+        this.$swal({
+          type: "success",
+          text: self.$i18n.t('document_added')
+        });
+        await this.fetchDocument();
       } catch (error) {
         this.$swal({
           type: "error",
@@ -166,6 +186,11 @@ export default {
 
       try {
         await api.deleteDocument(id);
+        this.$swal({
+          type: "info",
+          text: self.$i18n.t('document_deleted')
+        });
+        await this.fetchDocument();
       } catch (error) {
         this.$swal({
           type: "error",
@@ -175,16 +200,38 @@ export default {
       }
     },
 
-    fetchDocument() {
+    viewDocument(id) {
+
+    },
+
+    async fetchDocument() {
       let self = this;
       let api = new Api();
 
       try {
-        api.getDocuments();
+        let response = await api.getDocuments();
+        this.documents = response.data.justificatifs;
+        console.log(this.documents);
       } catch (error) {
         this.$swal({
           type: "error",
-          title: "oups",
+          title: "Oups",
+          text: error
+        });
+      }
+    },
+
+    async fetchDriverInfos() {
+      let self = this;
+      let api = new Api();
+
+      try {
+        let response = await api.readDriver();
+        this.siret = JSON.parse(response.data)[0].siret;
+      } catch (error) {
+        this.$swal({
+          type: "error",
+          title: "Oups",
           text: error
         });
       }
@@ -193,6 +240,14 @@ export default {
     fileChanged(file) {
       this.file = file;
       console.log(file);
+    },
+
+    textFromStatus(status_id) {
+      console.log('Status : ' + status_id);
+      if (status_id === null) return this.$i18n.t('waiting_for_validation');
+      else if (status_id === 1) return this.$i18n.t('validated');
+      else return this.$i18n.t('not_valid');
+      
     }
   }
 };

@@ -77,6 +77,13 @@ export default {
     "see": "Voir",
     "delete": "Supprimer",
     "documents_sbt": "Voir et ajouter des pièces justificatives",
+    "no_document_choosen": "Aucun document choisi",
+    "document_added": "Pièce justificative ajoutée",
+    "document_deleted": "Pièce justificative supprimée",
+    "siret_updated": "Numéro de SIRET mis à jour",
+    "waiting_for_validation": "En attente de validation",
+    "validated": "Validée",
+    "not_valid": "Non valide",
 
 
 

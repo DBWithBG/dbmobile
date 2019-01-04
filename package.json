@@ -5,7 +5,6 @@
   "description": "Deliverbag mobile app",
   "main": "index.js",
   "scripts": {
-    "dev": "./node_modules/.bin/webpack-dev-server",
     "emulate-browser": "webpack && cordova emulate browser",
     "emulate-android": "webpack && cordova emulate android",
     "build-android": "webpack && cordova build android",

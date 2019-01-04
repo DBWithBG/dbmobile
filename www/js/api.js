@@ -59,18 +59,18 @@ class Api {
     addDocument(documentName, file) {
         let formData = new FormData();
 
-        formData.append('file', file);
+        formData.append('justificatif', file);
         formData.append('name', documentName);
 
-        return axios.post(BASE_URL + "/mobile/driver/justificatif", formData, this.header);
+        return axios.post(BASE_URL + "/mobile/driver/addJustificatif", formData, this.header);
     }
 
     deleteDocument(id) {
-        return axios.delete(BASE_URL + "/driver/justificatif/" + id, {}, this.header);
+        return axios.delete(BASE_URL + "/mobile/driver/justificatif/" + id, this.header);
     }
 
     getDocuments() {
-        return axios.get(BASE_URL + "/driver/justificatif", this.header);
+        return axios.get(BASE_URL + "/mobile/driver/justificatifs", this.header);
     }
 
     /**

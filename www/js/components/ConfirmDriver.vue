@@ -26,7 +26,10 @@
           <v-btn @click="resendConfirmationEmail" color="info" block>{{$t('resend_email')}}</v-btn>
         </v-flex>
         <v-flex class="padding-top-1em text-xs-center">
-          <v-btn @click="next" color="success" block>{{$t('my_documents')}}</v-btn>
+          <v-btn @click="documents" color="success" block>{{$t('my_documents')}}</v-btn>
+        </v-flex>
+        <v-flex class="padding-top-1em text-xs-center">
+          <v-btn @click="next" color="success" block>{{$t('next')}}</v-btn>
         </v-flex>
         <v-flex class="padding-top-1em text-xs-center">
           <v-btn @click="logout" color="error" block>{{$t('disconnect')}}</v-btn>
@@ -41,9 +44,12 @@ import Api from "../api.js";
 
 export default {
   methods: {
+    documents() {
+      this.checkEmailConfirmed();
+    },
+
     next() {
-      if (this.checkEmailConfirmed()) {
-      }
+      this.checkDriverConfirmed();
     },
 
     async checkEmailConfirmed() {
@@ -72,7 +78,7 @@ export default {
       }
     },
 
-    /*checkDriverConfirmed() {
+    checkDriverConfirmed() {
       let self = this;
       let type = window.localStorage.getItem("type");
       let api = new Api();
@@ -111,7 +117,7 @@ export default {
         window.localStorage.removeItem("jwt");
         self.$router.push({ name: "Login" });
       }
-    },*/
+    },
 
     logout() {
       window.localStorage.removeItem("jwt");
