@@ -52,6 +52,7 @@
             <v-btn
               @click="addDocument"
               :disabled="!document_valid"
+              :loading="add_loading"
               outline
               block
               color="primary"
@@ -107,6 +108,7 @@ export default {
       siret: "",
       documentName: "",
       file: null,
+      add_loading: false,
       siret_valid: false,
       document_valid: true,
       documents: [],
@@ -163,7 +165,10 @@ export default {
       }
 
       try {
-        await api.addDocument(this.documentName, this.file);
+        this.add_loading = true;
+        let response = await api.addDocument(this.documentName, this.file);
+        console.log(JSON.stringify(response));
+        this.add_loading = false;
         this.$swal({
           type: "success",
           text: self.$i18n.t('document_added')
@@ -239,11 +244,9 @@ export default {
 
     fileChanged(file) {
       this.file = file;
-      console.log(file);
     },
 
     textFromStatus(status_id) {
-      console.log('Status : ' + status_id);
       if (status_id === null) return this.$i18n.t('waiting_for_validation');
       else if (status_id === 1) return this.$i18n.t('validated');
       else return this.$i18n.t('not_valid');
