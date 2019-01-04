@@ -84,6 +84,8 @@ export default {
     "waiting_for_validation": "En attente de validation",
     "validated": "Validée",
     "not_valid": "Non valide",
+    "unable_to_access_internal_storage": "Impossible d'accéder au stockage de l'appareil",
+    "download_failed": "Le téléchargement a échoué",
 
 
 

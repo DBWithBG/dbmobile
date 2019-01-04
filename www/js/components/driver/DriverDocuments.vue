@@ -78,7 +78,11 @@
               </div>
             </v-card-title>
             <v-card-actions>
-              <v-btn flat @click="viewDocument(document.id)" color="primary">{{$t('see')}}</v-btn>
+              <v-btn
+                flat
+                @click="viewDocument(document.id, document.name, document.file_path)"
+                color="primary"
+              >{{$t('see')}}</v-btn>
               <v-btn flat @click="deleteDocument(document.id)" color="error">{{$t('delete')}}</v-btn>
             </v-card-actions>
           </v-card>
@@ -95,6 +99,7 @@
 import BackHeader from "../BackHeader.vue";
 import UploadButton from "vuetify-upload-button";
 import Api from "../../api.js";
+import { BASE_URL } from "../../api.js";
 
 export default {
   components: {
@@ -124,10 +129,10 @@ export default {
       await this.fetchDocument();
     } catch (error) {
       this.$swal({
-          type: "error",
-          title: "Oups",
-          text: error
-        });
+        type: "error",
+        title: "Oups",
+        text: error
+      });
     }
   },
 
@@ -140,7 +145,7 @@ export default {
         await api.updateSiretDriver(this.siret);
         this.$swal({
           type: "success",
-          text: this.$i18n.t('siret_updated')
+          text: this.$i18n.t("siret_updated")
         });
       } catch (error) {
         this.$swal({
@@ -159,7 +164,7 @@ export default {
         this.$swal({
           type: "error",
           title: "Oups",
-          text: this.$i18n.t('no_document_choosen')
+          text: this.$i18n.t("no_document_choosen")
         });
         return;
       }
@@ -171,7 +176,7 @@ export default {
         this.add_loading = false;
         this.$swal({
           type: "success",
-          text: self.$i18n.t('document_added')
+          text: self.$i18n.t("document_added")
         });
         await this.fetchDocument();
       } catch (error) {
@@ -193,7 +198,7 @@ export default {
         await api.deleteDocument(id);
         this.$swal({
           type: "info",
-          text: self.$i18n.t('document_deleted')
+          text: self.$i18n.t("document_deleted")
         });
         await this.fetchDocument();
       } catch (error) {
@@ -205,8 +210,110 @@ export default {
       }
     },
 
-    viewDocument(id) {
+    viewDocument(id, name, file_path) {
+      let self = this;
+      let file_ext = file_path.split(".")[1];
+      let file_name = name + "." + file_ext;
+      let url = BASE_URL + "/mobile/driver/justificatif/" + id;
+      var fileTransfer = new FileTransfer();
 
+      var storageLocation = "";
+      switch (device.platform) {
+        case "Android":
+          storageLocation = "file:///storage/emulated/0/";
+          break;
+        case "iOS":
+          storageLocation = cordova.file.documentsDirectory;
+          break;
+      }
+      
+      var folderpath = storageLocation + "Download";
+      var fileURL = folderpath + '/' + file_name;
+
+      fileTransfer.download(
+        url,
+        fileURL,
+        function(entry) {
+          console.log("download complete: " + entry.toURL());
+          window.open(fileURL);
+        },
+
+        function(error) {
+          console.log("download error source " + error.source);
+          console.log("download error target " + error.target);
+          console.log("download error code" + error.code);
+        },
+
+        false,
+        {
+          headers: {
+            Authorization: "Bearer " + window.localStorage.getItem("jwt")
+          }
+        }
+      );
+    },
+
+    viewDocumentBack(id, name, file_path) {
+      let self = this;
+      let file_ext = file_path.split(".")[1];
+
+      window.requestFileSystem(
+        LocalFileSystem.PERSISTENT,
+        0,
+        function(fs) {
+          var blob = null;
+          var xhr = new XMLHttpRequest();
+          var url = BASE_URL + "/mobile/driver/justificatif/" + id;
+          console.log("Download url is " + url);
+          xhr.open("GET", url);
+          //xhr.responseType = "blob"; //force the HTTP response, response-type header to be blob
+          xhr.onload = function() {
+            blob = xhr.response; //xhr.response is now a blob object
+            var storageLocation = "";
+            switch (device.platform) {
+              case "Android":
+                storageLocation = "file:///storage/emulated/0/";
+                break;
+              case "iOS":
+                storageLocation = cordova.file.documentsDirectory;
+                break;
+            }
+            var folderpath = storageLocation + "Download";
+            var filename = name + "." + file_ext;
+            var DataBlob = blob;
+            window.resolveLocalFileSystemURL(folderpath, function(dir) {
+              dir.getFile(filename, { create: true }, function(file) {
+                file.createWriter(
+                  function(fileWriter) {
+                    fileWriter.write(DataBlob);
+                    console.log("Download success");
+                    //Download was succesfull
+                    window.open(folderpath + "/" + filename);
+                  },
+                  function(err) {
+                    // failed
+                    console.log(err);
+                    self.$swal({
+                      type: "error",
+                      title: "oups",
+                      text: self.$i18n.t("download_failed")
+                    });
+                  }
+                );
+              });
+            });
+          };
+          console.log("Sending download request");
+          xhr.send();
+        },
+        function(err) {
+          this.$swal({
+            type: "error",
+            title: "oups",
+            text: self.$i18n.t("unable_to_access_internal_storage")
+          });
+        }
+      );
     },
 
     async fetchDocument() {
@@ -247,10 +354,9 @@ export default {
     },
 
     textFromStatus(status_id) {
-      if (status_id === null) return this.$i18n.t('waiting_for_validation');
-      else if (status_id === 1) return this.$i18n.t('validated');
-      else return this.$i18n.t('not_valid');
-      
+      if (status_id === null) return this.$i18n.t("waiting_for_validation");
+      else if (status_id === 1) return this.$i18n.t("validated");
+      else return this.$i18n.t("not_valid");
     }
   }
 };

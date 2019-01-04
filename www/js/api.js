@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://dev-deliverbag.supconception.fr"
+export const BASE_URL = "https://dev-deliverbag.supconception.fr"
 
 class Api {
 
