@@ -160,6 +160,8 @@ export default {
       let self = this;
       let api = new Api();
 
+      if (this.add_loading) return;
+
       if (this.file == null) {
         this.$swal({
           type: "error",
@@ -180,6 +182,9 @@ export default {
         });
         await this.fetchDocument();
       } catch (error) {
+        console.log(error);
+        console.log(JSON.stringify(error));
+        this.add_loading = false;
         this.$swal({
           type: "error",
           title: "oups",
@@ -350,6 +355,10 @@ export default {
     },
 
     fileChanged(file) {
+      console.log('FILE CHANGED');
+      console.log(file);
+      console.log(JSON.stringify(file));
+      console.log(JSON.stringify(file.name));
       this.file = file;
     },
 

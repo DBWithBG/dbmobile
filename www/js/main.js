@@ -26,6 +26,7 @@ import MyDeliveriesDriver from './components/driver/MyDeliveries.vue'
 import SettingsDriver from './components/driver/Settings.vue'
 import ConfirmDriver from './components/ConfirmDriver.vue'
 import DriverDocuments from './components/driver/DriverDocuments.vue'
+import DriverStats from './components/driver/Stats.vue'
 
 
 Vue.use(VueRouter);
@@ -62,7 +63,8 @@ const routes = [
   { name: 'MyDeliveriesDriver', path: '/my-deliveries-driver', component: MyDeliveriesDriver },
   { name: 'SettingsDriver', path: '/settings-driver', component: SettingsDriver },
   { name: 'ConfirmDriver', path: '/confirm-driver', component: ConfirmDriver },
-  { name: 'DriverDocuments', path: '/driver-documents', component: DriverDocuments }
+  { name: 'DriverDocuments', path: '/driver-documents', component: DriverDocuments },
+  { name: 'DriverStats', path: '/driver-stats', component: DriverStats }
 ];
 
 const router = new VueRouter({ routes: routes });

@@ -62,6 +62,12 @@ class Api {
         formData.append('justificatif', file);
         formData.append('name', documentName);
 
+        console.log('FORMDATA');
+        console.log(JSON.stringify(formData));
+        console.log(formData);
+        console.log('FILE');
+        console.log(JSON.stringify(file));
+
         return axios.post(BASE_URL + "/mobile/driver/addJustificatif", formData, this.header);
     }
 
@@ -125,6 +131,10 @@ class Api {
 
     static sendGoogleToken(type, token) {
         return axios.get(BASE_URL + `/google/callback?type=${type}&code=${token}&from_type=mobile`);
+    }
+
+    getDriverDeliveries() {
+        return axios.get(BASE_URL + "/mobile/deliveries/drivers", this.header);
     }
 }
 

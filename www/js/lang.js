@@ -86,6 +86,8 @@ export default {
     "not_valid": "Non valide",
     "unable_to_access_internal_storage": "Impossible d'accéder au stockage de l'appareil",
     "download_failed": "Le téléchargement a échoué",
+    "stats": "Mes statistiques",
+    "stats_sbt": "Consulter vos statistiques",
 
 
 

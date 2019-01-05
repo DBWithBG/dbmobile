@@ -32,6 +32,16 @@
             </v-list-tile-content>
           </v-list-tile>
 
+          <v-list-tile avatar @click="stats">
+            <v-list-tile-avatar>
+              <v-icon color="primary" large>subject</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+              <v-list-tile-title>{{$t("stats")}}</v-list-tile-title>
+              <v-list-tile-sub-title>{{$t("stats_sbt")}}</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
           <v-list-tile @click.native.stop="dialLangue=true" avatar>
             <v-list-tile-avatar>
               <v-icon color="primary" large>language</v-icon>
@@ -147,6 +157,10 @@ export default {
 
     documents() {
       this.$router.push('/driver-documents');
+    },
+
+    stats() {
+      this.$router.push('/driver-stats');
     },
 
     // On clean le localStorage
