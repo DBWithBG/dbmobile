@@ -88,6 +88,23 @@ export default {
     "download_failed": "Le téléchargement a échoué",
     "stats": "Mes statistiques",
     "stats_sbt": "Consulter vos statistiques",
+    "nb_deliveries": "Nombre de courses",
+    "nb_luggages": "Nombre de bagages transportés",
+    "deliveries": "courses",
+    "luggages_taken": "bagages pris en charge",
+    "you_earn": "Vous avez gagné",
+    "month_1": "Janvier",
+    "month_2": "Février",
+    "month_3": "Mars",
+    "month_4": "Avril",
+    "month_5": "Mais",
+    "month_6": "Juin",
+    "month_7": "Juillet",
+    "month_8": "Aout",
+    "month_9": "Septembre",
+    "month_10": "Octobre",
+    "month_11": "Novembre",
+    "month_12": "Décembre",
 
 
 
