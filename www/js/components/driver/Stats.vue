@@ -144,7 +144,7 @@ export default {
       for (var delivery of this.deliveries) {
         // delivery.delivery.end_date format : 2018-12-14 22:53:00
         // We just want 2018-12
-        let end_year_month = delivery.delivery.end_date
+        let end_year_month = delivery.delivery.start_date
           .split(" ")[0]
           .substr(0, 7);
         let end_year = parseInt(end_year_month.split("-")[0]);
