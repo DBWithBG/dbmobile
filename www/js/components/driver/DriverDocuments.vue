@@ -100,6 +100,7 @@ import BackHeader from "../BackHeader.vue";
 import UploadButton from "vuetify-upload-button";
 import Api from "../../api.js";
 import { BASE_URL } from "../../api.js";
+import { mimeTypeFromExtension } from "../../utils.js";
 
 export default {
   components: {
@@ -240,7 +241,15 @@ export default {
         fileURL,
         function(entry) {
           console.log("download complete: " + entry.toURL());
-          window.open(fileURL);
+          cordova.plugins.fileOpener2.open(
+            fileURL.replace('file://', ''),
+            mimeTypeFromExtension(file_ext), {
+              error(error) {
+                console.log('Error ' + error);
+              },
+              success() {}
+            }
+          );
         },
 
         function(error) {
