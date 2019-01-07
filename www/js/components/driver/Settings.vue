@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-flex xs12>
-      <v-card>
+      <v-card class="padding-bottom">
         <v-list class="margin" three-line>
           <v-list-tile avatar @click="profile">
             <v-list-tile-avatar>
@@ -183,5 +183,9 @@ export default {
 <style scoped>
 #card-choix-langue {
   padding-bottom: 1.5em;
+}
+
+.padding-bottom {
+  padding-bottom: 100px;
 }
 </style>

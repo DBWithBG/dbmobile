@@ -105,6 +105,10 @@ export default {
     "month_10": "Octobre",
     "month_11": "Novembre",
     "month_12": "Décembre",
+    "language": "Langue",
+    "begin": "commencer",
+    "your_bags": "Vos bagages",
+    "our_mission": "Notre mission",
 
 
 
