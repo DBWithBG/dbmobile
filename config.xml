@@ -75,6 +75,9 @@
     <preference name="AutoHideSplashScreen" value="true" />
     <preference name="ShowSplashScreenSpinner" value="false" />
     <preference name="Orientation" value="portrait" />
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarBackgroundColor" value="#2D81C1" />
+    <preference name="Fullscreen" value="false" />
     <plugin name="cordova-plugin-dialogs" spec="^2.0.1" />
     <plugin name="cordova.plugins.diagnostic" spec="^4.0.5" />
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
@@ -106,6 +109,5 @@
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
     </plugin>
     <engine name="browser" spec="^5.0.4" />
-    <engine name="ios" spec="^4.5.5" />
     <engine name="android" spec="^7.1.4" />
 </widget>
