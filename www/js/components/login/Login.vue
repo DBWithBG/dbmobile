@@ -181,8 +181,6 @@ export default {
     async googleLogin(type) {
       let self = this;
 
-      // cordova plugin add cordova-plugin-googleplus --save --variable REVERSED_CLIENT_ID=com.googleusercontent.apps.607137533381-dr6aa4k9k1opovkh80or484unjrrh45t --variable WEB_APPLICATION_CLIENT_ID=607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com
-
       window.plugins.googleplus.login(
         {
           webClientId: "607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com",
