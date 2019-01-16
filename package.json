@@ -8,6 +8,7 @@
     "emulate-browser": "webpack && cordova emulate browser",
     "emulate-android": "webpack && cordova emulate android",
     "build-android": "webpack && cordova build android",
+    "build-ios": "webpack && cordova build ios",
     "emulate-g": "webpack && cordova emulate android --target=6e273ea5"
   },
   "author": "The Dev team",
@@ -29,6 +30,7 @@
     "cordova-android": "^7.1.4",
     "cordova-android-play-services-gradle-release": "^2.0.0",
     "cordova-browser": "^5.0.4",
+    "cordova-ios": "^4.5.5",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-dialogs": "^2.0.1",
     "cordova-plugin-facebook4": "4.0.0",
@@ -39,7 +41,7 @@
     "cordova-plugin-geolocation": "^4.0.1",
     "cordova-plugin-googlemaps": "^2.4.6",
     "cordova-plugin-googlemaps-sdk": "git+https://github.com/mapsplugin/cordova-plugin-googlemaps-sdk.git#2.6.0",
-    "cordova-plugin-googleplus": "^6.0.0",
+    "cordova-plugin-googleplus": "7.0.0",
     "cordova-plugin-inappbrowser": "^3.0.0",
     "cordova-plugin-request-location-accuracy": "^2.2.3",
     "cordova-plugin-splashscreen": "^5.0.2",
@@ -80,10 +82,6 @@
         "FIREBASE_MESSAGING_VERSION": "17.3.+",
         "ANDROID_SUPPORT_VERSION": "27.+"
       },
-      "cordova-plugin-googleplus": {
-        "REVERSED_CLIENT_ID": "reversed",
-        "WEB_APPLICATION_CLIENT_ID": "607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com"
-      },
       "cordova-plugin-facebook4": {
         "APP_ID": "320707318542573",
         "APP_NAME": "deliverbag",
@@ -95,11 +93,17 @@
       "cordova-plugin-file-transfer": {},
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
+      },
+      "cordova-plugin-googleplus": {
+        "REVERSED_CLIENT_ID": "com.googleusercontent.apps.607137533381-dr6aa4k9k1opovkh80or484unjrrh45t",
+        "WEB_APPLICATION_CLIENT_ID": "607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com",
+        "PLAY_SERVICES_VERSION": "11.8.0"
       }
     },
     "platforms": [
       "browser",
-      "android"
+      "android",
+      "ios"
     ]
   },
   "devDependencies": {

@@ -1,61 +1,5 @@
 <template>
   <div id="register">
-    <!--
-    <v-container>
-      <v-form v-model="valid">
-        <v-layout row wrap>
-          <v-flex xs12 mt-4 mb-4>
-            <h1 class="display-2">Deliverbag</h1>
-          </v-flex>
-          <v-flex xs12>
-            <v-text-field :rules="emailRules" v-model="email" type="email" label="Email"></v-text-field>
-          </v-flex>
-          <v-flex xs12>
-            <v-text-field
-              :rules="[otherRules.required]"
-              v-model="password"
-              :append-icon="showPassword ? 'visibility_off' : 'visibility'"
-              :type="showPassword ? 'text' : 'password'"
-              @click:append="showPassword = !showPassword"
-              :label="$t('password')"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs12 class="text-xs-center">
-            <v-btn :disabled="!valid" flat color="success" @click="login">{{$t('to_log_in')}}</v-btn>
-          </v-flex>
-
-          <v-flex xs12 mt-3 mb-3>
-            <v-divider></v-divider>
-          </v-flex>
-
-          <v-flex xs6>
-            <v-btn @click="googleLogin" color="white" block>Google</v-btn>
-          </v-flex>
-
-          <v-flex xs6>
-            <v-btn @click="facebookLogin" color="white" block>Facebook</v-btn>
-          </v-flex>
-
-          <v-flex xs12 mt-4 class="text-xs-center">
-            <v-btn @click="register" flat small>{{$t('to_create_an_account')}}</v-btn>
-          </v-flex>
-        </v-layout>
-      </v-form>
-
-      <v-dialog v-model="hasError">
-        <v-card>
-          <v-card-title class="headline">Erreur</v-card-title>
-
-          <v-card-text>{{error}}</v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="red darken-1" flat="flat" @click="hasError = false">Fermer</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-container>
-    -->
     <template>
       <v-tabs centered color="primary" dark icons-and-text>
         <v-tabs-slider color="primary"></v-tabs-slider>
@@ -209,6 +153,7 @@ export default {
   },
 
   mounted() {
+    console.log('LOGIN MOUNTED');
     if (this.checkIfUserIsLoggedIn()) {
       console.log("User already logged in");
       this.registerOnMessageCallback();
@@ -236,10 +181,11 @@ export default {
     async googleLogin(type) {
       let self = this;
 
+      // cordova plugin add cordova-plugin-googleplus --save --variable REVERSED_CLIENT_ID=com.googleusercontent.apps.607137533381-dr6aa4k9k1opovkh80or484unjrrh45t --variable WEB_APPLICATION_CLIENT_ID=607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com
+
       window.plugins.googleplus.login(
         {
-          webClientId:
-            "607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com",
+          webClientId: "607137533381-nktajtp63d841gtsicvp81anr84v0ia3.apps.googleusercontent.com",
           offline: true
         },
         async function(obj) {
