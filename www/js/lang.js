@@ -109,6 +109,7 @@ export default {
     "begin": "commencer",
     "your_bags": "Vos bagages",
     "our_mission": "Notre mission",
+    "apply": "Appliquer",
 
 
 

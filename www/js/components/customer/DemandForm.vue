@@ -424,7 +424,7 @@ Désactivé si le form n'est pas valide
         <v-stepper-content step="3">
           <!-- Récapitulatif -->
           <v-flex
-            mb-3
+            mb-4
             class="text-xs-center font-weight-medium primary--text subheading"
           >{{$t('subt_3')}}</v-flex>
           <v-card v-if="reponse != null">
@@ -501,7 +501,28 @@ Désactivé si le form n'est pas valide
               class="text-xs-center"
               v-if="compteurBagagesAutre>1"
             >{{compteurBagagesAutre}} {{$t('bagages_autre')}}</v-flex>
+          
           </v-card>
+
+          <v-flex xs12 style="display: flex;">
+            
+              <v-flex xs8 mt-4>
+                <v-text-field v-model="codePromo" clearable outline label="Code promo"></v-text-field>
+              </v-flex>
+              <v-flex xs4 mt-4>
+                <v-btn @click="applyPromo()" flat color="primary">{{$t('apply')}}</v-btn>
+              </v-flex>
+            
+          </v-flex>
+
+        
+            
+          
+        
+          
+        
+          
+          
 
           <v-btn icon large color="orange lighten-1" @click.native="step=2,deliveryPrice = null" dark>
             <v-icon x-large>navigate_before</v-icon>
@@ -567,6 +588,9 @@ export default {
 
       // définit le type de prestation souhaitée, true=livraison, false=consigne
       livraisonDirecte: false,
+
+      // Code promo
+      codePromo: '',
 
       // date minimum pour le picker, correspond à la date actuelle fromatée pour le picker
       minDate: this.moment()
@@ -775,6 +799,7 @@ export default {
         .replace("T", " ");
     },
 
+    
     // Affichage du label du datepicker PRISE EN CHARGE de manière plus humaine pour le client
     displayDate() {
       //return this.dateTime.toLocaleString().substring(0,10);
@@ -881,6 +906,11 @@ export default {
       }
       
     },
+
+    applyPromo() {
+      console.log('TODO');
+    },
+
 
     // La date de début doit être au moins 4 après après now
     checkStartDate() {
